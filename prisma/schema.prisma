@@ -10,12 +10,12 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-model Companys {
+model Company {
     id String @id @default(uuid())
 
-    name String?
+    name String
 
-    cnpj String? @unique
+    cnpj String @unique
 
     password String
 
@@ -31,7 +31,7 @@ model Companys {
 
     createdAt DateTime  @default(now())
     updatedAt DateTime @updatedAt @default(now())
-    @@map("companys")
+    @@map("company")
 }
 
 model Users {
@@ -49,8 +49,6 @@ model Users {
 
     isActive Boolean
 
-    isAdm Boolean
-
     phone String?
 
     email String?
@@ -61,7 +59,7 @@ model Users {
 
     updatedAt DateTime @updatedAt @default(now())
 
-    company Companys @relation(fields: [CompanyId], references: [id], onDelete: Cascade)
+    company Company @relation(fields: [CompanyId], references: [id], onDelete: Cascade)
     CompanyId String
 
     @@map("users")
@@ -75,10 +73,10 @@ model ClockIn {
 
     userName String?
 
-    company Companys @relation(fields: [companyId], references: [id], onDelete: Cascade)
+    company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
     companyId String
 
-    companyName String?
+    companyName String
 
     time String?
 
@@ -120,5 +118,5 @@ model CompanySession {
 
     expires      DateTime
 
-    company         Companys     @relation(fields: [companyId], references: [id], onDelete: Cascade)
+    company         Company     @relation(fields: [companyId], references: [id], onDelete: Cascade)
 }

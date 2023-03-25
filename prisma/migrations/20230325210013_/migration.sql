@@ -1,15 +1,15 @@
 -- CreateTable
-CREATE TABLE `companys` (
+CREATE TABLE `company` (
     `id` VARCHAR(191) NOT NULL,
-    `name` VARCHAR(191) NULL,
-    `cnpj` VARCHAR(191) NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `cnpj` VARCHAR(191) NOT NULL,
     `password` VARCHAR(191) NOT NULL,
     `logo` LONGTEXT NULL,
     `isActive` BOOLEAN NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
-    UNIQUE INDEX `companys_cnpj_key`(`cnpj`),
+    UNIQUE INDEX `company_cnpj_key`(`cnpj`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -21,7 +21,6 @@ CREATE TABLE `users` (
     `password` VARCHAR(191) NOT NULL,
     `hourly` BOOLEAN NOT NULL,
     `isActive` BOOLEAN NOT NULL,
-    `isAdm` BOOLEAN NOT NULL,
     `phone` VARCHAR(191) NULL,
     `email` VARCHAR(191) NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -38,7 +37,7 @@ CREATE TABLE `clockin` (
     `userId` VARCHAR(191) NOT NULL,
     `userName` VARCHAR(191) NULL,
     `companyId` VARCHAR(191) NOT NULL,
-    `companyName` VARCHAR(191) NULL,
+    `companyName` VARCHAR(191) NOT NULL,
     `time` VARCHAR(191) NULL,
     `ip` VARCHAR(191) NULL,
     `location` LONGTEXT NULL,
@@ -73,16 +72,16 @@ CREATE TABLE `CompanySession` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
-ALTER TABLE `users` ADD CONSTRAINT `users_CompanyId_fkey` FOREIGN KEY (`CompanyId`) REFERENCES `companys`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `users` ADD CONSTRAINT `users_CompanyId_fkey` FOREIGN KEY (`CompanyId`) REFERENCES `company`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `clockin` ADD CONSTRAINT `clockin_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `clockin` ADD CONSTRAINT `clockin_companyId_fkey` FOREIGN KEY (`companyId`) REFERENCES `companys`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `clockin` ADD CONSTRAINT `clockin_companyId_fkey` FOREIGN KEY (`companyId`) REFERENCES `company`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `UserSession` ADD CONSTRAINT `UserSession_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `CompanySession` ADD CONSTRAINT `CompanySession_companyId_fkey` FOREIGN KEY (`companyId`) REFERENCES `companys`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `CompanySession` ADD CONSTRAINT `CompanySession_companyId_fkey` FOREIGN KEY (`companyId`) REFERENCES `company`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
