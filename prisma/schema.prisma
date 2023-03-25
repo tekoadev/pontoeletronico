@@ -7,60 +7,118 @@ generator client {
 
 datasource db {
     provider = "mysql"
-    // NOTE: When using postgresql, mysql or sqlserver, uncomment the @db.Text annotations in model Account below
-    // Further reading:
-    // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
-    // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
     url      = env("DATABASE_URL")
 }
 
-model Example {
-    id        String   @id @default(cuid())
+model Companys {
+    id String @id @default(uuid())
+
+    name String?
+
+    cnpj String? @unique
+
+    password String
+
+    logo String? @db.LongText
+
+    isActive Boolean
+
+    users Users[]
+
+    clockin ClockIn[]
+
+    session CompanySession[]
+
+    createdAt DateTime  @default(now())
+    updatedAt DateTime @updatedAt @default(now())
+    @@map("companys")
+}
+
+model Users {
+    id String @id @default(uuid())
+
+    cpf String @unique
+
+    name String
+
+    password String
+
+    hourly Boolean
+
+    clockin ClockIn[]
+
+    isActive Boolean
+
+    isAdm Boolean
+
+    phone String?
+
+    email String?
+
+    session UserSession[]
+
     createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+
+    updatedAt DateTime @updatedAt @default(now())
+
+    company Companys @relation(fields: [CompanyId], references: [id], onDelete: Cascade)
+    CompanyId String
+
+    @@map("users")
+}
+
+model ClockIn {
+    id String @id @default(uuid())
+
+    user Users @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId String
+
+    userName String?
+
+    company Companys @relation(fields: [companyId], references: [id], onDelete: Cascade)
+    companyId String
+
+    companyName String?
+
+    time String?
+
+    ip String?
+
+    location String? @db.LongText
+
+    obs String?
+
+    type String?
+
+    updatedAt DateTime @updatedAt @default(now())
+
+    createdAt DateTime @default(now())
+
+    @@map("clockin")
 }
 
 // Necessary for Next auth
-model Account {
-    id                String  @id @default(cuid())
-    userId            String
-    type              String
-    provider          String
-    providerAccountId String
-    refresh_token     String? // @db.Text
-    access_token      String? // @db.Text
-    expires_at        Int?
-    token_type        String?
-    scope             String?
-    id_token          String? // @db.Text
-    session_state     String?
-    user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    @@unique([provider, providerAccountId])
-}
-
-model Session {
+model UserSession {
     id           String   @id @default(cuid())
+
     sessionToken String   @unique
+
     userId       String
+
     expires      DateTime
-    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    user         Users     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model User {
-    id            String    @id @default(cuid())
-    name          String?
-    email         String?   @unique
-    emailVerified DateTime?
-    image         String?
-    accounts      Account[]
-    sessions      Session[]
-}
+model CompanySession {
+    id           String   @id @default(cuid())
 
-model VerificationToken {
-    identifier String
-    token      String   @unique
-    expires    DateTime
+    sessionToken String   @unique
 
-    @@unique([identifier, token])
+    companyId       String
+
+    expires      DateTime
+
+    company         Companys     @relation(fields: [companyId], references: [id], onDelete: Cascade)
 }
