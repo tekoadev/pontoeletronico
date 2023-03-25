@@ -120,7 +120,7 @@ export async function listUniqueCompany(
 
   const company = await prismaConnect.company.findUnique({
     where: { id },
-    include: { clockin: true, session: true, users: true },
+    include: { clockin: true, session: true, users: true, _count: true },
   });
 
   if (company === null || company === undefined) {

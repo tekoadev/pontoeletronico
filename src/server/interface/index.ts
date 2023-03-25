@@ -17,11 +17,12 @@ export interface IUser {
   id?: string;
   cpf: string;
   name: string;
+  password?: string;
   hourly: boolean;
   isActive: boolean;
+  phone?: string | null;
+  email?: string | null;
   clockin?: IClockIn[];
-  phone?: string;
-  email?: string;
   session?: IUserSession[];
   createdAt?: Date;
   updatedAt?: Date;
@@ -73,4 +74,29 @@ export interface ICreateCompany {
   logo?: string | null;
   isActive: boolean;
   password: string;
+}
+
+export interface ICreateUserReq extends NextApiRequest {
+  body: {
+    company_id: string
+    id?: string;
+    cpf: string;
+    name: string;
+    password?: string;
+    hourly: boolean;
+    isActive: boolean;
+    phone?: string;
+    email?: string;
+  };
+}
+
+export interface ICreateUser {
+  id?: string;
+  cpf: string;
+  name: string;
+  password: string;
+  hourly: boolean;
+  isActive: boolean;
+  phone?: string | null;
+  email?: string | null;
 }
