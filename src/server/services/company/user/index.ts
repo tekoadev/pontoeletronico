@@ -190,13 +190,13 @@ export async function listUniqueUser(
 }
 
 export async function reportUserByMonth(
-  req: { query: { id: string; month: string }; user: string },
+  req: { query: { id: string; month: string; year: string }; user: string },
   res: NextApiResponse
 ) {
-  const { id, month } = req.query;
+  const { id, month, year } = req.query;
 
-  if (id === undefined || month === undefined) {
-    return res.status(400).json({ message: "must send a company id" });
+  if (id === undefined || month === undefined || year === undefined) {
+    return res.status(400).json({ message: "must send id, month and year" });
   }
 
   const clockIn = await prismaConnect.clockIn.findMany({
@@ -208,10 +208,16 @@ export async function reportUserByMonth(
   }
 
   const body = clockIn.map((elem) => {
-    if (elem.time?.split("/")[1] === month) {
+    if (
+      elem.time?.split(" ")[0]?.split("/")[1] === month &&
+      elem.time?.split(" ")[0]?.split("/")[2] === year
+    ) {
       return elem;
     }
   });
 
-  return res.json({ message: "Success", body });
+  return res.json({
+    message: "Success",
+    body: body === undefined || body === null ? [] : body,
+  });
 }
