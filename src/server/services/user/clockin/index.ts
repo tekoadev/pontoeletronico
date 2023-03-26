@@ -1,9 +1,7 @@
 import prismaConnect from "@/server/db";
 import type {
-  ICompany,
   ICreateClockIn,
   ICreateCompanyClockInReq,
-  IUser,
 } from "@/server/interface";
 import type { NextApiResponse } from "next";
 
