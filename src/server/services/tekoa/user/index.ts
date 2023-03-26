@@ -145,7 +145,7 @@ export async function deleteUser(
 
 export async function listAllUsers(req: any, res: NextApiResponse) {
   const user = await prismaConnect.users.findMany({
-    include: { clockin: true, session: true, company: true, _count: true },
+    include: { session: true, company: true, _count: true },
   });
 
   return res.json({ message: "Success", user: user });

@@ -106,7 +106,7 @@ export async function deleteCompany(
 
 export async function listAllCompany(req: any, res: NextApiResponse) {
   const companys = await prismaConnect.company.findMany({
-    include: { clockin: true, session: true, users: true },
+    include: { session: true, users: true },
   });
 
   return res.json({ message: "Success", companys: companys });
@@ -120,7 +120,7 @@ export async function listUniqueCompany(
 
   const company = await prismaConnect.company.findUnique({
     where: { id },
-    include: { clockin: true, session: true, users: true, _count: true },
+    include: { session: true, users: true, _count: true },
   });
 
   if (company === null || company === undefined) {
