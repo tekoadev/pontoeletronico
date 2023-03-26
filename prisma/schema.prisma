@@ -37,7 +37,9 @@ model Company {
 model Users {
     id String @id @default(uuid())
 
-    cpf String @unique
+    user String @unique
+
+    cpf String
 
     name String
 

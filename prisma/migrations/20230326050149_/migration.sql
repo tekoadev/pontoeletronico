@@ -16,6 +16,7 @@ CREATE TABLE `company` (
 -- CreateTable
 CREATE TABLE `users` (
     `id` VARCHAR(191) NOT NULL,
+    `user` VARCHAR(191) NOT NULL,
     `cpf` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NOT NULL,
     `password` VARCHAR(191) NOT NULL,
@@ -27,7 +28,7 @@ CREATE TABLE `users` (
     `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `CompanyId` VARCHAR(191) NOT NULL,
 
-    UNIQUE INDEX `users_cpf_key`(`cpf`),
+    UNIQUE INDEX `users_user_key`(`user`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
