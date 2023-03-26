@@ -78,7 +78,7 @@ export interface ICreateCompany {
 
 export interface ICreateUserReq extends NextApiRequest {
   body: {
-    company_id: string
+    company_id: string;
     id?: string;
     cpf: string;
     name: string;
@@ -99,4 +99,31 @@ export interface ICreateUser {
   isActive: boolean;
   phone?: string | null;
   email?: string | null;
+}
+
+export interface ICreateClockInReq extends NextApiRequest {
+  body: {
+    id?: string;
+    userId: string;
+    userName: string;
+    companyId: string;
+    companyName: string;
+    time?: string | null;
+    ip?: string | null;
+    location?: string | null;
+    obs?: string | null;
+    type?: string | null;
+    createdAt?: Date;
+    updatedAt?: Date;
+  };
+}
+
+export interface ICreateClockIn {
+  id?: string;
+  userId: string;
+  companyId?: string;
+  time?: string | null;
+  location?: string | null;
+  obs?: string | null;
+  type?: string | null;
 }

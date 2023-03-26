@@ -2,8 +2,6 @@
 import prismaConnect from "@/server/db";
 import type {
   ICompany,
-  ICreateCompany,
-  ICreateCompanyReq,
   ICreateUser,
   ICreateUserReq,
   IUser,
@@ -76,9 +74,7 @@ export async function updateUser(req: ICreateUserReq, res: NextApiResponse) {
   } = req.body;
 
   if (!id) {
-    return res
-      .status(400)
-      .json({ message: "must send a company id" });
+    return res.status(400).json({ message: "must send a company id" });
   }
   if (company_id) {
     const findCompany: ICompany | null = await prismaConnect.company.findUnique(

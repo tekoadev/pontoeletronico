@@ -35,11 +35,8 @@ CREATE TABLE `users` (
 CREATE TABLE `clockin` (
     `id` VARCHAR(191) NOT NULL,
     `userId` VARCHAR(191) NOT NULL,
-    `userName` VARCHAR(191) NULL,
     `companyId` VARCHAR(191) NOT NULL,
-    `companyName` VARCHAR(191) NOT NULL,
     `time` VARCHAR(191) NULL,
-    `ip` VARCHAR(191) NULL,
     `location` LONGTEXT NULL,
     `obs` VARCHAR(191) NULL,
     `type` VARCHAR(191) NULL,

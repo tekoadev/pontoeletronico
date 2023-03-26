@@ -71,16 +71,10 @@ model ClockIn {
     user Users @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId String
 
-    userName String?
-
     company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
     companyId String
 
-    companyName String
-
     time String?
-
-    ip String?
 
     location String? @db.LongText
 
