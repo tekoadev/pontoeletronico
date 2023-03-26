@@ -147,7 +147,7 @@ background-color: #1f2933;
 box-shadow: 0 0 15px black;
 color: white;
 width: 100vw;
-height: ${(props) => props.active ? "228px": "0px"};
+height: ${(props) => props.active ? "190px": "0px"};
 overflow-y: hidden;
 padding-bottom: ${(props) => props.active ? "40px": "0px"};
 padding-top: ${(props) => props.active ? "40px": "0px"};

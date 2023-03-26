@@ -6,7 +6,7 @@ import ClockIn from "@/assets/imgs/logo-clockin-white.png";
 import Image from "next/image";
 import * as S from "./styles";
 
-export default function AdmHeader() {
+export default function EmpresaHeader() {
   const navigate = useRouter();
   const [theme, setTheme] = useState(false);
   const [active, setActive] = useState(false);
@@ -31,7 +31,7 @@ export default function AdmHeader() {
           <div>
             <S.Text
               onClick={() => {
-                navigate.push("/adm/espelhodeponto");
+                navigate.push("/empresa/espelho-ponto");
               }}
               style={{ cursor: "pointer" }}
             >
@@ -39,7 +39,7 @@ export default function AdmHeader() {
             </S.Text>
             <S.Text
               onClick={() => {
-                navigate.push("/adm/create-user");
+                navigate.push("/empresa/criar-usuario");
               }}
               style={{ cursor: "pointer" }}
             >
@@ -47,7 +47,7 @@ export default function AdmHeader() {
             </S.Text>
             <S.Text
               onClick={() => {
-                navigate.push("/adm/edituser");
+                navigate.push("/empresa/editar-usuario");
               }}
               style={{ cursor: "pointer" }}
             >
@@ -72,7 +72,7 @@ export default function AdmHeader() {
 
         <S.LogOut
           onClick={() => {
-            navigate.push("/adm");
+            navigate.push("/empresa");
           }}
           style={{ cursor: "pointer" }}
         >
@@ -83,7 +83,7 @@ export default function AdmHeader() {
       <S.NavMobileOptions active={theme}>
         <S.Text
           onClick={() => {
-            navigate.push("/adm/espelhodeponto");
+            navigate.push("/empresa/espelho-ponto");
           }}
           style={{ cursor: "pointer" }}
         >
@@ -91,7 +91,7 @@ export default function AdmHeader() {
         </S.Text>
         <S.Text
           onClick={() => {
-            navigate.push("/adm/createuser");
+            navigate.push("/empresa/criar-usuario");
           }}
           style={{ cursor: "pointer" }}
         >
@@ -99,7 +99,7 @@ export default function AdmHeader() {
         </S.Text>
         <S.Text
           onClick={() => {
-            navigate.push("/adm/edituser");
+            navigate.push("/empresa/editar-usuario");
           }}
           style={{ cursor: "pointer" }}
         >
