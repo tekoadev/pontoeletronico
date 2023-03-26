@@ -161,7 +161,7 @@ export async function listAllUsers(
 ) {
   const user = await prismaConnect.users.findMany({
     where: { CompanyId: req.user },
-    include: { clockin: true, session: true, company: true, _count: true },
+    include: { _count: true },
   });
 
   return res.json({ message: "Success", body: user });
@@ -187,4 +187,31 @@ export async function listUniqueUser(
   }
 
   return res.json({ message: "Success", body: user });
+}
+
+export async function reportUserByMonth(
+  req: { query: { id: string; month: string }; user: string },
+  res: NextApiResponse
+) {
+  const { id, month } = req.query;
+
+  if (id === undefined || month === undefined) {
+    return res.status(400).json({ message: "must send a company id" });
+  }
+
+  const clockIn = await prismaConnect.clockIn.findMany({
+    where: { userId: id, companyId: req.user },
+  });
+
+  if (clockIn === null || clockIn === undefined) {
+    return res.status(409).json({ message: "User not found" });
+  }
+
+  const body = clockIn.map((elem) => {
+    if (elem.time?.split("/")[1] === month) {
+      return elem;
+    }
+  });
+
+  return res.json({ message: "Success", body });
 }

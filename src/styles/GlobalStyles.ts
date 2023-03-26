@@ -68,6 +68,9 @@ export default createGlobalStyle`
   input[type=number] {
     -moz-appearance: textfield;
   }
+  * {
+    color: var(--text);
+  }
   
   :root{
     --primary: #F2B705;
