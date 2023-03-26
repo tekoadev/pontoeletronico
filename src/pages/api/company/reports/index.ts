@@ -9,7 +9,7 @@ const Handler = nc({ onError });
 
 Handler.use(corsMiddleware);
 
-// Handler.use(TokenMiddleware);
+Handler.use(TokenMiddleware);
 
 Handler.get(reportUserByMonth);
 
