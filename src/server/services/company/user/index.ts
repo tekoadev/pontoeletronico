@@ -70,6 +70,7 @@ export async function updateUser(
 ) {
   const {
     id,
+    user,
     cpf,
     name,
     password,
@@ -90,13 +91,22 @@ export async function updateUser(
     return res.status(409).json({ message: "Company not found" });
   }
 
-  const findUser: IUser | null = await prismaConnect.users.findUnique({
+  const userExist: IUser | null = await prismaConnect.users.findUnique({
     where: { id },
   });
 
-  if (!findUser) {
+  if (!userExist) {
     return res.status(409).json({ message: "User not found" });
   }
+
+  const findUser: IUser | null = await prismaConnect.users.findUnique({
+    where: { user },
+  });
+
+  if (findUser) {
+    return res.status(409).json({ message: "User already exist" });
+  }
+
   let hashedPassword = undefined;
 
   if (password) {
