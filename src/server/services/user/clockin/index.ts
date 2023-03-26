@@ -51,10 +51,30 @@ export async function createClockIn(
 }
 
 export async function listClockIn(req: { user: string }, res: NextApiResponse) {
-    const clockIn = await prismaConnect.clockIn.findMany({
-      where: { userId: req.user },
-      include: { user: true },
-    });
-  
-    return res.json({ message: "Success", body: clockIn });
-  }
+  const clockIn = await prismaConnect.clockIn.findMany({
+    where: { userId: req.user },
+    include: { user: true },
+  });
+
+  return res.json({ message: "Success", body: clockIn });
+}
+
+export async function listByMonthClockIn(
+  req: { user: string; query: { month: string } },
+  res: NextApiResponse
+) {
+  const { month } = req.query;
+
+  const clockIn = await prismaConnect.clockIn.findMany({
+    where: { userId: req.user },
+    include: { user: true },
+  });
+
+  const response = clockIn.map((elem) => {
+    if (elem.time?.split("/")[1] === month) {
+      return elem;
+    }
+  });
+
+  return res.json({ message: "Success", body: response });
+}
