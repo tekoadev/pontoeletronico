@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable @typescript-eslint/no-floating-promises */
 /* eslint-disable react-hooks/exhaustive-deps */
@@ -9,12 +10,13 @@ import React, { useEffect, useContext, useState, createContext } from "react";
 import nookies, { parseCookies, setCookie, destroyCookie } from "nookies";
 import ClockInApi from "@/services";
 import { useRouter } from "next/router";
-import { ICompany } from "@/server/interface";
+import { ICompany, ICreateUser } from "@/server/interface";
 import { useGeneral } from "./generalContext";
 
 interface CompanyContextProps {
   company: ICompany | string | undefined;
   companyLogin: (data: { cnpj: string; password: string }) => void;
+  createUser: (data: ICreateUser) => Promise<boolean>;
 }
 export const CompanyContext = createContext<CompanyContextProps>(
   {} as CompanyContextProps
@@ -26,7 +28,9 @@ export const CompanyProvider = ({ children }: any) => {
   const { setIsLoading, showAlert } = useGeneral();
 
   const [company, setCompany] = useState<ICompany | string | undefined>(
-    cookies?.Company || ({} as ICompany)
+    cookies?.Company !== undefined
+      ? JSON.parse(cookies?.Company)
+      : ({} as ICompany)
   );
 
   const [companyToken, setCompanyToken] = useState(cookies?.CompanyToken) || "";
@@ -38,7 +42,7 @@ export const CompanyProvider = ({ children }: any) => {
   };
 
   useEffect(() => {
-    if (window.location.pathname.includes("/empresa/") && companyToken !== "") {
+    if (window.location.pathname.includes("/empresa") && companyToken !== "") {
       ClockInApi({
         method: "GET",
         url: "company/company",
@@ -46,12 +50,17 @@ export const CompanyProvider = ({ children }: any) => {
       })
         .then((res) => {
           setCompany(res?.data?.body);
-          setCookie(null, "Company", res?.data?.body);
-          return navigate.push("/empresa/home");
+          setCookie(null, "Company", JSON.stringify(res?.data?.body));
+
+          if (window.location.pathname === "/empresa") {
+            return navigate.push("/empresa/home");
+          }
         })
         .catch((err) => {
           console.log(err);
           return navigate.push("/empresa");
+          destroyCookie(null, "Company");
+          destroyCookie(null, "CompanyToken");
         });
     }
     if (window.location.pathname.includes("/empresa/") && companyToken === "") {
@@ -68,8 +77,9 @@ export const CompanyProvider = ({ children }: any) => {
     })
       .then((res) => {
         setCompanyToken(res?.data?.accessToken);
+        setCookie(null, "CompanyToken", res?.data?.accessToken);
         setCompany(res?.data?.body);
-        setCookie(null, "Company", res?.data?.body);
+        setCookie(null, "Company", JSON.stringify(res?.data?.body));
         setIsLoading(false);
         navigate.push("/empresa/home");
       })
@@ -80,8 +90,46 @@ export const CompanyProvider = ({ children }: any) => {
       });
   };
 
+  const createUser = async (data: ICreateUser) => {
+    setIsLoading(true);
+    let error = false;
+    await ClockInApi({
+      method: "POST",
+      url: "company/user",
+      headers,
+      data,
+    })
+      .then(() => {
+        setIsLoading(false);
+        showAlert("", "Usuário criado", "");
+        return true;
+      })
+      .catch((err) => {
+        error = true;
+        setIsLoading(false);
+        if (err?.response?.data?.message === "User already exist") {
+          showAlert(
+            "error",
+            "Usuário já existe",
+            "Tente outro nome de usuário"
+          );
+          return false;
+        }
+        showAlert(
+          "error",
+          "Erro ao criar usuário",
+          "Verifique com administrador do serviço"
+        );
+        return false;
+      });
+    if (error) {
+      return false;
+    }
+    return true;
+  };
+
   return (
-    <CompanyContext.Provider value={{ company, companyLogin }}>
+    <CompanyContext.Provider value={{ company, companyLogin, createUser }}>
       {children}
     </CompanyContext.Provider>
   );

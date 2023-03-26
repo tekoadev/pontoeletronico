@@ -39,7 +39,7 @@ export const FormContainer = styled.form`
 `;
 
 export const ContainerInput = styled.div`
-  width: calc((100% - 40px)/3);
+  width: calc((100% - 40px) / 3);
   min-width: 320px;
   display: flex;
   align-items: center;
@@ -56,6 +56,12 @@ export const LabelText = styled.label`
   font-weight: bold;
   color: black;
   margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  > label {
+    font-size: 10px;
+  }
 `;
 
 export const Input = styled.input`
@@ -64,6 +70,7 @@ export const Input = styled.input`
   padding-left: 20px;
   padding: 10px;
   font-size: large;
+  color: black;
 `;
 
 export const SubmitButton = styled.button`

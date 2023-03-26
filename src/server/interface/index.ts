@@ -113,7 +113,7 @@ export interface ICreateUser {
   name: string;
   password: string;
   hourly: boolean;
-  isActive: boolean;
+  isActive?: boolean;
   phone?: string | null;
   email?: string | null;
 }

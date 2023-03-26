@@ -51,7 +51,7 @@ export const GeneralProvider = ({ children }: any) => {
       content,
       progressPercentage: percentage || 0,
     });
-    setTimeout(closeAlert, 40000);
+    setTimeout(closeAlert, 4000);
   };
 
   return (
