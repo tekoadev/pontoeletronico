@@ -41,10 +41,10 @@ export default function RegisterUser() {
            
             <S.ContainerInput>
                 <S.LabelText htmlFor="">Diarista</S.LabelText>
-                <label className="switch">
-                    <S.Input type="checkbox"/>
-                    <span className="slider round"></span>
-                </label>
+                <S.CheckboxContainer className="switch">
+                    <S.SwitchInput type="checkbox"/>
+                    <S.Slider className="slider round"></S.Slider>
+                </S.CheckboxContainer>
             </S.ContainerInput>
 
             <S.SubmitButton>Enviar</S.SubmitButton>

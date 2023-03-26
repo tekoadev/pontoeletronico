@@ -39,7 +39,7 @@ export default function AdmHeader() {
             </S.Text>
             <S.Text
               onClick={() => {
-                navigate.push("/adm/createuser");
+                navigate.push("/adm/create-user");
               }}
               style={{ cursor: "pointer" }}
             >
