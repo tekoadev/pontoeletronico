@@ -49,7 +49,5 @@ export default async function companyLogin(
     { expiresIn: "72000h", subject: findCompany.id }
   );
 
-  return res
-    .status(200)
-    .json({ message: "Success", accessToken, body: findCompany });
+  return res.json({ message: "Success", accessToken, body: findCompany });
 }
