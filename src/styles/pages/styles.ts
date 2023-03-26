@@ -56,13 +56,32 @@ export const LoginForm = styled.form`
   }
   @media (min-width: 765px) {
   }
+  > div {
+    width: 100%;
+    position: relative;
+
+    > svg {
+      position: absolute;
+      right: 15px;
+      top: 5px;
+      height: 35px;
+      width: 35px;
+    }
+  }
 `;
 
 export const Label = styled.label``;
 
+export const ErrorLabel = styled.label`
+  min-height: 20px;
+  margin-bottom: 15px;
+  margin-left: 10px;
+  color: var(--red-alert);
+`;
 
 export const Input = styled.input`
   width: 100%;
+  height: 45px;
   background-color: transparent;
   border-radius: 0;
   color: var(--inputs);
