@@ -3,15 +3,17 @@ import prismaConnect from "@/server/db";
 import type {
   ICompany,
   ICreateUser,
-  ICreateUserReq,
+  ICreateUserCompanyReq,
   IUser,
 } from "@/server/interface";
 import { hash } from "bcrypt";
 import type { NextApiResponse } from "next";
 
-export async function createUser(req: ICreateUserReq, res: NextApiResponse) {
+export async function createUser(
+  req: ICreateUserCompanyReq,
+  res: NextApiResponse
+) {
   const {
-    company_id,
     cpf,
     name,
     password,
@@ -21,14 +23,14 @@ export async function createUser(req: ICreateUserReq, res: NextApiResponse) {
     email,
   } = req.body;
 
-  if (!company_id || !cpf || !name || !password) {
+  if (!cpf || !name || !password) {
     return res
       .status(400)
       .json({ message: "must send a company id, cpf, name and password" });
   }
 
   const findCompany: ICompany | null = await prismaConnect.company.findUnique({
-    where: { id: company_id },
+    where: { id: req.user },
   });
 
   if (!findCompany) {
@@ -46,7 +48,7 @@ export async function createUser(req: ICreateUserReq, res: NextApiResponse) {
 
   const createUser: ICreateUser = await prismaConnect.users.create({
     data: {
-      CompanyId: company_id,
+      CompanyId: req.user,
       cpf,
       name,
       password: hashedPassword,
@@ -60,9 +62,11 @@ export async function createUser(req: ICreateUserReq, res: NextApiResponse) {
   return res.json({ message: "User created", body: createUser });
 }
 
-export async function updateUser(req: ICreateUserReq, res: NextApiResponse) {
+export async function updateUser(
+  req: ICreateUserCompanyReq,
+  res: NextApiResponse
+) {
   const {
-    company_id,
     id,
     cpf,
     name,
@@ -76,16 +80,12 @@ export async function updateUser(req: ICreateUserReq, res: NextApiResponse) {
   if (!id) {
     return res.status(400).json({ message: "must send a company id" });
   }
-  if (company_id) {
-    const findCompany: ICompany | null = await prismaConnect.company.findUnique(
-      {
-        where: { id: company_id },
-      }
-    );
+  const findCompany: ICompany | null = await prismaConnect.company.findUnique({
+    where: { id: req.user },
+  });
 
-    if (!findCompany) {
-      return res.status(409).json({ message: "Company not found" });
-    }
+  if (!findCompany) {
+    return res.status(409).json({ message: "Company not found" });
   }
 
   const findUser: IUser | null = await prismaConnect.users.findUnique({
@@ -104,7 +104,7 @@ export async function updateUser(req: ICreateUserReq, res: NextApiResponse) {
   const updateUser: ICreateUser = await prismaConnect.users.update({
     where: { id },
     data: {
-      CompanyId: company_id,
+      CompanyId: req.user,
       cpf,
       name,
       password: hashedPassword,
@@ -143,39 +143,36 @@ export async function deleteUser(
   return res.json({ message: "User delete", body: deleteUser });
 }
 
-export async function listAllUsers(req: any, res: NextApiResponse) {
+export async function listAllUsers(
+  req: { user: string },
+  res: NextApiResponse
+) {
   const user = await prismaConnect.users.findMany({
-    include: { session: true, company: true, _count: true },
+    where: { CompanyId: req.user },
+    include: { clockin: true, session: true, company: true, _count: true },
   });
 
   return res.json({ message: "Success", body: user });
 }
 
 export async function listUniqueUser(
-  req: { query: { id: string } },
+  req: { query: { id: string }; user: string },
   res: NextApiResponse
 ) {
   const { id } = req.query;
 
   const user = await prismaConnect.users.findUnique({
-    where: { id },
+    where: { id: id },
     include: { clockin: true, session: true, company: true, _count: true },
   });
 
-  const company = await prismaConnect.company.findUnique({
-    where: { id },
-    include: { clockin: true, session: true, _count: true },
-  });
-
-  if (
-    (user === null || user === undefined) &&
-    (company === null || company === undefined)
-  ) {
-    return res.status(409).json({ message: "not found" });
+  if (user === null || user === undefined) {
+    return res.status(409).json({ message: "User not found" });
   }
 
-  return res.json({
-    message: "Success",
-    body: user === null || user === undefined ? company : user,
-  });
+  if (user.CompanyId !== req.user) {
+    return res.status(409).json({ message: "User not found" });
+  }
+
+  return res.json({ message: "Success", body: user });
 }

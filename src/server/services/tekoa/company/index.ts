@@ -39,7 +39,7 @@ export async function createCompany(
     },
   });
 
-  return res.json({ message: "Company created", company: createCompany });
+  return res.json({ message: "Company created", body: createCompany });
 }
 
 export async function updateCompany(
@@ -76,7 +76,7 @@ export async function updateCompany(
     },
   });
 
-  return res.json({ message: "Company updated", company: createCompany });
+  return res.json({ message: "Company updated", body: createCompany });
 }
 
 export async function deleteCompany(
@@ -101,7 +101,7 @@ export async function deleteCompany(
     where: { id },
   });
 
-  return res.json({ message: "Company delete", company: createCompany });
+  return res.json({ message: "Company delete", body: createCompany });
 }
 
 export async function listAllCompany(req: any, res: NextApiResponse) {
@@ -109,7 +109,7 @@ export async function listAllCompany(req: any, res: NextApiResponse) {
     include: { session: true, users: true },
   });
 
-  return res.json({ message: "Success", companys: companys });
+  return res.json({ message: "Success", body: companys });
 }
 
 export async function listUniqueCompany(
@@ -127,5 +127,5 @@ export async function listUniqueCompany(
     return res.status(409).json({ message: "Company not found" });
   }
 
-  return res.json({ message: "Success", company });
+  return res.json({ message: "Success", body: company });
 }

@@ -2,13 +2,13 @@ import prismaConnect from "@/server/db";
 import type {
   ICompany,
   ICreateClockIn,
-  ICreateClockInReq,
+  ICreateCompanyClockInReq,
   IUser,
 } from "@/server/interface";
-import type { NextApiRequest, NextApiResponse } from "next";
+import type { NextApiResponse } from "next";
 
 export async function createClockIn(
-  req: ICreateClockInReq,
+  req: ICreateCompanyClockInReq,
   res: NextApiResponse
 ) {
   const { userId, location, obs, type } = req.body;
@@ -19,6 +19,10 @@ export async function createClockIn(
 
   if (!findUser) {
     return res.status(409).json({ message: "User not found" });
+  }
+
+  if (findUser.CompanyId !== req.user) {
+    return res.status(401).json({ message: "Access denied" });
   }
 
   const time = new Date()
@@ -51,7 +55,7 @@ export async function createClockIn(
 }
 
 export async function updateClockIn(
-  req: ICreateClockInReq,
+  req: ICreateCompanyClockInReq,
   res: NextApiResponse
 ) {
   const { id, time, location, obs, type } = req.body;
@@ -66,6 +70,10 @@ export async function updateClockIn(
 
   if (!findClockIn) {
     return res.status(409).json({ message: "Clock In not found" });
+  }
+
+  if (findClockIn.companyId !== req.user) {
+    return res.status(401).json({ message: "Access denied" });
   }
 
   const clockIn: ICreateClockIn = await prismaConnect.clockIn.update({
@@ -86,7 +94,7 @@ export async function updateClockIn(
 }
 
 export async function deleteClockIn(
-  req: { body: { id: string } },
+  req: { body: { id: string }; user: string },
   res: NextApiResponse
 ) {
   const { id } = req.body;
@@ -103,6 +111,10 @@ export async function deleteClockIn(
     return res.status(409).json({ message: "Clock In not found" });
   }
 
+  if (findClockIn.companyId !== req.user) {
+    return res.status(401).json({ message: "Access denied" });
+  }
+
   const clockIn: ICreateClockIn = await prismaConnect.clockIn.delete({
     where: { id },
     include: {
@@ -114,52 +126,25 @@ export async function deleteClockIn(
   return res.json({ message: "clock in deleted", body: clockIn });
 }
 
-export async function listClockIn(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+export async function listClockIn(req: { user: string }, res: NextApiResponse) {
   const clockIn = await prismaConnect.clockIn.findMany({
-    include: { company: true, user: true },
+    where: { companyId: req.user },
+    include: { user: true },
   });
+
   return res.json({ message: "Success", body: clockIn });
 }
 
-export async function listUniqueClockIn(
-  req: { query: { id: string } },
+export async function listUniqueUserClockIn(
+  req: { user: string; query: { id: string } },
   res: NextApiResponse
 ) {
   const { id } = req.query;
 
-  const user = await prismaConnect.users.findUnique({
-    where: { id },
-    include: { clockin: true, session: true, company: true, _count: true },
+  const clockIn = await prismaConnect.clockIn.findMany({
+    where: { companyId: req.user, userId: id },
+    include: { user: true },
   });
 
-  const company = await prismaConnect.company.findUnique({
-    where: { id },
-    include: { clockin: true, session: true, _count: true },
-  });
-
-  if (
-    (user === null || user === undefined) &&
-    (company === null || company === undefined)
-  ) {
-    return res.status(409).json({ message: "not found" });
-  }
-
-  if (user) {
-    const clockIn = await prismaConnect.clockIn.findMany({
-      where: { userId: user.id },
-      include: { company: true, user: true },
-    });
-    return res.json({ message: "Success", body: clockIn });
-  }
-
-  if (company) {
-    const clockIn = await prismaConnect.clockIn.findMany({
-      where: { companyId: company.id },
-      include: { company: true, user: true },
-    });
-    return res.json({ message: "Success", body: clockIn });
-  }
+  return res.json({ message: "Success", body: clockIn });
 }
