@@ -79,6 +79,7 @@ export interface ICreateCompany {
 
 export interface ICreateUserReq extends NextApiRequest {
   body: {
+    user: string
     company_id: string;
     id?: string;
     cpf: string;
@@ -92,6 +93,7 @@ export interface ICreateUserReq extends NextApiRequest {
 }
 export interface ICreateUserCompanyReq extends NextApiRequest {
   body: {
+    user: string
     company_id: string;
     id?: string;
     cpf: string;

@@ -14,6 +14,7 @@ export async function createUser(
   res: NextApiResponse
 ) {
   const {
+    user,
     cpf,
     name,
     password,
@@ -38,7 +39,7 @@ export async function createUser(
   }
 
   const findUser: IUser | null = await prismaConnect.users.findUnique({
-    where: { cpf },
+    where: { user },
   });
 
   if (findUser) {
@@ -48,6 +49,7 @@ export async function createUser(
 
   const createUser: ICreateUser = await prismaConnect.users.create({
     data: {
+      user,
       CompanyId: req.user,
       cpf,
       name,

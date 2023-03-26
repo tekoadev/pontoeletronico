@@ -11,6 +11,7 @@ import type { NextApiResponse } from "next";
 
 export async function createUser(req: ICreateUserReq, res: NextApiResponse) {
   const {
+    user,
     company_id,
     cpf,
     name,
@@ -21,10 +22,10 @@ export async function createUser(req: ICreateUserReq, res: NextApiResponse) {
     email,
   } = req.body;
 
-  if (!company_id || !cpf || !name || !password) {
+  if (!user || !company_id || !cpf || !name || !password) {
     return res
       .status(400)
-      .json({ message: "must send a company id, cpf, name and password" });
+      .json({ message: "must send a user, company id, cpf, name and password" });
   }
 
   const findCompany: ICompany | null = await prismaConnect.company.findUnique({
@@ -36,7 +37,7 @@ export async function createUser(req: ICreateUserReq, res: NextApiResponse) {
   }
 
   const findUser: IUser | null = await prismaConnect.users.findUnique({
-    where: { cpf },
+    where: { user },
   });
 
   if (findUser) {
@@ -46,6 +47,7 @@ export async function createUser(req: ICreateUserReq, res: NextApiResponse) {
 
   const createUser: ICreateUser = await prismaConnect.users.create({
     data: {
+      user,
       CompanyId: company_id,
       cpf,
       name,
