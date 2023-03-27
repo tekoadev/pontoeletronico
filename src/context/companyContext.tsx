@@ -135,7 +135,7 @@ export const CompanyProvider = ({ children }: any) => {
       headers,
     })
       .then((req: { data: { body: IClockIn[] } }) =>
-        setClockIn(req?.data?.body?.reverse())
+        setClockIn(req?.data?.body)
       )
       .catch((err) => {
         showAlert(

@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/restrict-plus-operands */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
@@ -100,58 +103,167 @@ export default function Registrodeponto() {
     }
   }, []);
 
-  const generateRow = (value: string) => {
-    const firstIn = clockIn
-      .filter((ele) => {
-        if (
-          Number(ele?.time?.split("/")[0]) === Number(value) &&
-          ele?.type === "in"
-        ) {
-          return ele;
-        }
-      })[0]
-      ?.time?.split(" ")[1];
+  const generateTimes = (value: string) => {
+    const firstIn = clockIn.filter((ele) => {
+      if (
+        Number(ele?.time?.split("/")[0]) === Number(value) &&
+        ele?.type === "in"
+      ) {
+        return ele;
+      }
+    })[0]?.time;
+    const firstOut = clockIn.filter((ele) => {
+      if (
+        Number(ele?.time?.split("/")[0]) === Number(value) &&
+        ele?.type === "out"
+      ) {
+        return ele;
+      }
+    })[0]?.time;
+    const secondIn = clockIn.filter((ele) => {
+      if (
+        Number(ele?.time?.split("/")[0]) === Number(value) &&
+        ele?.type === "in"
+      ) {
+        return ele;
+      }
+    })[1]?.time;
+    const secondOut = clockIn.filter((ele) => {
+      if (
+        Number(ele?.time?.split("/")[0]) === Number(value) &&
+        ele?.type === "out"
+      ) {
+        return ele;
+      }
+    })[1]?.time;
 
-    const firstOut = clockIn
-      .filter((ele) => {
-        if (
-          Number(ele?.time?.split("/")[0]) === Number(value) &&
-          ele?.type === "out"
-        ) {
-          return ele;
-        }
-      })[0]
-      ?.time?.split(" ")[1];
+    const refac = (value: any) => {
+      return `20${value?.split(" ")[0]?.split("/")[2]}/${value.split("/")[1]}/${
+        value.split("/")[0]
+      } ${value.split(" ")[1]}`;
+    };
 
-    const secondIn = clockIn
-      .filter((ele) => {
-        if (
-          Number(ele?.time?.split("/")[0]) === Number(value) &&
-          ele?.type === "in"
-        ) {
-          return ele;
-        }
-      })[1]
-      ?.time?.split(" ")[1];
+    const arrSubtotal = [];
 
-    const secondOut = clockIn
-      .filter((ele) => {
-        if (
-          Number(ele?.time?.split("/")[0]) === Number(value) &&
-          ele?.type === "out"
-        ) {
-          return ele;
-        }
-      })[1]
-      ?.time?.split(" ")[1];
-
-    let subtotal1 = 0;
     if (firstIn !== undefined && firstOut !== undefined) {
-      const refacFirstIn = `20${firstIn?.split(" ")[0]?.split("/")[2]}`;
-      subtotal1 = Math.abs(
-        new Date("2023/03/26 10:18") - new Date("2023/03/26 19:11")
+      const refacFirstIn = refac(firstIn);
+      const refacFirstOut = refac(firstOut);
+      arrSubtotal.push(
+        Math.abs(new Date(refacFirstIn) - new Date(refacFirstOut))
       );
     }
+
+    if (secondIn !== undefined && secondOut !== undefined) {
+      const refacSecondIn = refac(secondIn);
+      const refacSecondOut = refac(secondOut);
+
+      arrSubtotal.push(
+        Math.abs(new Date(refacSecondIn) - new Date(refacSecondOut))
+      );
+    }
+    if (arrSubtotal.length > 0) {
+      return arrSubtotal.reduce((a, b) => a + b, 0);
+    }
+    return 0;
+  };
+
+  const generateRow = (value: string) => {
+    const firstIn = clockIn.filter((ele) => {
+      if (
+        Number(ele?.time?.split("/")[0]) === Number(value) &&
+        ele?.type === "in"
+      ) {
+        return ele;
+      }
+    })[0];
+    const firstOut = clockIn.filter((ele) => {
+      if (
+        Number(ele?.time?.split("/")[0]) === Number(value) &&
+        ele?.type === "out"
+      ) {
+        return ele;
+      }
+    })[0];
+    const secondIn = clockIn.filter((ele) => {
+      if (
+        Number(ele?.time?.split("/")[0]) === Number(value) &&
+        ele?.type === "in"
+      ) {
+        return ele;
+      }
+    })[1];
+    const secondOut = clockIn.filter((ele) => {
+      if (
+        Number(ele?.time?.split("/")[0]) === Number(value) &&
+        ele?.type === "out"
+      ) {
+        return ele;
+      }
+    })[1];
+
+    const refac = (value: any) => {
+      return `20${value?.split(" ")[0]?.split("/")[2]}/${value.split("/")[1]}/${
+        value.split("/")[0]
+      } ${value.split(" ")[1]}`;
+    };
+
+    const arrSubtotal = [];
+
+    if (firstIn !== undefined && firstOut !== undefined) {
+      const refacFirstIn = refac(firstIn?.time);
+      const refacFirstOut = refac(firstOut?.time);
+      arrSubtotal.push(
+        Math.abs(new Date(refacFirstIn) - new Date(refacFirstOut))
+      );
+    }
+
+    if (secondIn !== undefined && secondOut !== undefined) {
+      const refacSecondIn = refac(secondIn?.time);
+      const refacSecondOut = refac(secondOut?.time);
+
+      arrSubtotal.push(
+        Math.abs(new Date(refacSecondIn) - new Date(refacSecondOut))
+      );
+    }
+
+    if (arrSubtotal.length > 0) {
+      const subTotal = arrSubtotal.reduce((a, b) => a + b, 0);
+      const minutes =
+        Math.floor(subTotal / 1000 / 60 / 60) +
+        ":" +
+        (Math.floor(
+          subTotal / 1000 / 60 - Math.floor(subTotal / 1000 / 60 / 60) * 60
+        ) === 0
+          ? "00"
+          : Math.floor(
+              subTotal / 1000 / 60 - Math.floor(subTotal / 1000 / 60 / 60) * 60
+            ));
+      return [firstIn, firstOut, secondIn, secondOut, `${minutes} horas`];
+    }
+
+    return [firstIn, firstOut, secondIn, secondOut, ""];
+  };
+
+  const generateTotalHours = () => {
+    const totalTimes = [];
+    for (let i = 1; i <= 31; i++) {
+      totalTimes.push(generateTimes(i.toString()));
+    }
+
+    const subTotal = totalTimes.reduce((a, b) => a + b, 0);
+
+    const minutes =
+      Math.floor(subTotal / 1000 / 60 / 60) +
+      ":" +
+      (Math.floor(
+        subTotal / 1000 / 60 - Math.floor(subTotal / 1000 / 60 / 60) * 60
+      ) === 0
+        ? "00"
+        : Math.floor(
+            subTotal / 1000 / 60 - Math.floor(subTotal / 1000 / 60 / 60) * 60
+          ));
+
+    return `${minutes} horas`;
   };
 
   return (
@@ -239,6 +351,11 @@ export default function Registrodeponto() {
               CPF: {selectedUser?.cpf === undefined ? "" : selectedUser?.cpf}
             </S.TableHeadersText>
           </div>
+
+          <div>
+            <S.TableHeadersText>Horas contabilizadas:</S.TableHeadersText>
+            <S.TableHeadersText>{generateTotalHours()}</S.TableHeadersText>
+          </div>
         </S.TableHeadersColumn>
         <hr
           style={{ width: "100%", height: "1px", backgroundColor: "#000000" }}
@@ -257,65 +374,13 @@ export default function Registrodeponto() {
             return (
               <tr key={i}>
                 <td>{ele}</td>
-                <td>
-                  {
-                    clockIn
-                      .filter((ele2) => {
-                        if (
-                          Number(ele2?.time?.split("/")[0]) === Number(ele) &&
-                          ele2?.type === "in"
-                        ) {
-                          return ele2;
-                        }
-                      })[0]
-                      ?.time?.split(" ")[1]
+                {generateRow(ele).map((ele2, i) => {
+                  if (i < 4) {
+                    return <td key={i}>{ele2?.time?.split(" ")[1]}</td>;
+                  } else {
+                    return <td key={i}>{ele2}</td>;
                   }
-                </td>
-                <td>
-                  {" "}
-                  {
-                    clockIn
-                      .filter((ele2) => {
-                        if (
-                          Number(ele2?.time?.split("/")[0]) === Number(ele) &&
-                          ele2?.type === "out"
-                        ) {
-                          return ele2;
-                        }
-                      })[0]
-                      ?.time?.split(" ")[1]
-                  }
-                </td>
-
-                <td>
-                  {
-                    clockIn
-                      .filter((ele2) => {
-                        if (
-                          Number(ele2?.time?.split("/")[0]) === Number(ele) &&
-                          ele2?.type === "in"
-                        ) {
-                          return ele2;
-                        }
-                      })[1]
-                      ?.time?.split(" ")[1]
-                  }
-                </td>
-
-                <td>
-                  {
-                    clockIn
-                      .filter((ele2) => {
-                        if (
-                          Number(ele2?.time?.split("/")[0]) === Number(ele) &&
-                          ele2?.type === "out"
-                        ) {
-                          return ele2;
-                        }
-                      })[1]
-                      ?.time?.split(" ")[1]
-                  }
-                </td>
+                })}
               </tr>
             );
           })}
