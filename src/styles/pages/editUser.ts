@@ -32,6 +32,14 @@ export const FormContainer = styled.form`
   margin: 0 auto;
   margin-top: 80px;
 
+  > div:nth-child(1) {
+    width: 100%;
+
+    select{
+      width: calc((100% - 40px) / 3);
+    }
+  }
+
   @media (max-width: 948px) {
     margin-top: 180px;
 

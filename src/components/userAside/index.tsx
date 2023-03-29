@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import * as S from "./styles";
 import { BsReverseLayoutTextSidebarReverse, BsXCircle } from "react-icons/bs";
 import { useRouter } from "next/router";
@@ -7,20 +7,43 @@ import nookies, { parseCookies, setCookie, destroyCookie } from "nookies";
 export default function UserAside() {
   const navigate = useRouter();
 
+  const [animation, setAnimation] = useState({});
+  const [animoBlur, setAnimoBlur] = useState({});
+  const [userAside, setUserAside] = useState(false);
+
+  function HandlerClose() {
+    setAnimation({
+      animation: "Close 0.5s ease-in-out",
+      WebkitAnimation: "Close 0.5s ease-in-out",
+      MozAnimation: "Close 0.5s ease-in-out",
+      OAnimation: "Close 0.5s ease-in-out",
+      zIndex: 5,
+    });
+    setAnimoBlur({
+      animation: "UnBackDropBlur 0.5s ease-in-out",
+      WebkitAnimation: "UnBackDropBlur 0.5s ease-in-out",
+      MozAnimation: "UnBackDropBlur 0.5s ease-in-out",
+      OAnimation: "UnBackDropBlur 0.5s ease-in-out;}",
+      zIndex: 4,
+    });
+    setTimeout(() => {
+      setAnimation({ zIndex: -1 });
+      setAnimoBlur({ zIndex: -1 });
+    }, 490);
+  }
 
   return (
     <>
       <>
-        <S.OpenBck />
-        <S.Open >
+        <S.OpenBck style={animoBlur} onClick={() => HandlerClose()} />
+        <S.Open style={animation}>
           <S.HeaderMenu>
             <S.Text>Menu do usuário</S.Text>
-            <BsXCircle/>
+            <BsXCircle onClick={() => HandlerClose()} />
           </S.HeaderMenu>
           <hr />
           <S.Text
             onClick={() => {
-            
               navigate.push("/registros");
             }}
             style={{ cursor: "pointer" }}
@@ -29,8 +52,7 @@ export default function UserAside() {
           </S.Text>
           <S.Text
             onClick={() => {
-       
-              navigate.push("/registrodeponto");
+              navigate.push("/usuario/registro");
             }}
             style={{ cursor: "pointer" }}
           >
@@ -47,7 +69,28 @@ export default function UserAside() {
         </S.Open>
       </>
 
-      <S.Closed>
+      <S.Closed
+        onClick={() => {
+          setUserAside(!userAside);
+          setAnimation({
+            animation: "Open 0.5s ease-in-out",
+            WebkitAnimation: "Open 0.5s ease-in-out",
+            MozAnimation: "Open 0.5s ease-in-out",
+            OAnimation: "Open 0.5s ease-in-out",
+            zIndex: 5,
+            opacity: 1,
+          });
+          setAnimoBlur({
+            animation: "BackDropBlur 0.5s ease-in-out",
+            WebkitAnimation: "BackDropBlur 0.5s ease-in-out",
+            MozAnimation: "BackDropBlur 0.5s ease-in-out",
+            OAnimation: "BackDropBlur 0.5s ease-in-out;}",
+            opacity: 1,
+            zIndex: 4,
+          });
+        }}
+        style={{ cursor: "pointer" }}
+      >
         <BsReverseLayoutTextSidebarReverse />
       </S.Closed>
     </>

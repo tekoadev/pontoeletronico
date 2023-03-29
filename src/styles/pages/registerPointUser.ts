@@ -31,6 +31,7 @@ export const ClockText = styled.p`
   height: auto;
   align-items: center;
   display: flex;
+
   > svg {
     margin-right: 2vw;
   }
@@ -42,6 +43,9 @@ export const Button = styled.button`
   background-color: var(--primary);
   border-radius: 10px;
   padding: 2%;
+  font-weight: bold;
+  color: black;
+
   @media (min-width: 765px) {
     margin: 0;
   }
@@ -61,6 +65,8 @@ export const Form = styled.form`
   border-radius: 10px;
   border: 1px solid var(--primary-light);
   box-shadow: 0 0 15px black;
+  font-weight: bold;
+  
   @media (min-width: 765px) {
     padding: 2vh 10%;
   }
@@ -82,14 +88,23 @@ export const TypeBtn = styled.div`
   justify-content: space-around;
   height: 5vh;
   width: 100%;
+
+
   @media (min-width: 765px) {
     margin: 0;
   }
 `;
 
-export const ChoicesButton = styled.button`
+interface ChoicesButton{
+  active: boolean
+}
+
+export const ChoicesButton = styled.button<ChoicesButton>`
   border-radius: 10px;
   padding: 2% 1vw;
+  font-weight: bold;
+  color: ${(p) => p.active ? "black" : "white"};
+
   @media (min-width: 765px) {
     margin: 0;
   }
@@ -103,3 +118,4 @@ export const TextArea = styled.textarea`
   resize: none;
   width: 100%;
 `;
+

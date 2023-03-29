@@ -6,6 +6,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable react-hooks/exhaustive-deps */
 import Header from "@/components/HeaderAdm";
+import Modal from "@/components/modal";
 import { useCompanyContext } from "@/context/companyContext";
 import { IUser } from "@/server/interface";
 import * as S from "@/styles/pages/registerPoint";
@@ -67,6 +68,8 @@ export default function Registrodeponto() {
   const [selectedYear, setSelectedYear] = useState("22");
 
   const [month, setMonth] = useState("Janeiro");
+
+  const [open, setOpen] = useState(true);
 
   const [selectedUser, setSelectedUser] = useState<IUser>(
     users[0] === undefined ? ({ name: "", cpf: "" } as IUser) : users[0]
@@ -361,31 +364,35 @@ export default function Registrodeponto() {
           style={{ width: "100%", height: "1px", backgroundColor: "#000000" }}
         />
 
-        <table>
-          <tr>
-            <th>Dia</th>
-            <th>Entrada</th>
-            <th>Saída</th>
-            <th>Entrada</th>
-            <th>Saída</th>
-            <th>Total</th>
-          </tr>
-          {days.map((ele, i) => {
-            return (
-              <tr key={i}>
-                <td>{ele}</td>
-                {generateRow(ele).map((ele2, i) => {
-                  if (i < 4) {
-                    return <td key={i}>{ele2?.time?.split(" ")[1]}</td>;
-                  } else {
-                    return <td key={i}>{ele2}</td>;
-                  }
-                })}
-              </tr>
-            );
-          })}
-        </table>
+        <S.ContainerTableComponent>
+          <S.TableComponent>
+            <tr>
+              <th>Dia</th>
+              <th>Entrada</th>
+              <th>Saída</th>
+              <th>Entrada</th>
+              <th>Saída</th>
+              <th>Total</th>
+            </tr>
+
+            {days.map((ele, i) => {
+              return (
+                <tr key={i}>
+                  <td>{ele}</td>
+                  {generateRow(ele).map((ele2, i) => {
+                    if (i < 4) {
+                      return <td key={i}>{ele2?.time?.split(" ")[1]}</td>;
+                    } else {
+                      return <td key={i}>{ele2}</td>;
+                    }
+                  })}
+                </tr>
+              );
+            })}
+          </S.TableComponent>
+        </S.ContainerTableComponent>
       </S.ReportWrapper>
+      {open && <Modal type="edit" setOpen={setOpen}></Modal>}
     </S.Wrapper>
   );
 }
