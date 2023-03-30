@@ -15,3 +15,11 @@ export const cnpjFormatter = (cnpj: string): string => {
   // realizar a formatação...
   return cnpj.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, "$1.$2.$3/$4-$5");
 };
+
+export const hourFormatter = (hour: string): string => {
+  // retira os caracteres indesejados...
+  hour = hour.replace(/\D/g, "");
+
+  // realizar a formatação...
+  return hour.replace(/(\d{2})(\d{2})/, "$1:$2");
+};

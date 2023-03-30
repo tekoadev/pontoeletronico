@@ -21,6 +21,8 @@ interface CompanyContextProps {
   clockIn: IClockIn[];
   getReport: (id: string, month: string, year: string) => Promise<void>;
   listUsers: () => Promise<void>;
+  editClockIn: (timeValue: string, clockInId: string) => Promise<void>;
+  deleteClockIn: (clockInId: string) => Promise<void>;
 }
 export const CompanyContext = createContext<CompanyContextProps>(
   {} as CompanyContextProps
@@ -182,9 +184,74 @@ export const CompanyProvider = ({ children }: any) => {
     }
   }, []);
 
+  const editClockIn = async (timeValue: string, clockInId: string): Promise<void> => {
+    setIsLoading(true);
+    await ClockInApi({
+      method: "PATCH",
+      url: `company/clockin`,
+      headers,
+      data: {
+        "id": clockInId,
+        "time": timeValue
+      }
+    })
+      .then((req) => {
+        showAlert(
+          "",
+          "Editado com sucesso",
+          ""
+        );
+        listUsers()
+      })
+      .catch((err) => {
+        showAlert(
+          "error",
+          "Erro com dados",
+          "Comunique o administrador do serviço"
+        );
+      });
+  };
+
+  const deleteClockIn = async (clockInId: string): Promise<void> => {
+    setIsLoading(true);
+    await ClockInApi({
+      method: "DELETE",
+      url: `company/clockin`,
+      headers,
+      data: {
+        "id": clockInId,
+      }
+    })
+      .then((req) => {
+        showAlert(
+          "",
+          "Deletado com sucesso",
+          ""
+        );
+        listUsers()
+      })
+      .catch((err) => {
+        showAlert(
+          "error",
+          "Erro com dados",
+          "Comunique o administrador do serviço"
+        );
+      });
+  };
+
   return (
     <CompanyContext.Provider
-      value={{ company, companyLogin, createUser, users, clockIn, getReport, listUsers }}
+      value={{
+        company,
+        companyLogin,
+        createUser,
+        users,
+        clockIn,
+        getReport,
+        listUsers,
+        editClockIn,
+        deleteClockIn
+      }}
     >
       {children}
     </CompanyContext.Provider>
