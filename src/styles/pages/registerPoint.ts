@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const Wrapper = styled.div`
   z-index: 1;
- 
+
   flex-direction: column;
   align-content: space-around;
   justify-content: space-between;
@@ -24,7 +24,7 @@ export const ReportWrapper = styled.div`
   border-radius: 12px;
   background-color: var(--white);
   margin: 0 auto;
-`
+`;
 
 export const ReportInputs = styled.div`
   display: flex;
@@ -32,7 +32,7 @@ export const ReportInputs = styled.div`
   height: 80px;
   justify-content: space-between;
   padding: 20px;
-`
+`;
 
 export const EmployLabel = styled.label`
   margin-bottom: 12px;
@@ -40,7 +40,7 @@ export const EmployLabel = styled.label`
 `;
 
 export const EmploySelect = styled.select`
-  width: 80%;
+  width: max-content;
   background-color: var(--white);
   border-radius: 8px;
   padding: 6px;
@@ -67,22 +67,56 @@ export const DownloadPDF = styled.button`
 `;
 
 export const TableHeadersColumn = styled.div`
-display: flex;
-align-items: center;
-justify-content: space-between;
-padding: 20px 40px;
-
-width: 60%;
-
-> div:nth-child(2){
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 10px;
-}
-`
+  justify-content: space-between;
+  padding: 20px 40px;
+
+  width: 100%;
+
+  > div:nth-child(2) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+`;
 
 export const TableHeadersText = styled.p`
   text-align: start;
   margin: 2px 0;
+`;
+
+export const TableComponent = styled.table`
+  width: 100%;
+  height: 400px;
+
+  overflow: hidden;
+  overflow-y: auto;
+  text-align: center;
+  position: relative;
+
+  > tr:nth-child(1) {
+    position: sticky;
+    top: 0px;
+    height: 40px;
+
+    background-color: white; /* opcional, para esconder o cabeçalho quando o usuário rolar para cima */
+    border: 1px solid black;
+
+    th {
+      padding-top: 0px;
+      border-left: 1px solid black;
+    }
+  }
+
+  td {
+    border-left: 1px solid black;
+  }
+`;
+
+export const ContainerTableComponent = styled.div`
+  width: 100%;
+  height: calc((80vh - 260px));
+  overflow: auto;
 `;
