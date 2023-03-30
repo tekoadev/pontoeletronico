@@ -17,7 +17,6 @@ export const Open = styled.aside`
   }
   opacity: 0;
   z-index: -1;
-
   @media (min-width: 760px) {
     width: 30vw;
   }
@@ -34,22 +33,13 @@ export const OpenBck = styled.div`
   opacity: 0;
 `;
 
-export const Text = styled.p`
-  margin-bottom: 20px;
-  color: white;
-  font-size: 20px;
-`;
+export const Text = styled.p``;
 
 export const HeaderMenu = styled.div`
   height: 10vh;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
-
-  >p:nth-child(1){
-    margin: 0px;
-  }
 `;
 
 export const Closed = styled.button`
@@ -65,7 +55,6 @@ export const Closed = styled.button`
     height: 100%;
     width: 100%;
   }
-
   @media (min-width: 760px) {
     width: 5vw;
     height: 5vw;

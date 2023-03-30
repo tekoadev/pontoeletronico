@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import * as Element from "@/styles/pages/registerPointUser";
+import * as Element from "@/styles/pages/stylesregistrodeponto";
 import { BsClock } from "react-icons/bs";
 import ClockInApi from "@/services";
 import UserAside from "@/components/userAside";
@@ -108,7 +108,6 @@ export default function Registrodeponto() {
 
             <Element.TypeBtn>
               <Element.ChoicesButton
-
                 style={{
                   backgroundColor:
                     btnChoices === "in" ? "var(--primary)" : "var(--deselect)",

@@ -34,7 +34,6 @@ export const FormContainer = styled.form`
 
   @media (max-width: 948px) {
     margin-top: 180px;
-
     margin-bottom: 180px;
   }
 `;
@@ -60,7 +59,6 @@ export const LabelText = styled.label`
   display: flex;
   flex-direction: column;
   align-items: center;
-
   > label {
     font-size: 10px;
   }
@@ -139,17 +137,4 @@ export const Slider = styled.div`
   :before {
     border-radius: 50%;
   }
-`;
-
-export const EmploySelect = styled.select`
-  width: 80%;
-  border: 1px solid black;
-  padding-left: 20px;
-  padding: 10px;
-  font-size: large;
-  color: black;
-`;
-
-export const EmployOptions = styled.option`
-  width: 100%;
 `;
