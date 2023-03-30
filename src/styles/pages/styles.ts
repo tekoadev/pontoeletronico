@@ -106,4 +106,7 @@ export const Button = styled.button`
   border-radius: 10px;
   padding: 2%;
   color: var(--white);
+  
 `;
+
+// ola test 12
