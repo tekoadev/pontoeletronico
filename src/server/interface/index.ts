@@ -15,13 +15,15 @@ export interface ICompany {
 
 export interface IUser {
   id?: string;
+  user: string;
   cpf: string;
   name: string;
   password?: string;
+  newPassword?: string;
   hourly: boolean;
   isActive: boolean;
-  phone?: string | null;
-  email?: string | null;
+  phone?: string;
+  email?: string;
   CompanyId?: string;
   clockin?: IClockIn[];
   session?: IUserSession[];
@@ -79,7 +81,7 @@ export interface ICreateCompany {
 
 export interface ICreateUserReq extends NextApiRequest {
   body: {
-    user: string
+    user: string;
     company_id: string;
     id?: string;
     cpf: string;
@@ -92,8 +94,10 @@ export interface ICreateUserReq extends NextApiRequest {
   };
 }
 export interface ICreateUserCompanyReq extends NextApiRequest {
+  request_id: any;
   body: {
-    user: string
+    user: string;
+    user_name: string;
     company_id: string;
     id?: string;
     cpf: string;
@@ -109,8 +113,10 @@ export interface ICreateUserCompanyReq extends NextApiRequest {
 
 export interface ICreateUser {
   id?: string;
+  user_name?: string;
+  user: string;
   cpf: string;
-  name: string;
+  name?: string;
   password: string;
   hourly: boolean;
   isActive?: boolean;
@@ -136,6 +142,7 @@ export interface ICreateClockInReq extends NextApiRequest {
 }
 
 export interface ICreateCompanyClockInReq extends NextApiRequest {
+  request_id: any;
   body: {
     id?: string;
     userId: string;
