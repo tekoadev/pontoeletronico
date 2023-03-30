@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-floating-promises */
+/* eslint-disable @typescript-eslint/await-thenable */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/restrict-plus-operands */
@@ -6,14 +8,42 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable react-hooks/exhaustive-deps */
 import Header from "@/components/HeaderAdm";
+import Loading from "@/components/Loading";
 import Modal from "@/components/modal";
 import { useCompanyContext } from "@/context/companyContext";
-import { IUser } from "@/server/interface";
+import type { IClockIn, IUser } from "@/server/interface";
 import * as S from "@/styles/pages/registerPoint";
 import { useEffect, useState } from "react";
 
-export default function Registrodeponto() {
-  const { users, company, clockIn, getReport } = useCompanyContext();
+export default function RegistroDePonto() {
+  const today: Date = new Date();
+  // const { setIsLoading } = useGeneral();
+  const { users, company, clockIn, getReport, listUsers } = useCompanyContext();
+  const [showModalEdit, setShowModalEdit] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<IUser>({
+    name: "",
+    cpf: "",
+  } as IUser);
+
+  const setSelectedUserFunction = () => {
+    if (users[0]) {
+      setSelectedUser(users[0]);
+    }
+  };
+
+  useEffect(() => {
+    setSelectedUserFunction();
+  }, [users]);
+
+  useEffect(() => {
+    listUsers();
+  }, []);
+
+  const [selectedYear, setSelectedYear] = useState(
+    (today.getFullYear() - 2000).toString()
+  );
+
+  const year = ["22", "23", "24"];
 
   const days = [
     "1",
@@ -64,81 +94,49 @@ export default function Registrodeponto() {
     { title: "Dezembro", value: "12" },
   ];
 
-  const year = ["22", "23", "24"];
-  const [selectedYear, setSelectedYear] = useState("22");
-
-  const [month, setMonth] = useState("Janeiro");
-
-  const [open, setOpen] = useState(true);
-
-  const [selectedUser, setSelectedUser] = useState<IUser>(
-    users[0] === undefined ? ({ name: "", cpf: "" } as IUser) : users[0]
+  const [selectedMonth, setMonth] = useState(
+    months.filter((ele) => Number(ele.value) === today.getMonth() + 1)[0]?.title
   );
 
-  const HandlerOnChange = (id: string, month: string) => {
-    const selected = users.find((elem) => {
-      return elem.id === id;
-    });
-
-    if (selected === undefined) {
-      return;
-    }
-
-    setSelectedUser(selected);
-
-    const selectedMonth = months.find((elem) => {
-      return elem.title === month;
+  const HandlerOnChange = async () => {
+    const dateMonth = months.find((elem) => {
+      return elem.title === selectedMonth;
     });
 
     if (selectedMonth === undefined) {
       return;
     }
 
-    setMonth(selectedMonth.title);
-
-    getReport(selected.id!, selectedMonth.value, "23");
-    console.log(clockIn);
+    await getReport(selectedUser.id!, dateMonth!.value, selectedYear);
   };
 
   useEffect(() => {
-    if (users[0] !== undefined) {
-      setSelectedUser(users[0]);
+    if (selectedUser?.id !== undefined) {
+      HandlerOnChange();
     }
-  }, []);
+  }, [selectedUser, selectedMonth, selectedYear]);
 
   const generateTimes = (value: string) => {
     const firstIn = clockIn.filter((ele) => {
-      if (
-        Number(ele?.time?.split("/")[0]) === Number(value) &&
-        ele?.type === "in"
-      ) {
+      if (Number(ele?.time?.split("/")[0]) === Number(value)) {
         return ele;
       }
     })[0]?.time;
     const firstOut = clockIn.filter((ele) => {
-      if (
-        Number(ele?.time?.split("/")[0]) === Number(value) &&
-        ele?.type === "out"
-      ) {
+      if (Number(ele?.time?.split("/")[0]) === Number(value)) {
         return ele;
       }
-    })[0]?.time;
+    })[1]?.time;
     const secondIn = clockIn.filter((ele) => {
-      if (
-        Number(ele?.time?.split("/")[0]) === Number(value) &&
-        ele?.type === "in"
-      ) {
+      if (Number(ele?.time?.split("/")[0]) === Number(value)) {
         return ele;
       }
-    })[1]?.time;
+    })[2]?.time;
     const secondOut = clockIn.filter((ele) => {
-      if (
-        Number(ele?.time?.split("/")[0]) === Number(value) &&
-        ele?.type === "out"
-      ) {
+      if (Number(ele?.time?.split("/")[0]) === Number(value)) {
         return ele;
       }
-    })[1]?.time;
+    })[3]?.time;
 
     const refac = (value: any) => {
       return `20${value?.split(" ")[0]?.split("/")[2]}/${value.split("/")[1]}/${
@@ -165,44 +163,42 @@ export default function Registrodeponto() {
       );
     }
     if (arrSubtotal.length > 0) {
-      return arrSubtotal.reduce((a, b) => a + b, 0);
+      return arrSubtotal
+        .sort((a, b) => (a?.time > b?.time ? 1 : -1))
+        .reduce((a, b) => a + b, 0);
     }
     return 0;
   };
 
-  const generateRow = (value: string) => {
+  const generateRow = (
+    value: string
+  ): [
+    IClockIn | undefined,
+    IClockIn | undefined,
+    IClockIn | undefined,
+    IClockIn | undefined,
+    string
+  ] => {
     const firstIn = clockIn.filter((ele) => {
-      if (
-        Number(ele?.time?.split("/")[0]) === Number(value) &&
-        ele?.type === "in"
-      ) {
+      if (Number(ele?.time?.split("/")[0]) === Number(value)) {
         return ele;
       }
     })[0];
     const firstOut = clockIn.filter((ele) => {
-      if (
-        Number(ele?.time?.split("/")[0]) === Number(value) &&
-        ele?.type === "out"
-      ) {
+      if (Number(ele?.time?.split("/")[0]) === Number(value)) {
         return ele;
       }
-    })[0];
+    })[1];
     const secondIn = clockIn.filter((ele) => {
-      if (
-        Number(ele?.time?.split("/")[0]) === Number(value) &&
-        ele?.type === "in"
-      ) {
+      if (Number(ele?.time?.split("/")[0]) === Number(value)) {
         return ele;
       }
-    })[1];
+    })[2];
     const secondOut = clockIn.filter((ele) => {
-      if (
-        Number(ele?.time?.split("/")[0]) === Number(value) &&
-        ele?.type === "out"
-      ) {
+      if (Number(ele?.time?.split("/")[0]) === Number(value)) {
         return ele;
       }
-    })[1];
+    })[3];
 
     const refac = (value: any) => {
       return `20${value?.split(" ")[0]?.split("/")[2]}/${value.split("/")[1]}/${
@@ -228,6 +224,14 @@ export default function Registrodeponto() {
         Math.abs(new Date(refacSecondIn) - new Date(refacSecondOut))
       );
     }
+    const sortedElements: [
+      IClockIn | undefined,
+      IClockIn | undefined,
+      IClockIn | undefined,
+      IClockIn | undefined
+    ] = [firstIn, firstOut, secondIn, secondOut].sort((a, b) =>
+      a?.time > b?.time ? 1 : -1
+    );
 
     if (arrSubtotal.length > 0) {
       const subTotal = arrSubtotal.reduce((a, b) => a + b, 0);
@@ -236,15 +240,17 @@ export default function Registrodeponto() {
         ":" +
         (Math.floor(
           subTotal / 1000 / 60 - Math.floor(subTotal / 1000 / 60 / 60) * 60
-        ) === 0
-          ? "00"
+        ) < 10
+          ? `0${Math.floor(
+              subTotal / 1000 / 60 - Math.floor(subTotal / 1000 / 60 / 60) * 60
+            )}`
           : Math.floor(
               subTotal / 1000 / 60 - Math.floor(subTotal / 1000 / 60 / 60) * 60
             ));
-      return [firstIn, firstOut, secondIn, secondOut, `${minutes} horas`];
+      return [...sortedElements, `${minutes} horas`];
     }
 
-    return [firstIn, firstOut, secondIn, secondOut, ""];
+    return [...sortedElements, ""];
   };
 
   const generateTotalHours = () => {
@@ -270,129 +276,172 @@ export default function Registrodeponto() {
   };
 
   return (
-    <S.Wrapper>
-      <Header></Header>
+    <>
+      {selectedUser?.id !== undefined ? (
+        <S.Wrapper>
+          <Header></Header>
 
-      <S.ReportWrapper>
-        <S.ReportInputs>
-          <S.EmployColumn>
-            <S.EmployLabel>Funcionários</S.EmployLabel>
-            <S.EmploySelect
-              onChange={(e) => HandlerOnChange(e.target.value, month)}
-            >
-              {users.map((elem, i) => {
-                return (
-                  <S.EmployOptions value={elem?.id} key={i}>
-                    {elem.name}
-                  </S.EmployOptions>
-                );
-              })}
-            </S.EmploySelect>
-          </S.EmployColumn>
-          <S.EmployColumn>
-            <S.EmployLabel>Mês</S.EmployLabel>
-            <S.EmploySelect
-              onChange={(event) => {
-                const selected = months.filter((elem) => {
-                  return elem.value === event.target.value;
-                });
+          <S.ReportWrapper>
+            <S.ReportInputs>
+              <S.EmployColumn>
+                <S.EmployLabel>Funcionários</S.EmployLabel>
+                <S.EmploySelect
+                  onChange={(e) => {
+                    const selected = users.find((elem) => {
+                      return elem.id === e.target.value;
+                    });
 
-                if (selected[0]?.title !== undefined) {
-                  setMonth(selected[0]?.title);
-                }
-              }}
-            >
-              {months.map((elem, i) => (
-                <S.EmployOptions value={elem.value} key={`${i}ds`}>
-                  {elem.title}
-                </S.EmployOptions>
-              ))}
-            </S.EmploySelect>
-          </S.EmployColumn>
-          <S.EmployColumn>
-            <S.EmployLabel>Ano</S.EmployLabel>
-            <S.EmploySelect
-              onChange={(event) => {
-                setSelectedYear(event.target.value);
-              }}
-            >
-              {year.map((elem, i) => (
-                <S.EmployOptions value={elem} key={`${i}ds`}>
-                  {elem}
-                </S.EmployOptions>
-              ))}
-            </S.EmploySelect>
-          </S.EmployColumn>
-          <S.DownloadPDF>Baixar como PDF</S.DownloadPDF>
-        </S.ReportInputs>
-
-        <hr
-          style={{ width: "100%", height: "1px", backgroundColor: "#000000" }}
-        />
-
-        <S.TableHeadersColumn>
-          <div>
-            <S.TableHeadersText>Empresa: {company?.name}</S.TableHeadersText>
-            <S.TableHeadersText>CNPJ: {company?.cnpj}</S.TableHeadersText>
-          </div>
-
-          <div>
-            <S.TableHeadersText>Período:</S.TableHeadersText>
-            <S.TableHeadersText>
-              {month} / 20{selectedYear}
-            </S.TableHeadersText>
-          </div>
-        </S.TableHeadersColumn>
-
-        <S.TableHeadersColumn>
-          <div>
-            <S.TableHeadersText>
-              Funcionário:
-              {selectedUser?.name === undefined ? "" : selectedUser.name}
-            </S.TableHeadersText>
-            <S.TableHeadersText>
-              CPF: {selectedUser?.cpf === undefined ? "" : selectedUser?.cpf}
-            </S.TableHeadersText>
-          </div>
-
-          <div>
-            <S.TableHeadersText>Horas contabilizadas:</S.TableHeadersText>
-            <S.TableHeadersText>{generateTotalHours()}</S.TableHeadersText>
-          </div>
-        </S.TableHeadersColumn>
-        <hr
-          style={{ width: "100%", height: "1px", backgroundColor: "#000000" }}
-        />
-
-        <S.ContainerTableComponent>
-          <S.TableComponent>
-            <tr>
-              <th>Dia</th>
-              <th>Entrada</th>
-              <th>Saída</th>
-              <th>Entrada</th>
-              <th>Saída</th>
-              <th>Total</th>
-            </tr>
-
-            {days.map((ele, i) => {
-              return (
-                <tr key={i}>
-                  <td>{ele}</td>
-                  {generateRow(ele).map((ele2, i) => {
-                    if (i < 4) {
-                      return <td key={i}>{ele2?.time?.split(" ")[1]}</td>;
-                    } else {
-                      return <td key={i}>{ele2}</td>;
+                    if (selected === undefined) {
+                      return;
                     }
+
+                    setSelectedUser(selected);
+                  }}
+                >
+                  {users.map((elem, i) => {
+                    return (
+                      <S.EmployOptions value={elem?.id} key={i}>
+                        {elem.name}
+                      </S.EmployOptions>
+                    );
                   })}
+                </S.EmploySelect>
+              </S.EmployColumn>
+              <S.EmployColumn>
+                <S.EmployLabel>Mês</S.EmployLabel>
+                <S.EmploySelect
+                  onChange={(event) => {
+                    const selected = months.filter((elem) => {
+                      return elem.value === event.target.value;
+                    });
+
+                    if (selected[0]?.title !== undefined) {
+                      setMonth(selected[0]?.title);
+                    }
+                  }}
+                >
+                  {months.map((elem, i) => (
+                    <S.EmployOptions
+                      value={elem.value}
+                      key={`${i}ds`}
+                      selected={selectedMonth === elem.title}
+                    >
+                      {elem.title}
+                    </S.EmployOptions>
+                  ))}
+                </S.EmploySelect>
+              </S.EmployColumn>
+              <S.EmployColumn>
+                <S.EmployLabel>Ano</S.EmployLabel>
+                <S.EmploySelect
+                  onChange={(event) => {
+                    setSelectedYear(event.target.value);
+                  }}
+                >
+                  {year.map((elem, i) => (
+                    <S.EmployOptions
+                      value={elem}
+                      key={`${i}ds`}
+                      selected={selectedYear === elem}
+                    >
+                      {elem}
+                    </S.EmployOptions>
+                  ))}
+                </S.EmploySelect>
+              </S.EmployColumn>
+              <S.DownloadPDF>Baixar como PDF</S.DownloadPDF>
+            </S.ReportInputs>
+
+            <hr
+              style={{
+                width: "100%",
+                height: "1px",
+                backgroundColor: "#000000",
+              }}
+            />
+
+            <S.TableHeadersColumn>
+              <div>
+                <S.TableHeadersText>
+                  Empresa: {company?.name}
+                </S.TableHeadersText>
+                <S.TableHeadersText>CNPJ: {company?.cnpj}</S.TableHeadersText>
+              </div>
+
+              <div>
+                <S.TableHeadersText>Período:</S.TableHeadersText>
+                <S.TableHeadersText>
+                  {selectedMonth} / 20{selectedYear}
+                </S.TableHeadersText>
+              </div>
+            </S.TableHeadersColumn>
+
+            <S.TableHeadersColumn>
+              <div>
+                <S.TableHeadersText>
+                  Funcionário:
+                  {selectedUser?.name === undefined ? "" : selectedUser.name}
+                </S.TableHeadersText>
+                <S.TableHeadersText>
+                  CPF:{" "}
+                  {selectedUser?.cpf === undefined ? "" : selectedUser?.cpf}
+                </S.TableHeadersText>
+              </div>
+
+              <div>
+                <S.TableHeadersText>Horas contabilizadas:</S.TableHeadersText>
+                <S.TableHeadersText>{generateTotalHours()}</S.TableHeadersText>
+              </div>
+            </S.TableHeadersColumn>
+            <hr
+              style={{
+                width: "100%",
+                height: "1px",
+                backgroundColor: "#000000",
+              }}
+            />
+
+            <S.ContainerTableComponent>
+              <S.TableComponent>
+                <tr>
+                  <th>Dia</th>
+                  <th>Entrada</th>
+                  <th>Saída</th>
+                  <th>Entrada</th>
+                  <th>Saída</th>
+                  <th>Total</th>
                 </tr>
-              );
-            })}
-          </S.TableComponent>
-        </S.ContainerTableComponent>
-      </S.ReportWrapper>
-      {open && <Modal type="edit" setOpen={setOpen}></Modal>}
-    </S.Wrapper>
+
+                {days.map((ele, i) => {
+                  return (
+                    <tr key={i}>
+                      <td>{ele}</td>
+                      {generateRow(ele).map((ele2, i: number) => {
+                        if (i < 4) {
+                          return (
+                            <td key={i}>
+                              {ele2?.time?.split(" ")[1] === undefined
+                                ? ""
+                                : ele2?.time?.split(" ")[1]}
+                            </td>
+                          );
+                        } else {
+                          return <td key={i}>{ele2 as string}</td>;
+                        }
+                      })}
+                    </tr>
+                  );
+                })}
+              </S.TableComponent>
+            </S.ContainerTableComponent>
+          </S.ReportWrapper>
+          {showModalEdit && (
+            <Modal type="edit" setOpen={setShowModalEdit}></Modal>
+          )}
+        </S.Wrapper>
+      ) : (
+        <Loading />
+      )}
+    </>
   );
 }

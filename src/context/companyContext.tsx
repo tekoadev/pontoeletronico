@@ -19,7 +19,8 @@ interface CompanyContextProps {
   createUser: (data: ICreateUser) => Promise<boolean>;
   users: IUser[];
   clockIn: IClockIn[];
-  getReport: (id: string, month: string, year: string) => void;
+  getReport: (id: string, month: string, year: string) => Promise<void>;
+  listUsers: () => Promise<void>;
 }
 export const CompanyContext = createContext<CompanyContextProps>(
   {} as CompanyContextProps
@@ -53,7 +54,9 @@ export const CompanyProvider = ({ children }: any) => {
       url: "company/user",
       headers,
     })
-      .then((req: { data: { body: IUser[] } }) => setUser(req?.data?.body))
+      .then((req: { data: { body: IUser[] } }) => {
+        setUser(req?.data?.body);
+      })
       .catch((err) => {
         showAlert(
           "error",
@@ -127,7 +130,11 @@ export const CompanyProvider = ({ children }: any) => {
 
   const [clockIn, setClockIn] = useState<IClockIn[]>([] as IClockIn[]);
 
-  const getReport = async (id: string, month: string, year: string) => {
+  const getReport = async (
+    id: string,
+    month: string,
+    year: string
+  ): Promise<void> => {
     setIsLoading(true);
     await ClockInApi({
       method: "GET",
@@ -162,9 +169,6 @@ export const CompanyProvider = ({ children }: any) => {
           if (window.location.pathname === "/empresa") {
             return navigate.push("/empresa/home");
           }
-          if (window.location.pathname === "/empresa/espelho-ponto") {
-            listUsers();
-          }
         })
         .catch((err) => {
           console.log(err);
@@ -180,7 +184,7 @@ export const CompanyProvider = ({ children }: any) => {
 
   return (
     <CompanyContext.Provider
-      value={{ company, companyLogin, createUser, users, clockIn, getReport }}
+      value={{ company, companyLogin, createUser, users, clockIn, getReport, listUsers }}
     >
       {children}
     </CompanyContext.Provider>
