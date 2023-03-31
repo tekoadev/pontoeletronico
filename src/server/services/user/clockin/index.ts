@@ -10,7 +10,7 @@ export async function createClockIn(
   req: ICreateCompanyClockInReq,
   res: NextApiResponse
 ) {
-  const { location, obs, type } = req.body;
+  const { time, location, obs, type } = req.body;
 
   const findUser = await prismaConnect.users.findUnique({
     where: { id: req.request_id },
@@ -19,17 +19,6 @@ export async function createClockIn(
   if (!findUser) {
     return res.status(409).json({ message: "User not found" });
   }
-
-  const time = new Date()
-    .toLocaleTimeString("pt-BR", {
-      timeZone: "America/Sao_Paulo",
-      day: "2-digit",
-      month: "2-digit",
-      year: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-    })
-    .toString();
 
   const clockIn: ICreateClockIn = await prismaConnect.clockIn.create({
     data: {
@@ -49,9 +38,13 @@ export async function createClockIn(
   return res.json({ message: "clock in registered", body: clockIn });
 }
 
-export async function listClockIn(req: {
-  request_id: any; user: string 
-}, res: NextApiResponse) {
+export async function listClockIn(
+  req: {
+    request_id: any;
+    user: string;
+  },
+  res: NextApiResponse
+) {
   const clockIn = await prismaConnect.clockIn.findMany({
     where: { userId: req.request_id },
     include: { user: true },
@@ -62,8 +55,10 @@ export async function listClockIn(req: {
 
 export async function listByMonthClockIn(
   req: {
-    request_id: any; user: string; query: { month: string } 
-},
+    request_id: any;
+    user: string;
+    query: { month: string };
+  },
   res: NextApiResponse
 ) {
   const { month } = req.query;
