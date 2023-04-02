@@ -14,12 +14,22 @@ import { useCompanyContext } from "@/context/companyContext";
 import type { IClockIn, IUser } from "@/server/interface";
 import * as S from "@/styles/pages/registerPoint";
 import { useEffect, useState } from "react";
+import { AiOutlinePlusCircle } from "react-icons/ai";
+import { BsPencil } from "react-icons/bs";
+import { MdDeleteOutline } from "react-icons/md";
 
 export default function RegistroDePonto() {
   const today: Date = new Date();
   // const { setIsLoading } = useGeneral();
   const { users, company, clockIn, getReport, listUsers } = useCompanyContext();
-  const [showModalEdit, setShowModalEdit] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [typeModal, setTypeModal] = useState<"edit" | "add" | "delete" | "">(
+    "edit"
+  );
+  const [clockInId, setClockInId] = useState("");
+  const [editClockInValue, setEditClockInValue] = useState("");
+
+  const [day, setDay] = useState("");
   const [selectedUser, setSelectedUser] = useState<IUser>({
     name: "",
     cpf: "",
@@ -266,8 +276,10 @@ export default function RegistroDePonto() {
       ":" +
       (Math.floor(
         subTotal / 1000 / 60 - Math.floor(subTotal / 1000 / 60 / 60) * 60
-      ) === 0
-        ? "00"
+      ) < 10
+        ? `0${Math.floor(
+            subTotal / 1000 / 60 - Math.floor(subTotal / 1000 / 60 / 60) * 60
+          )}`
         : Math.floor(
             subTotal / 1000 / 60 - Math.floor(subTotal / 1000 / 60 / 60) * 60
           ));
@@ -415,14 +427,47 @@ export default function RegistroDePonto() {
                 {days.map((ele, i) => {
                   return (
                     <tr key={i}>
-                      <td>{ele}</td>
+                      <td className="day">{ele}</td>
                       {generateRow(ele).map((ele2, i: number) => {
                         if (i < 4) {
                           return (
                             <td key={i}>
-                              {ele2?.time?.split(" ")[1] === undefined
-                                ? ""
-                                : ele2?.time?.split(" ")[1]}
+                              {ele2?.time?.split(" ")[1] === undefined ? (
+                                <AiOutlinePlusCircle
+                                  className="plus"
+                                  size={18}
+                                  color="black"
+                                  onClick={() => {
+                                    setShowModal(true);
+                                    setTypeModal("add");
+                                    setDay(ele);
+                                  }}
+                                />
+                              ) : (
+                                <div>
+                                  {ele2?.time?.split(" ")[1]}
+                                  <BsPencil
+                                    size={18}
+                                    color="black"
+                                    onClick={() => {
+                                      setShowModal(true);
+                                      setTypeModal("edit");
+                                      setDay(ele);
+                                      setClockInId(ele2.id);
+                                      setEditClockInValue(ele2.time);
+                                    }}
+                                  />
+                                  <MdDeleteOutline
+                                    size={18}
+                                    color="black"
+                                    onClick={() => {
+                                      setShowModal(true);
+                                      setTypeModal("delete");
+                                      setClockInId(ele2.id);
+                                    }}
+                                  />
+                                </div>
+                              )}
                             </td>
                           );
                         } else {
@@ -435,8 +480,16 @@ export default function RegistroDePonto() {
               </S.TableComponent>
             </S.ContainerTableComponent>
           </S.ReportWrapper>
-          {showModalEdit && (
-            <Modal type="edit" setOpen={setShowModalEdit}></Modal>
+          {showModal && (
+            <Modal
+              type={typeModal}
+              setShowModal={setShowModal}
+              day={day}
+              month={selectedMonth}
+              year={selectedYear}
+              clockInId={clockInId}
+              editClockInValue={editClockInValue}
+            ></Modal>
           )}
         </S.Wrapper>
       ) : (

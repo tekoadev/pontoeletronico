@@ -112,6 +112,19 @@ export const TableComponent = styled.table`
 
   td {
     border-left: 1px solid black;
+    width: 230px;
+
+    svg {
+      margin-left: 10px;
+    }
+
+    .plus {
+      margin: 0px;
+    }
+  }
+
+  .day {
+    width: 80px;
   }
 `;
 
