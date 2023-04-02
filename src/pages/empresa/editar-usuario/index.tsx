@@ -1,19 +1,65 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+/* eslint-disable @typescript-eslint/no-floating-promises */
 import Header from "@/components/HeaderAdm";
 import { useCompanyContext } from "@/context/companyContext";
-import { IUser } from "@/server/interface";
+import { useGeneral } from "@/context/generalContext";
+import type { IUser } from "@/server/interface";
 import * as S from "@/styles/pages/editUser";
+import { cpfFormatter } from "@/utils/masks";
 import { useEffect, useState } from "react";
 
 export default function EditUser() {
-  const { users } = useCompanyContext();
+  const { showAlert } = useGeneral();
+  const { users, listUsers, editUser } = useCompanyContext();
 
   const [user, setUser] = useState<IUser>({} as IUser);
-  const [checked, setChecked] = useState(user.hourly);
+  const [checked, setChecked] = useState(user?.hourly);
 
   const findUserById = (id: string) => {
     const userFind = users.find((e) => e.id == id);
 
+    if (userFind === undefined) {
+      setUser({} as IUser);
+    }
+
     setUser(userFind!);
+  };
+
+  useEffect(() => {
+    listUsers();
+  }, []);
+
+  const HandlerSubmit = (e: React.FormEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    if (user?.name === "" || !user?.name) {
+      showAlert("error", "Nome obrigatório", "Campo obrigatório");
+      return false;
+    }
+    if (user?.user === "" || !user?.user) {
+      showAlert("error", "Usuário obrigatório", "Campo obrigatório");
+      return false;
+    }
+    if (user?.cpf === "" || !user?.cpf) {
+      showAlert("error", "CPF obrigatório", "Campo obrigatório");
+      return false;
+    }
+    if (user?.cpf.length < 14) {
+      showAlert("error", "CPF inválido", "");
+      return false;
+    }
+    // if (user?.newPassword === "" || !user?.newPassword) {
+    //   showAlert("error", "Senha obrigatória", "Campo obrigatório");
+    //   return false;
+    // }
+    if (user?.newPassword !== undefined && user?.newPassword.length < 6) {
+      showAlert(
+        "error",
+        "Tamanho mínimo senha",
+        "O tamanho mínimo é de 6 caracteres"
+      );
+      return false;
+    }
+    return true;
   };
 
   return (
@@ -28,6 +74,7 @@ export default function EditUser() {
               findUserById(e.target.value);
             }}
           >
+            <S.EmployOptions value="">Selecione um funcionário</S.EmployOptions>
             {users.map((elem, i) => {
               return (
                 <S.EmployOptions value={elem?.id} key={i}>
@@ -42,14 +89,24 @@ export default function EditUser() {
           <S.LabelText>Nome do funcionário</S.LabelText>
           <S.Input
             type="text"
-            defaultValue={user.name}
+            value={user?.name}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setUser({ ...user, name: e.target.value })
+            }
             placeholder="Ex: Silva"
           />
         </S.ContainerInput>
 
         <S.ContainerInput>
           <S.LabelText>Usuário de acesso</S.LabelText>
-          <S.Input type="text" placeholder="Ex: Silva" />
+          <S.Input
+            type="text"
+            placeholder="Ex: Silva"
+            value={user?.user}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setUser({ ...user, user: e.target.value })
+            }
+          />
         </S.ContainerInput>
 
         <S.ContainerInput>
@@ -57,13 +114,24 @@ export default function EditUser() {
           <S.Input
             type="text"
             placeholder="Ex: 999.999.999-99"
-            defaultValue={user.cpf}
+            value={user?.cpf}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setUser({ ...user, cpf: cpfFormatter(e.target.value) })
+            }
           />
         </S.ContainerInput>
 
         <S.ContainerInput>
           <S.LabelText>Senha</S.LabelText>
-          <S.Input type="text" placeholder="Ex: 123" />
+          <S.Input
+            type="text"
+            placeholder="Ex: 123"
+            defaultValue={""}
+            value={user?.newPassword}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setUser({ ...user, newPassword: e.target.value })
+            }
+          />
         </S.ContainerInput>
 
         <S.ContainerInput>
@@ -71,7 +139,10 @@ export default function EditUser() {
           <S.Input
             type="text"
             placeholder="Ex: silva@tekoa.com"
-            defaultValue={user.email!}
+            value={user?.email}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setUser({ ...user, email: e.target.value })
+            }
           />
         </S.ContainerInput>
 
@@ -80,7 +151,10 @@ export default function EditUser() {
           <S.Input
             type="text"
             placeholder="Ex: (19) 999999999"
-            defaultValue={user.phone!}
+            value={user?.phone}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setUser({ ...user, phone: e.target.value })
+            }
           />
         </S.ContainerInput>
 
@@ -89,8 +163,8 @@ export default function EditUser() {
           <S.CheckboxContainer className="switch">
             <S.SwitchInput
               type="checkbox"
-              checked={!checked}
-              onClick={() => setChecked(!checked)}
+              checked={!user?.hourly}
+              onClick={() => setUser({ ...user, hourly: !user.hourly })}
             />
             <S.Slider className="slider round"></S.Slider>
           </S.CheckboxContainer>
@@ -101,8 +175,8 @@ export default function EditUser() {
           <S.CheckboxContainer className="switch">
             <S.SwitchInput
               type="checkbox"
-              checked={checked}
-              onClick={() => setChecked(!checked)}
+              checked={user?.hourly}
+              onClick={() => setUser({ ...user, hourly: !user.hourly })}
             />
             <S.Slider className="slider round"></S.Slider>
           </S.CheckboxContainer>
@@ -111,12 +185,44 @@ export default function EditUser() {
         <S.ContainerInput>
           <S.LabelText htmlFor="">Funcionário Ativo</S.LabelText>
           <S.CheckboxContainer className="switch">
-            <S.SwitchInput type="checkbox" checked={user.isActive} />
+            <S.SwitchInput
+              type="checkbox"
+              checked={user?.isActive}
+              onChange={() => setUser({ ...user, isActive: !user.isActive })}
+            />
             <S.Slider className="slider round"></S.Slider>
           </S.CheckboxContainer>
         </S.ContainerInput>
 
-        <S.SubmitButton>Enviar</S.SubmitButton>
+        <S.SubmitButton
+          type="submit"
+          // eslint-disable-next-line @typescript-eslint/no-misused-promises
+          onClick={async (e) => {
+            if (user?.id === undefined) {
+              e.preventDefault();
+              showAlert("error", "Selecione um usuário", "");
+              return;
+            } else if (HandlerSubmit(e) && user?.id !== undefined) {
+              console.log(user);
+
+              if (users.find((ele) => ele.user === user.user)) {
+                await editUser({
+                  ...user,
+                  password: user.newPassword!,
+                  user: undefined,
+                });
+              } else {
+                await editUser({
+                  ...user,
+                  password: user.newPassword!,
+                  user_name: user.user,
+                });
+              }
+            }
+          }}
+        >
+          Enviar
+        </S.SubmitButton>
       </S.FormContainer>
     </>
   );

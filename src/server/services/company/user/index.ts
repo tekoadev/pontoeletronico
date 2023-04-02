@@ -31,14 +31,14 @@ export async function createUser(
   }
 
   const findCompany: ICompany | null = await prismaConnect.company.findUnique({
-    where: { id: req.user },
+    where: { id: req.request_id },
   });
 
   if (!findCompany) {
     return res.status(409).json({ message: "Company not found" });
   }
 
-  const findUser: IUser | null = await prismaConnect.users.findUnique({
+  const findUser = await prismaConnect.users.findUnique({
     where: { user },
   });
 
@@ -50,7 +50,7 @@ export async function createUser(
   const createUser: ICreateUser = await prismaConnect.users.create({
     data: {
       user,
-      CompanyId: req.user,
+      CompanyId: req.request_id,
       cpf,
       name,
       password: hashedPassword,
@@ -70,7 +70,7 @@ export async function updateUser(
 ) {
   const {
     id,
-    user,
+    user_name,
     cpf,
     name,
     password,
@@ -84,14 +84,14 @@ export async function updateUser(
     return res.status(400).json({ message: "must send a company id" });
   }
   const findCompany: ICompany | null = await prismaConnect.company.findUnique({
-    where: { id: req.user },
+    where: { id: req.request_id },
   });
 
   if (!findCompany) {
     return res.status(409).json({ message: "Company not found" });
   }
 
-  const userExist: IUser | null = await prismaConnect.users.findUnique({
+  const userExist = await prismaConnect.users.findUnique({
     where: { id },
   });
 
@@ -99,8 +99,8 @@ export async function updateUser(
     return res.status(409).json({ message: "User not found" });
   }
 
-  const findUser: IUser | null = await prismaConnect.users.findUnique({
-    where: { user },
+  const findUser = await prismaConnect.users.findUnique({
+    where: { user: user_name },
   });
 
   if (findUser) {
@@ -116,7 +116,8 @@ export async function updateUser(
   const updateUser: ICreateUser = await prismaConnect.users.update({
     where: { id },
     data: {
-      CompanyId: req.user,
+      CompanyId: req.request_id,
+      user: user_name,
       cpf,
       name,
       password: hashedPassword,
@@ -140,7 +141,7 @@ export async function deleteUser(
     return res.status(400).json({ message: "must send a id" });
   }
 
-  const findUser: IUser | null = await prismaConnect.users.findUnique({
+  const findUser = await prismaConnect.users.findUnique({
     where: { id },
   });
 
@@ -156,11 +157,14 @@ export async function deleteUser(
 }
 
 export async function listAllUsers(
-  req: { user: string },
+  req: {
+    request_id: any;
+    user: string;
+  },
   res: NextApiResponse
 ) {
   const user = await prismaConnect.users.findMany({
-    where: { CompanyId: req.user },
+    where: { CompanyId: req.request_id },
     include: { _count: true },
   });
 
@@ -168,7 +172,11 @@ export async function listAllUsers(
 }
 
 export async function listUniqueUser(
-  req: { query: { id: string }; user: string },
+  req: {
+    request_id: string;
+    query: { id: string };
+    user: string;
+  },
   res: NextApiResponse
 ) {
   const { id } = req.query;
@@ -182,7 +190,7 @@ export async function listUniqueUser(
     return res.status(409).json({ message: "User not found" });
   }
 
-  if (user.CompanyId !== req.user) {
+  if (user.CompanyId !== req.request_id) {
     return res.status(409).json({ message: "User not found" });
   }
 
@@ -190,7 +198,11 @@ export async function listUniqueUser(
 }
 
 export async function reportUserByMonth(
-  req: { query: { id: string; month: string; year: string }; user: string },
+  req: {
+    request_id: any;
+    query: { id: string; month: string; year: string };
+    user: string;
+  },
   res: NextApiResponse
 ) {
   const { id, month, year } = req.query;
@@ -200,7 +212,7 @@ export async function reportUserByMonth(
   }
 
   const clockIn = await prismaConnect.clockIn.findMany({
-    where: { userId: id, companyId: req.user },
+    where: { userId: id, companyId: req.request_id },
   });
 
   if (clockIn === null || clockIn === undefined) {

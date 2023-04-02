@@ -23,6 +23,7 @@ interface CompanyContextProps {
   listUsers: () => Promise<void>;
   editClockIn: (timeValue: string, clockInId: string) => Promise<void>;
   deleteClockIn: (clockInId: string) => Promise<void>;
+  editUser: (data: ICreateUser) => Promise<boolean>;
 }
 export const CompanyContext = createContext<CompanyContextProps>(
   {} as CompanyContextProps
@@ -184,11 +185,11 @@ export const CompanyProvider = ({ children }: any) => {
     }
   }, []);
 
-  const editClockIn = async (timeValue: string, clockInId: string): Promise<void> => {
+const editClockIn = async (timeValue: string, clockInId: string): Promise<void> => {
     setIsLoading(true);
     await ClockInApi({
       method: "PATCH",
-      url: `company/clockin`,
+      url: company/clockin,
       headers,
       data: {
         "id": clockInId,
@@ -216,7 +217,7 @@ export const CompanyProvider = ({ children }: any) => {
     setIsLoading(true);
     await ClockInApi({
       method: "DELETE",
-      url: `company/clockin`,
+      url: company/clockin,
       headers,
       data: {
         "id": clockInId,
@@ -238,6 +239,44 @@ export const CompanyProvider = ({ children }: any) => {
         );
       });
   };
+  
+    const editUser = async (data: ICreateUser) => {
+    setIsLoading(true);
+    let error = false;
+    await ClockInApi({
+      method: "PATCH",
+      url: "company/user",
+      headers,
+      data,
+    })
+      .then(() => {
+        setIsLoading(false);
+        showAlert("", "Usuário editado", "");
+        return true;
+      })
+      .catch((err) => {
+        error = true;
+        setIsLoading(false);
+        if (err?.response?.data?.message === "User already exist") {
+          showAlert(
+            "error",
+            "Usuário já existe",
+            "Tente outro nome de usuário"
+          );
+          return false;
+        }
+        showAlert(
+          "error",
+          "Erro ao criar usuário",
+          "Verifique com administrador do serviço"
+        );
+        return false;
+      });
+    if (error) {
+      return false;
+    }
+    return true;
+  };
 
   return (
     <CompanyContext.Provider
@@ -251,6 +290,7 @@ export const CompanyProvider = ({ children }: any) => {
         listUsers,
         editClockIn,
         deleteClockIn
+        editUser
       }}
     >
       {children}
