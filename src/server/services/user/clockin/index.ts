@@ -10,7 +10,7 @@ export async function createClockIn(
   req: ICreateCompanyClockInReq,
   res: NextApiResponse
 ) {
-  const { time, location, obs, type } = req.body;
+  const { location, obs, type } = req.body;
 
   const findUser = await prismaConnect.users.findUnique({
     where: { id: req.request_id },
@@ -19,6 +19,17 @@ export async function createClockIn(
   if (!findUser) {
     return res.status(409).json({ message: "User not found" });
   }
+
+  const time = new Date()
+    .toLocaleTimeString("pt-BR", {
+      timeZone: "America/Sao_Paulo",
+      day: "2-digit",
+      month: "2-digit",
+      year: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    })
+    .toString();
 
   const clockIn: ICreateClockIn = await prismaConnect.clockIn.create({
     data: {

@@ -38,7 +38,7 @@ export async function createUser(
     return res.status(409).json({ message: "Company not found" });
   }
 
-  const findUser: IUser | null = await prismaConnect.users.findUnique({
+  const findUser = await prismaConnect.users.findUnique({
     where: { user },
   });
 
@@ -91,7 +91,7 @@ export async function updateUser(
     return res.status(409).json({ message: "Company not found" });
   }
 
-  const userExist: IUser | null = await prismaConnect.users.findUnique({
+  const userExist = await prismaConnect.users.findUnique({
     where: { id },
   });
 
@@ -99,7 +99,7 @@ export async function updateUser(
     return res.status(409).json({ message: "User not found" });
   }
 
-  const findUser: IUser | null = await prismaConnect.users.findUnique({
+  const findUser = await prismaConnect.users.findUnique({
     where: { user: user_name },
   });
 
@@ -141,7 +141,7 @@ export async function deleteUser(
     return res.status(400).json({ message: "must send a id" });
   }
 
-  const findUser: IUser | null = await prismaConnect.users.findUnique({
+  const findUser = await prismaConnect.users.findUnique({
     where: { id },
   });
 
