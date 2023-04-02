@@ -70,7 +70,7 @@ export async function updateUser(
 ) {
   const {
     id,
-    user_name,
+    user,
     cpf,
     name,
     password,
@@ -100,7 +100,7 @@ export async function updateUser(
   }
 
   const findUser = await prismaConnect.users.findUnique({
-    where: { user: user_name },
+    where: { user },
   });
 
   if (findUser) {
@@ -117,7 +117,7 @@ export async function updateUser(
     where: { id },
     data: {
       CompanyId: req.request_id,
-      user: user_name,
+      user,
       cpf,
       name,
       password: hashedPassword,
@@ -132,7 +132,7 @@ export async function updateUser(
 }
 
 export async function deleteUser(
-  req: { body: { id: string } },
+  req: { body: { id: string }, request_id: string},
   res: NextApiResponse
 ) {
   const { id } = req.body;
@@ -147,6 +147,10 @@ export async function deleteUser(
 
   if (findUser === null || findUser === undefined) {
     return res.status(409).json({ message: "User not found" });
+  }
+
+  if (findUser.CompanyId !== req.request_id) {
+    res.status(401).json({ message: "Invalid credentials" });
   }
 
   const deleteUser: ICreateUser = await prismaConnect.users.delete({

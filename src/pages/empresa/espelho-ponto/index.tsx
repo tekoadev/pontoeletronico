@@ -13,6 +13,7 @@ import Modal from "@/components/modal";
 import { useCompanyContext } from "@/context/companyContext";
 import type { IClockIn, IUser } from "@/server/interface";
 import * as S from "@/styles/pages/registerPoint";
+import { PDFgeneratorToDownload } from "@/utils/PDFgeneratorToDownload";
 import { useEffect, useState } from "react";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import { BsPencil } from "react-icons/bs";
@@ -38,6 +39,20 @@ export default function RegistroDePonto() {
   const setSelectedUserFunction = () => {
     if (users[0]) {
       setSelectedUser(users[0]);
+    }
+  };
+
+  const handlerUpdateClockIn = async (id: string) => {
+    await listUsers();
+
+    const findUser = users.find((user) => user.id === id);
+
+    if (users[0] && findUser === undefined) {
+      setSelectedUser(users[0]);
+      return
+    } else {
+      setSelectedUser(findUser!);
+      return
     }
   };
 
@@ -221,6 +236,7 @@ export default function RegistroDePonto() {
     if (firstIn !== undefined && firstOut !== undefined) {
       const refacFirstIn = refac(firstIn?.time);
       const refacFirstOut = refac(firstOut?.time);
+
       arrSubtotal.push(
         Math.abs(new Date(refacFirstIn) - new Date(refacFirstOut))
       );
@@ -361,7 +377,7 @@ export default function RegistroDePonto() {
                   ))}
                 </S.EmploySelect>
               </S.EmployColumn>
-              <S.DownloadPDF>Baixar como PDF</S.DownloadPDF>
+              <S.DownloadPDF onClick={() => PDFgeneratorToDownload(days, generateRow, selectedUser, company!, selectedMonth, selectedYear, generateTotalHours)}>Baixar como PDF</S.DownloadPDF>
             </S.ReportInputs>
 
             <hr
@@ -485,10 +501,14 @@ export default function RegistroDePonto() {
               type={typeModal}
               setShowModal={setShowModal}
               day={day}
-              month={selectedMonth}
+              month={
+                months.filter((ele) => ele.title === selectedMonth)[0]?.value
+              }
               year={selectedYear}
               clockInId={clockInId}
               editClockInValue={editClockInValue}
+              userId={selectedUser.id}
+              handlerUpdateClockIn={handlerUpdateClockIn}
             ></Modal>
           )}
         </S.Wrapper>

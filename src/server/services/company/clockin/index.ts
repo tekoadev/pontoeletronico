@@ -11,8 +11,12 @@ export async function createClockIn(
   req: ICreateCompanyClockInReq,
   res: NextApiResponse
 ) {
-  const { userId, location = "", obs, type = "in", time } = req.body;
-
+  const { userId, location, obs, type = "in", time } = req.body;
+  
+  if(userId === undefined || time === undefined){
+    return res.status(400).json({ message: "Must send user id and time" });
+  }
+ 
   const findUser = await prismaConnect.users.findUnique({
     where: { id: userId },
   });
@@ -21,7 +25,7 @@ export async function createClockIn(
     return res.status(409).json({ message: "User not found" });
   }
 
-  if (findUser.CompanyId !== req.user) {
+  if (findUser.CompanyId !== req.request_id) {
     return res.status(401).json({ message: "Access denied" });
   }
 
@@ -61,7 +65,7 @@ export async function updateClockIn(
     return res.status(409).json({ message: "Clock In not found" });
   }
 
-  if (findClockIn.companyId !== req.user) {
+  if (findClockIn.companyId !== req.request_id) {
     return res.status(401).json({ message: "Access denied" });
   }
 
@@ -83,7 +87,7 @@ export async function updateClockIn(
 }
 
 export async function deleteClockIn(
-  req: { body: { id: string }; user: string },
+  req: { body: { id: string }; request_id: string },
   res: NextApiResponse
 ) {
   const { id } = req.body;
@@ -100,7 +104,7 @@ export async function deleteClockIn(
     return res.status(409).json({ message: "Clock In not found" });
   }
 
-  if (findClockIn.companyId !== req.user) {
+  if (findClockIn.companyId !== req.request_id) {
     return res.status(401).json({ message: "Access denied" });
   }
 
@@ -115,9 +119,9 @@ export async function deleteClockIn(
   return res.json({ message: "clock in deleted", body: clockIn });
 }
 
-export async function listClockIn(req: { user: string }, res: NextApiResponse) {
+export async function listClockIn(req: { request_id: string }, res: NextApiResponse) {
   const clockIn = await prismaConnect.clockIn.findMany({
-    where: { companyId: req.user },
+    where: { companyId: req.request_id },
     include: { user: true },
   });
 
@@ -125,13 +129,13 @@ export async function listClockIn(req: { user: string }, res: NextApiResponse) {
 }
 
 export async function listUniqueUserClockIn(
-  req: { user: string; query: { id: string } },
+  req: { request_id: string; query: { id: string } },
   res: NextApiResponse
 ) {
   const { id } = req.query;
 
   const clockIn = await prismaConnect.clockIn.findMany({
-    where: { companyId: req.user, userId: id },
+    where: { companyId: req.request_id, userId: id },
     include: { user: true },
   });
 

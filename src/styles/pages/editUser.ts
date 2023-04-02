@@ -30,7 +30,7 @@ export const FormContainer = styled.form`
   border-radius: 12px;
   background-color: var(--white);
   margin: 0 auto;
-  margin-top: 80px;
+  margin-top: calc(125px + 20px);
 
   > div:nth-child(1) {
     width: 100%;

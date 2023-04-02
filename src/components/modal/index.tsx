@@ -12,19 +12,23 @@ export default function Modal({
   year,
   clockInId,
   editClockInValue,
+  userId,
+  handlerUpdateClockIn
 }: {
   type: string;
   setShowModal: Dispatch<SetStateAction<boolean>>;
-  day?: string;
-  month?: string;
-  year?: string;
-  clockInId?: string;
-  editClockInValue?: string;
+  day: string;
+  month: string;
+  year: string;
+  clockInId: string;
+  editClockInValue: string;
+  userId: string;
+  handlerUpdateClockIn: (id: string) => Promise<void>
 }) {
   const [valueInput, setValueInput] = useState(
-    editClockInValue ? editClockInValue.split(" ")[1] : ""
+    type == "edit" ? editClockInValue ? editClockInValue.split(" ")[1] : "" : ""
   );
-  const { editClockIn, deleteClockIn } = useContext(CompanyContext);
+  const { editClockIn, deleteClockIn, addClockIn } = useContext(CompanyContext);
 
   return (
     <S.ModalContainer>
@@ -39,10 +43,9 @@ export default function Modal({
           </div>
 
           <button
-            onClick={() => {
-              deleteClockIn(
-                clockInId!
-              );
+            onClick={async () => {
+              await deleteClockIn(clockInId);
+              handlerUpdateClockIn(userId)
               setShowModal(false);
             }}
           >
@@ -67,11 +70,12 @@ export default function Modal({
           />
 
           <button
-            onClick={() => {
-              editClockIn(
+            onClick={ async () => {
+              await editClockIn(
                 `${editClockInValue!.split(" ")[0]} ${valueInput}`,
-                clockInId!
+                clockInId
               );
+              handlerUpdateClockIn(userId)
               setShowModal(false);
             }}
           >
@@ -94,7 +98,18 @@ export default function Modal({
             maxLength={5}
           />
 
-          <button>Adicionar</button>
+          <button
+            onClick={async () => {
+              await addClockIn(
+                `${day}/${month}/${year} ${valueInput}`,
+                userId
+              );
+              setShowModal(false)
+              handlerUpdateClockIn(userId)
+            }}
+          >
+            Adicionar
+          </button>
         </S.ModalInfo>
       )}
     </S.ModalContainer>

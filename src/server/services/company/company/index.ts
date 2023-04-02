@@ -2,10 +2,10 @@ import prismaConnect from "@/server/db";
 import type { NextApiResponse } from "next";
 
 export async function listSelfCompany(
-  req: { user: string },
+  req: { request_id: string },
   res: NextApiResponse
 ) {
-  const id = req.user;
+  const id = req.request_id;
 
   const company = await prismaConnect.company.findUnique({
     where: { id },

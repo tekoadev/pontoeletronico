@@ -42,29 +42,6 @@ export default function Home() {
               Marcar ponto:
             </S.Text>
 
-            <S.TypeBtn>
-              <S.ChoicesButton
-               active={active}
-                style={{
-                  backgroundColor:
-                    active === true ? "var(--primary)" : "var(--deselect)",
-                }}
-                onClick={() => {setActive(true)}}
-              >
-                Entrada
-              </S.ChoicesButton>
-              <S.ChoicesButton
-                active={!active}
-                style={{
-                  backgroundColor:
-                  active === false ? "var(--primary)" : "var(--deselect)",
-                }}
-                onClick={() => {setActive(false)}}
-              >
-                Saída
-              </S.ChoicesButton>
-            </S.TypeBtn>
-
             <S.Label>Observações:</S.Label>
             <S.TextArea name="Observações" />
 
