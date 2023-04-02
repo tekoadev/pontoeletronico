@@ -21,6 +21,7 @@ interface CompanyContextProps {
   clockIn: IClockIn[];
   getReport: (id: string, month: string, year: string) => Promise<void>;
   listUsers: () => Promise<void>;
+  addClockIn: (timeValue: string, userID: string) => Promise<void>;
   editClockIn: (timeValue: string, clockInId: string) => Promise<void>;
   deleteClockIn: (clockInId: string) => Promise<void>;
   editUser: (data: ICreateUser) => Promise<boolean>;
@@ -170,26 +171,56 @@ export const CompanyProvider = ({ children }: any) => {
           setCookie(null, "Company", JSON.stringify(res?.data?.body));
 
           if (window.location.pathname === "/empresa") {
-            return navigate.push("/empresa/home");
+            navigate.push("/empresa/home");
           }
         })
         .catch((err) => {
           console.log(err);
-          return navigate.push("/empresa");
+          navigate.push("/empresa");
           destroyCookie(null, "Company");
           destroyCookie(null, "CompanyToken");
         });
     }
+
     if (window.location.pathname.includes("/empresa/") && companyToken === "") {
-      return navigate.push("/");
+      navigate.push("/empresa");
     }
   }, []);
+
+  const addClockIn = async (
+    timeValue: string,
+    userId: string
+  ): Promise<void> => {
+    setIsLoading(true);
+    await ClockInApi({
+      method: "POST",
+      url: "company/clockin",
+      headers,
+      data: {
+        userId,
+        time: timeValue,
+      },
+    })
+      .then((req) => {
+        showAlert("", "Adicionado com sucesso", "");
+      })
+      .catch((err) => {
+        showAlert(
+          "error",
+          "Erro com dados",
+          "Comunique o administrador do serviço"
+        );
+      });
+
+    setIsLoading(true);
+  };
 
   const editClockIn = async (
     timeValue: string,
     clockInId: string
   ): Promise<void> => {
     setIsLoading(true);
+
     await ClockInApi({
       method: "PATCH",
       url: "company/clockin",
@@ -201,7 +232,6 @@ export const CompanyProvider = ({ children }: any) => {
     })
       .then((req) => {
         showAlert("", "Editado com sucesso", "");
-        listUsers();
       })
       .catch((err) => {
         showAlert(
@@ -210,6 +240,8 @@ export const CompanyProvider = ({ children }: any) => {
           "Comunique o administrador do serviço"
         );
       });
+
+    setIsLoading(false);
   };
 
   const deleteClockIn = async (clockInId: string): Promise<void> => {
@@ -224,7 +256,6 @@ export const CompanyProvider = ({ children }: any) => {
     })
       .then((req) => {
         showAlert("", "Deletado com sucesso", "");
-        listUsers();
       })
       .catch((err) => {
         showAlert(
@@ -233,6 +264,8 @@ export const CompanyProvider = ({ children }: any) => {
           "Comunique o administrador do serviço"
         );
       });
+
+    setIsLoading(false);
   };
 
   const editUser = async (data: ICreateUser) => {
@@ -283,6 +316,7 @@ export const CompanyProvider = ({ children }: any) => {
         clockIn,
         getReport,
         listUsers,
+        addClockIn,
         editClockIn,
         deleteClockIn,
         editUser,
