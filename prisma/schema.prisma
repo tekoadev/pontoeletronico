@@ -1,0 +1,118 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+}
+
+model Company {
+    id String @id @default(uuid())
+
+    name String
+
+    cnpj String @unique
+
+    password String
+
+    logo String? @db.LongText
+
+    isActive Boolean
+
+    users Users[]
+
+    clockin ClockIn[]
+
+    session CompanySession[]
+
+    createdAt DateTime  @default(now())
+    updatedAt DateTime @updatedAt @default(now())
+    @@map("company")
+}
+
+model Users {
+    id String @id @default(uuid())
+
+    user String @unique
+
+    cpf String
+
+    name String
+
+    password String
+
+    hourly Boolean
+
+    isActive Boolean
+
+    phone String?
+
+    email String?
+    
+    clockin ClockIn[]
+
+    session UserSession[]
+
+    createdAt DateTime @default(now())
+
+    updatedAt DateTime @updatedAt @default(now())
+
+    company Company @relation(fields: [CompanyId], references: [id], onDelete: Cascade)
+    CompanyId String
+
+    @@map("users")
+}
+
+model ClockIn {
+    id String @id @default(uuid())
+
+    user Users @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId String
+
+    company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+    companyId String
+
+    time String?
+
+    location String? @db.LongText
+
+    obs String?
+
+    type String?
+
+    updatedAt DateTime @updatedAt @default(now())
+
+    createdAt DateTime @default(now())
+
+    @@map("clockin")
+}
+
+// Necessary for Next auth
+
+model UserSession {
+    id           String   @id @default(cuid())
+
+    sessionToken String   @unique
+
+    userId       String
+
+    expires      DateTime
+
+    user         Users     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model CompanySession {
+    id           String   @id @default(cuid())
+
+    sessionToken String   @unique
+
+    companyId       String
+
+    expires      DateTime
+
+    company         Company     @relation(fields: [companyId], references: [id], onDelete: Cascade)
+}
