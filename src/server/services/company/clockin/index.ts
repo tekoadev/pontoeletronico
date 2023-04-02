@@ -11,7 +11,7 @@ export async function createClockIn(
   req: ICreateCompanyClockInReq,
   res: NextApiResponse
 ) {
-  const { userId, location, obs, type } = req.body;
+  const { userId, location = "", obs, type = "in", time } = req.body;
 
   const findUser = await prismaConnect.users.findUnique({
     where: { id: userId },
@@ -24,17 +24,6 @@ export async function createClockIn(
   if (findUser.CompanyId !== req.user) {
     return res.status(401).json({ message: "Access denied" });
   }
-
-  const time = new Date()
-    .toLocaleTimeString("pt-BR", {
-      timeZone: "America/Sao_Paulo",
-      day: "2-digit",
-      month: "2-digit",
-      year: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-    })
-    .toString();
 
   const clockIn: ICreateClockIn = await prismaConnect.clockIn.create({
     data: {

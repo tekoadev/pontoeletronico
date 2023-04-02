@@ -6,7 +6,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import jwt from "jsonwebtoken";
 
 interface TokenMiddlewareProps extends NextApiRequest {
-  user: string;
+  request_id: string;
 }
 
 export default function TokenMiddleware(
@@ -28,7 +28,7 @@ export default function TokenMiddleware(
     if (error) {
       return res.status(401).json("Invalid Token");
     }
-    req.user = decoded.sub;
+    req.request_id = decoded.sub;
   });
 
   next();

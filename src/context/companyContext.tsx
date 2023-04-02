@@ -21,6 +21,7 @@ interface CompanyContextProps {
   clockIn: IClockIn[];
   getReport: (id: string, month: string, year: string) => Promise<void>;
   listUsers: () => Promise<void>;
+  editUser: (data: ICreateUser) => Promise<boolean>;
 }
 export const CompanyContext = createContext<CompanyContextProps>(
   {} as CompanyContextProps
@@ -182,9 +183,56 @@ export const CompanyProvider = ({ children }: any) => {
     }
   }, []);
 
+  const editUser = async (data: ICreateUser) => {
+    setIsLoading(true);
+    let error = false;
+    await ClockInApi({
+      method: "PATCH",
+      url: "company/user",
+      headers,
+      data,
+    })
+      .then(() => {
+        setIsLoading(false);
+        showAlert("", "Usuário editado", "");
+        return true;
+      })
+      .catch((err) => {
+        error = true;
+        setIsLoading(false);
+        if (err?.response?.data?.message === "User already exist") {
+          showAlert(
+            "error",
+            "Usuário já existe",
+            "Tente outro nome de usuário"
+          );
+          return false;
+        }
+        showAlert(
+          "error",
+          "Erro ao criar usuário",
+          "Verifique com administrador do serviço"
+        );
+        return false;
+      });
+    if (error) {
+      return false;
+    }
+    return true;
+  };
+
   return (
     <CompanyContext.Provider
-      value={{ company, companyLogin, createUser, users, clockIn, getReport, listUsers }}
+      value={{
+        company,
+        companyLogin,
+        createUser,
+        users,
+        clockIn,
+        getReport,
+        listUsers,
+        editUser
+      }}
     >
       {children}
     </CompanyContext.Provider>
