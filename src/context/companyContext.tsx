@@ -185,24 +185,23 @@ export const CompanyProvider = ({ children }: any) => {
     }
   }, []);
 
-const editClockIn = async (timeValue: string, clockInId: string): Promise<void> => {
+  const editClockIn = async (
+    timeValue: string,
+    clockInId: string
+  ): Promise<void> => {
     setIsLoading(true);
     await ClockInApi({
       method: "PATCH",
-      url: company/clockin,
+      url: "company/clockin",
       headers,
       data: {
-        "id": clockInId,
-        "time": timeValue
-      }
+        id: clockInId,
+        time: timeValue,
+      },
     })
       .then((req) => {
-        showAlert(
-          "",
-          "Editado com sucesso",
-          ""
-        );
-        listUsers()
+        showAlert("", "Editado com sucesso", "");
+        listUsers();
       })
       .catch((err) => {
         showAlert(
@@ -217,19 +216,15 @@ const editClockIn = async (timeValue: string, clockInId: string): Promise<void> 
     setIsLoading(true);
     await ClockInApi({
       method: "DELETE",
-      url: company/clockin,
+      url: "company/clockin",
       headers,
       data: {
-        "id": clockInId,
-      }
+        id: clockInId,
+      },
     })
       .then((req) => {
-        showAlert(
-          "",
-          "Deletado com sucesso",
-          ""
-        );
-        listUsers()
+        showAlert("", "Deletado com sucesso", "");
+        listUsers();
       })
       .catch((err) => {
         showAlert(
@@ -239,8 +234,8 @@ const editClockIn = async (timeValue: string, clockInId: string): Promise<void> 
         );
       });
   };
-  
-    const editUser = async (data: ICreateUser) => {
+
+  const editUser = async (data: ICreateUser) => {
     setIsLoading(true);
     let error = false;
     await ClockInApi({
@@ -289,8 +284,8 @@ const editClockIn = async (timeValue: string, clockInId: string): Promise<void> 
         getReport,
         listUsers,
         editClockIn,
-        deleteClockIn
-        editUser
+        deleteClockIn,
+        editUser,
       }}
     >
       {children}
