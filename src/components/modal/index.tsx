@@ -12,6 +12,7 @@ export default function Modal({
   year,
   clockInId,
   editClockInValue,
+  userId
 }: {
   type: string;
   setShowModal: Dispatch<SetStateAction<boolean>>;
@@ -20,11 +21,12 @@ export default function Modal({
   year?: string;
   clockInId?: string;
   editClockInValue?: string;
+  userId?: string;
 }) {
   const [valueInput, setValueInput] = useState(
     editClockInValue ? editClockInValue.split(" ")[1] : ""
   );
-  const { editClockIn, deleteClockIn } = useContext(CompanyContext);
+  const { editClockIn, deleteClockIn, addClockIn } = useContext(CompanyContext);
 
   return (
     <S.ModalContainer>
@@ -40,9 +42,7 @@ export default function Modal({
 
           <button
             onClick={() => {
-              deleteClockIn(
-                clockInId!
-              );
+              deleteClockIn(clockInId!);
               setShowModal(false);
             }}
           >
@@ -94,7 +94,16 @@ export default function Modal({
             maxLength={5}
           />
 
-          <button>Adicionar</button>
+          <button
+            onClick={() => {
+              addClockIn(
+                `${editClockInValue!.split(" ")[0]} ${valueInput}`,
+                userId!
+              );
+            }}
+          >
+            Adicionar
+          </button>
         </S.ModalInfo>
       )}
     </S.ModalContainer>
