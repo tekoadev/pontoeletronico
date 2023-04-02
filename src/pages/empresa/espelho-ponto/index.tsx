@@ -489,6 +489,7 @@ export default function RegistroDePonto() {
               year={selectedYear}
               clockInId={clockInId}
               editClockInValue={editClockInValue}
+              userId={selectedUser.id}
             ></Modal>
           )}
         </S.Wrapper>

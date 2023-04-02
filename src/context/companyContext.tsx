@@ -21,6 +21,7 @@ interface CompanyContextProps {
   clockIn: IClockIn[];
   getReport: (id: string, month: string, year: string) => Promise<void>;
   listUsers: () => Promise<void>;
+  addClockIn: (timeValue: string, userID: string) => Promise<void>,
   editClockIn: (timeValue: string, clockInId: string) => Promise<void>;
   deleteClockIn: (clockInId: string) => Promise<void>;
   editUser: (data: ICreateUser) => Promise<boolean>;
@@ -185,6 +186,35 @@ export const CompanyProvider = ({ children }: any) => {
     }
   }, []);
 
+  const addClockIn = async (
+    timeValue: string,
+    userID: string
+  ): Promise<void> => {
+    setIsLoading(true);
+    await ClockInApi({
+      method: "POST",
+      url: "company/clockin",
+      headers,
+      data: {
+        "id": userID,
+        "time": timeValue,
+        "type": "in"
+      },
+    })
+      .then((req) => {
+        showAlert("", "Adicionado com sucesso", "");
+        listUsers();
+      })
+      .catch((err) => {
+        showAlert(
+          "error",
+          "Erro com dados",
+          "Comunique o administrador do serviço"
+        );
+      });
+  };
+
+
   const editClockIn = async (
     timeValue: string,
     clockInId: string
@@ -235,6 +265,7 @@ export const CompanyProvider = ({ children }: any) => {
       });
   };
 
+
   const editUser = async (data: ICreateUser) => {
     setIsLoading(true);
     let error = false;
@@ -283,6 +314,7 @@ export const CompanyProvider = ({ children }: any) => {
         clockIn,
         getReport,
         listUsers,
+        addClockIn,
         editClockIn,
         deleteClockIn,
         editUser,
