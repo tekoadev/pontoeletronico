@@ -51,13 +51,9 @@ export default function RegistroDePonto() {
     const findUser = users.find((user) => user.id === id);
 
     if (findUser === undefined) {
-      console.log(1);
-
       setSelectedUser(users[0]);
       return;
     } else {
-      console.log(2);
-
       await HandlerOnChange();
       setSelectedUser(findUser);
       return;
@@ -74,47 +70,6 @@ export default function RegistroDePonto() {
   );
 
   const year = ["22", "23", "24"];
-
-  function daysInThisMonth() {
-    const now = new Date();
-    const days = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-
-    for (let i = 0; i <= days; i++) {}
-  }
-
-  const days = [
-    "1",
-    "2",
-    "3",
-    "4",
-    "5",
-    "6",
-    "7",
-    "8",
-    "9",
-    "10",
-    "11",
-    "12",
-    "13",
-    "14",
-    "15",
-    "16",
-    "17",
-    "18",
-    "19",
-    "20",
-    "21",
-    "22",
-    "23",
-    "24",
-    "25",
-    "26",
-    "27",
-    "28",
-    "29",
-    "30",
-    "31",
-  ];
 
   const months = [
     { title: "Janeiro", value: "01" },
@@ -135,6 +90,24 @@ export default function RegistroDePonto() {
     months.filter((ele) => Number(ele.value) === today.getMonth() + 1)[0]?.title
   );
 
+  function daysInThisMonth() {
+    const now = new Date(
+      `20${selectedYear}-${Number(
+        months.filter((ele) => ele.title === selectedMonth)[0]?.value
+      )}-05`
+    );
+    const days = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+    const daysByMonth = [];
+
+    for (let i = 1; i <= days; i++) {
+      daysByMonth.push(i.toString());
+    }
+
+    return daysByMonth;
+  }
+
+  const [days, setDays] = useState(daysInThisMonth());
+
   const HandlerOnChange = async () => {
     const dateMonth = months.find((elem) => {
       return elem.title === selectedMonth;
@@ -144,6 +117,7 @@ export default function RegistroDePonto() {
       return;
     }
 
+    setDays(daysInThisMonth());
     await getReport(selectedUser.id!, dateMonth!.value, selectedYear);
   };
 

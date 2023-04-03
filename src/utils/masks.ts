@@ -27,3 +27,19 @@ export const hourFormatter = (hour: string): string => {
   // realizar a formatação...
   return hour.replace(/(\d{2})(\d{2})/, "$1:$2");
 };
+
+export const verifyHour = (hour: string) => {
+  if(Number(hour[0]) > 2){
+    return false
+  }
+
+  if(Number(hour[0]) == 2 && Number(hour[1]) > 3){
+    return false
+  }
+
+  if(Number(hour[3]) > 5){
+    return false
+  }
+
+  return true
+}

@@ -209,7 +209,6 @@ export default function EditUser() {
               showAlert("error", "Selecione um usuário", "");
               return;
             } else if (HandlerSubmit(e) && user?.id !== undefined) {
-              console.log(user);
 
               if (users.find((ele) => ele.user === user.user)) {
                 await editUser({

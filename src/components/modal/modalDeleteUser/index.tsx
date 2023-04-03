@@ -13,7 +13,7 @@ export default function ModalDeleteEmployee({
   userId: string;
 }) {
   const { deleteUser } = useContext(CompanyContext);
-  console.log(userId);
+ 
 
   return (
     <S.ModalContainer>

@@ -151,7 +151,6 @@ export const PDFgeneratorToDownload = (
   };
 
   pdfMaker.createPdf(docDefinitions).download();
-  console.log("oi");
 };
 
 const transformObjectToPDFMaker = (
