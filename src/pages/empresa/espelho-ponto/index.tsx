@@ -8,14 +8,17 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable react-hooks/exhaustive-deps */
 import Header from "@/components/HeaderAdm";
-import Loading from "@/components/Loading";
-import Modal from "@/components/modal";
+import ModalCompanyClockIn from "@/components/modal/ModalCompanyClockIn";
 import { useCompanyContext } from "@/context/companyContext";
 import type { IClockIn, IUser } from "@/server/interface";
 import * as S from "@/styles/pages/registerPoint";
 import { PDFgeneratorToDownload } from "@/utils/PDFgeneratorToDownload";
 import { useEffect, useState } from "react";
-import { AiOutlinePlusCircle } from "react-icons/ai";
+import {
+  AiOutlinePlusCircle,
+  AiFillCheckCircle,
+  AiFillCloseCircle,
+} from "react-icons/ai";
 import { BsPencil } from "react-icons/bs";
 import { MdDeleteOutline } from "react-icons/md";
 
@@ -47,21 +50,23 @@ export default function RegistroDePonto() {
 
     const findUser = users.find((user) => user.id === id);
 
-    if (users[0] && findUser === undefined) {
+    if (findUser === undefined) {
+      console.log(1);
+
       setSelectedUser(users[0]);
-      return
+      return;
     } else {
-      setSelectedUser(findUser!);
-      return
+      console.log(2);
+
+      await HandlerOnChange();
+      setSelectedUser(findUser);
+      return;
     }
   };
 
   useEffect(() => {
-    setSelectedUserFunction();
-  }, [users]);
-
-  useEffect(() => {
     listUsers();
+    setSelectedUserFunction();
   }, []);
 
   const [selectedYear, setSelectedYear] = useState(
@@ -69,6 +74,13 @@ export default function RegistroDePonto() {
   );
 
   const year = ["22", "23", "24"];
+
+  function daysInThisMonth() {
+    const now = new Date();
+    const days = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+
+    for (let i = 0; i <= days; i++) {}
+  }
 
   const days = [
     "1",
@@ -195,7 +207,7 @@ export default function RegistroDePonto() {
     return 0;
   };
 
-  const generateRow = (
+  const generateRowHourly = (
     value: string
   ): [
     IClockIn | undefined,
@@ -303,6 +315,25 @@ export default function RegistroDePonto() {
     return `${minutes} horas`;
   };
 
+  const generateRow = (value: string): IClockIn[] | undefined[] => {
+    return [
+      clockIn.filter((ele) => {
+        if (Number(ele?.time?.split("/")[0]) === Number(value)) {
+          return ele;
+        }
+      })[0],
+    ];
+  };
+
+  const generateTotalEmployeeDays = (): number => {
+    const totalTimes = [];
+    for (let i = 1; i <= 31; i++) {
+      const value = generateRow(i.toString());
+
+      value[0] !== undefined && totalTimes.push(1);
+    }
+    return totalTimes.length;
+  };
   return (
     <>
       {selectedUser?.id !== undefined ? (
@@ -326,13 +357,19 @@ export default function RegistroDePonto() {
                     setSelectedUser(selected);
                   }}
                 >
-                  {users.map((elem, i) => {
-                    return (
-                      <S.EmployOptions value={elem?.id} key={i}>
-                        {elem.name}
-                      </S.EmployOptions>
-                    );
-                  })}
+                  {users
+                    .sort((a, b) => (a?.name > b?.name ? 1 : -1))
+                    .map((elem, i) => {
+                      return (
+                        <S.EmployOptions
+                          value={elem?.id}
+                          key={i}
+                          selected={selectedUser?.id === elem?.id}
+                        >
+                          {elem.name}
+                        </S.EmployOptions>
+                      );
+                    })}
                 </S.EmploySelect>
               </S.EmployColumn>
               <S.EmployColumn>
@@ -377,7 +414,21 @@ export default function RegistroDePonto() {
                   ))}
                 </S.EmploySelect>
               </S.EmployColumn>
-              <S.DownloadPDF onClick={() => PDFgeneratorToDownload(days, generateRow, selectedUser, company!, selectedMonth, selectedYear, generateTotalHours)}>Baixar como PDF</S.DownloadPDF>
+              <S.DownloadPDF
+                onClick={() =>
+                  PDFgeneratorToDownload(
+                    days,
+                    generateRowHourly,
+                    selectedUser,
+                    company!,
+                    selectedMonth,
+                    selectedYear,
+                    generateTotalHours
+                  )
+                }
+              >
+                Baixar como PDF
+              </S.DownloadPDF>
             </S.ReportInputs>
 
             <hr
@@ -411,14 +462,22 @@ export default function RegistroDePonto() {
                   {selectedUser?.name === undefined ? "" : selectedUser.name}
                 </S.TableHeadersText>
                 <S.TableHeadersText>
-                  CPF:{" "}
+                  CPF:
                   {selectedUser?.cpf === undefined ? "" : selectedUser?.cpf}
                 </S.TableHeadersText>
               </div>
 
               <div>
-                <S.TableHeadersText>Horas contabilizadas:</S.TableHeadersText>
-                <S.TableHeadersText>{generateTotalHours()}</S.TableHeadersText>
+                <S.TableHeadersText>
+                  {selectedUser.hourly
+                    ? "Horas contabilizadas:"
+                    : "Diárias contabilizadas:"}
+                </S.TableHeadersText>
+                <S.TableHeadersText>
+                  {selectedUser.hourly
+                    ? generateTotalHours()
+                    : generateTotalEmployeeDays()}
+                </S.TableHeadersText>
               </div>
             </S.TableHeadersColumn>
             <hr
@@ -430,50 +489,117 @@ export default function RegistroDePonto() {
             />
 
             <S.ContainerTableComponent>
-              <S.TableComponent>
-                <tr>
-                  <th>Dia</th>
-                  <th>Entrada</th>
-                  <th>Saída</th>
-                  <th>Entrada</th>
-                  <th>Saída</th>
-                  <th>Total</th>
-                </tr>
+              {selectedUser.hourly ? (
+                <S.TableComponent>
+                  <tr>
+                    <th>Dia</th>
+                    <th>Entrada</th>
+                    <th>Saída</th>
+                    <th>Entrada</th>
+                    <th>Saída</th>
+                    <th>Total</th>
+                  </tr>
 
-                {days.map((ele, i) => {
-                  return (
-                    <tr key={i}>
-                      <td className="day">{ele}</td>
-                      {generateRow(ele).map((ele2, i: number) => {
-                        if (i < 4) {
-                          return (
-                            <td key={i}>
-                              {ele2?.time?.split(" ")[1] === undefined ? (
-                                <AiOutlinePlusCircle
-                                  className="plus"
-                                  size={18}
-                                  color="black"
-                                  onClick={() => {
-                                    setShowModal(true);
-                                    setTypeModal("add");
-                                    setDay(ele);
-                                  }}
-                                />
-                              ) : (
-                                <div>
-                                  {ele2?.time?.split(" ")[1]}
-                                  <BsPencil
+                  {days.map((ele, i) => {
+                    return (
+                      <tr key={i}>
+                        <td className="day">{ele}</td>
+                        {generateRowHourly(ele).map((ele2, i: number) => {
+                          if (i < 4) {
+                            return (
+                              <td key={i}>
+                                {ele2?.time?.split(" ")[1] === undefined ? (
+                                  <AiOutlinePlusCircle
+                                    className="plus"
                                     size={18}
                                     color="black"
                                     onClick={() => {
                                       setShowModal(true);
-                                      setTypeModal("edit");
+                                      setTypeModal("add");
                                       setDay(ele);
-                                      setClockInId(ele2.id);
-                                      setEditClockInValue(ele2.time);
                                     }}
                                   />
+                                ) : (
+                                  <div>
+                                    {ele2?.time?.split(" ")[1]}
+                                    <BsPencil
+                                      size={18}
+                                      color="black"
+                                      onClick={() => {
+                                        setShowModal(true);
+                                        setTypeModal("edit");
+                                        setDay(ele);
+                                        setClockInId(ele2.id);
+                                        setEditClockInValue(ele2.time);
+                                      }}
+                                    />
+                                    <MdDeleteOutline
+                                      size={18}
+                                      color="black"
+                                      onClick={() => {
+                                        setShowModal(true);
+                                        setTypeModal("delete");
+                                        setClockInId(ele2.id);
+                                      }}
+                                    />
+                                  </div>
+                                )}
+                              </td>
+                            );
+                          } else {
+                            return <td key={i}>{ele2 as string}</td>;
+                          }
+                        })}
+                      </tr>
+                    );
+                  })}
+                </S.TableComponent>
+              ) : (
+                <S.TableComponent>
+                  <tr>
+                    <th>Dia</th>
+                    <th>Diária</th>
+                  </tr>
+                  {days.map((ele, i) => {
+                    return (
+                      <tr key={i}>
+                        <td>{ele}</td>
+                        {generateRow(ele).map((ele2, i2) => {
+                          return (
+                            <td key={i2}>
+                              {ele2?.time?.split(" ")[1] === undefined ? (
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    gap: "4px",
+                                  }}
+                                >
+                                  <AiFillCloseCircle size={36} />
+                                  <AiOutlinePlusCircle
+                                    className="plus"
+                                    size={18}
+                                    color="black"
+                                    onClick={() => {
+                                      setShowModal(true);
+                                      setTypeModal("add");
+                                      setDay(ele);
+                                    }}
+                                  />
+                                </div>
+                              ) : (
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    gap: "4px",
+                                  }}
+                                >
+                                  <AiFillCheckCircle size={36} />
                                   <MdDeleteOutline
+                                    style={{ margin: 0 }}
                                     size={18}
                                     color="black"
                                     onClick={() => {
@@ -486,18 +612,16 @@ export default function RegistroDePonto() {
                               )}
                             </td>
                           );
-                        } else {
-                          return <td key={i}>{ele2 as string}</td>;
-                        }
-                      })}
-                    </tr>
-                  );
-                })}
-              </S.TableComponent>
+                        })}
+                      </tr>
+                    );
+                  })}
+                </S.TableComponent>
+              )}
             </S.ContainerTableComponent>
           </S.ReportWrapper>
           {showModal && (
-            <Modal
+            <ModalCompanyClockIn
               type={typeModal}
               setShowModal={setShowModal}
               day={day}
@@ -508,12 +632,106 @@ export default function RegistroDePonto() {
               clockInId={clockInId}
               editClockInValue={editClockInValue}
               userId={selectedUser.id}
+              user={selectedUser}
               handlerUpdateClockIn={handlerUpdateClockIn}
-            ></Modal>
+            />
           )}
         </S.Wrapper>
       ) : (
-        <Loading />
+        <S.Wrapper>
+          <Header></Header>
+
+          <S.ReportWrapper>
+            <S.ReportInputs>
+              <S.EmployColumn>
+                <S.EmployLabel>Funcionários</S.EmployLabel>
+                <S.EmploySelect>
+                  {users.map((elem, i) => {
+                    return (
+                      <S.EmployOptions value={elem?.id} key={i}>
+                        {elem.name}
+                      </S.EmployOptions>
+                    );
+                  })}
+                </S.EmploySelect>
+              </S.EmployColumn>
+              <S.EmployColumn>
+                <S.EmployLabel>Mês</S.EmployLabel>
+                <S.EmploySelect>
+                  {months.map((elem, i) => (
+                    <S.EmployOptions
+                      value={elem.value}
+                      key={`${i}ds`}
+                      selected={selectedMonth === elem.title}
+                    >
+                      {elem.title}
+                    </S.EmployOptions>
+                  ))}
+                </S.EmploySelect>
+              </S.EmployColumn>
+              <S.EmployColumn>
+                <S.EmployLabel>Ano</S.EmployLabel>
+                <S.EmploySelect>
+                  {year.map((elem, i) => (
+                    <S.EmployOptions
+                      value={elem}
+                      key={`${i}ds`}
+                      selected={selectedYear === elem}
+                    >
+                      {elem}
+                    </S.EmployOptions>
+                  ))}
+                </S.EmploySelect>
+              </S.EmployColumn>
+              <S.DownloadPDF>Baixar como PDF</S.DownloadPDF>
+            </S.ReportInputs>
+
+            <hr
+              style={{
+                width: "100%",
+                height: "1px",
+                backgroundColor: "#000000",
+              }}
+            />
+
+            <S.TableHeadersColumn>
+              <div>
+                <S.TableHeadersText>Empresa:</S.TableHeadersText>
+                <S.TableHeadersText>CNPJ:</S.TableHeadersText>
+              </div>
+
+              <div>
+                <S.TableHeadersText>Período:</S.TableHeadersText>
+                <S.TableHeadersText>
+                  {selectedMonth} / 20{selectedYear}
+                </S.TableHeadersText>
+              </div>
+            </S.TableHeadersColumn>
+
+            <S.TableHeadersColumn>
+              <div>
+                <S.TableHeadersText>Funcionário:</S.TableHeadersText>
+                <S.TableHeadersText>CPF:</S.TableHeadersText>
+              </div>
+
+              <div>
+                <S.TableHeadersText>Horas contabilizadas:</S.TableHeadersText>
+                <S.TableHeadersText></S.TableHeadersText>
+              </div>
+            </S.TableHeadersColumn>
+            <hr
+              style={{
+                width: "100%",
+                height: "1px",
+                backgroundColor: "#000000",
+              }}
+            />
+
+            <S.ContainerTableComponent>
+              <S.TableComponent></S.TableComponent>
+            </S.ContainerTableComponent>
+          </S.ReportWrapper>
+        </S.Wrapper>
       )}
     </>
   );

@@ -3,8 +3,9 @@ import { hourFormatter } from "@/utils/masks";
 import { Dispatch, SetStateAction, useContext, useState } from "react";
 import { AiOutlineCloseCircle } from "react-icons/ai";
 import * as S from "./style";
+import { IUser } from "@/server/interface";
 
-export default function Modal({
+export default function ModalCompanyClockIn({
   type,
   setShowModal,
   day,
@@ -13,7 +14,8 @@ export default function Modal({
   clockInId,
   editClockInValue,
   userId,
-  handlerUpdateClockIn
+  user,
+  handlerUpdateClockIn,
 }: {
   type: string;
   setShowModal: Dispatch<SetStateAction<boolean>>;
@@ -23,10 +25,15 @@ export default function Modal({
   clockInId: string;
   editClockInValue: string;
   userId: string;
-  handlerUpdateClockIn: (id: string) => Promise<void>
+  user: IUser;
+  handlerUpdateClockIn: (id: string) => Promise<void>;
 }) {
   const [valueInput, setValueInput] = useState(
-    type == "edit" ? editClockInValue ? editClockInValue.split(" ")[1] : "" : ""
+    type == "edit"
+      ? editClockInValue
+        ? editClockInValue.split(" ")[1]
+        : "00:00"
+      : "00:00"
   );
   const { editClockIn, deleteClockIn, addClockIn } = useContext(CompanyContext);
 
@@ -45,7 +52,7 @@ export default function Modal({
           <button
             onClick={async () => {
               await deleteClockIn(clockInId);
-              handlerUpdateClockIn(userId)
+              await handlerUpdateClockIn(userId);
               setShowModal(false);
             }}
           >
@@ -65,17 +72,19 @@ export default function Modal({
           <input
             placeholder="Horário"
             value={valueInput}
-            onChange={(e) => setValueInput(hourFormatter(e.target.value))}
-            maxLength={5}
+            onChange={(e) => {
+              setValueInput(hourFormatter(e.target.value));
+            }}
+            maxLength={6}
           />
 
           <button
-            onClick={ async () => {
+            onClick={async () => {
               await editClockIn(
                 `${editClockInValue!.split(" ")[0]} ${valueInput}`,
                 clockInId
               );
-              handlerUpdateClockIn(userId)
+              await handlerUpdateClockIn(userId);
               setShowModal(false);
             }}
           >
@@ -91,25 +100,42 @@ export default function Modal({
               onClick={() => setShowModal(false)}
             />
           </div>
-          <input
-            placeholder="Horário"
-            value={valueInput}
-            onChange={(e) => setValueInput(hourFormatter(e.target.value))}
-            maxLength={5}
-          />
-
-          <button
-            onClick={async () => {
-              await addClockIn(
-                `${day}/${month}/${year} ${valueInput}`,
-                userId
-              );
-              setShowModal(false)
-              handlerUpdateClockIn(userId)
-            }}
-          >
-            Adicionar
-          </button>
+          {user.hourly ? (
+            <>
+              <input
+                placeholder="Horário"
+                value={valueInput}
+                onChange={(e) => {
+                  setValueInput(hourFormatter(e.target.value));
+                }}
+                maxLength={6}
+              />
+              <button
+                onClick={async () => {
+                  await addClockIn(
+                    `${day}/${month}/${year} ${valueInput}`,
+                    userId
+                  );
+                  await handlerUpdateClockIn(userId);
+                  setShowModal(false);
+                }}
+              >
+                Adicionar
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={async () => {
+                  await addClockIn(`${day}/${month}/${year} 12:00`, userId);
+                  await handlerUpdateClockIn(userId);
+                  setShowModal(false);
+                }}
+              >
+                Confirmar
+              </button>
+            </>
+          )}
         </S.ModalInfo>
       )}
     </S.ModalContainer>

@@ -18,7 +18,11 @@ export const cnpjFormatter = (cnpj: string): string => {
 
 export const hourFormatter = (hour: string): string => {
   // retira os caracteres indesejados...
+
   hour = hour.replace(/\D/g, "");
+  const newHour = hour.split("");
+  newHour.shift();
+  hour = newHour.join('');
 
   // realizar a formatação...
   return hour.replace(/(\d{2})(\d{2})/, "$1:$2");
