@@ -154,26 +154,17 @@ export default function RegistroDePonto() {
   }, [selectedUser, selectedMonth, selectedYear]);
 
   const generateTimes = (value: string) => {
-    const firstIn = clockIn.filter((ele) => {
-      if (Number(ele?.time?.split("/")[0]) === Number(value)) {
-        return ele;
-      }
-    })[0]?.time;
-    const firstOut = clockIn.filter((ele) => {
-      if (Number(ele?.time?.split("/")[0]) === Number(value)) {
-        return ele;
-      }
-    })[1]?.time;
-    const secondIn = clockIn.filter((ele) => {
-      if (Number(ele?.time?.split("/")[0]) === Number(value)) {
-        return ele;
-      }
-    })[2]?.time;
-    const secondOut = clockIn.filter((ele) => {
-      if (Number(ele?.time?.split("/")[0]) === Number(value)) {
-        return ele;
-      }
-    })[3]?.time;
+    const dayClockIn = clockIn
+      .filter((ele) => {
+        if (Number(ele?.time?.split("/")[0]) === Number(value)) {
+          return ele;
+        }
+      })
+      .sort((a, b) => (a?.time > b?.time ? 1 : -1));
+    const firstIn = dayClockIn[0]?.time;
+    const firstOut = dayClockIn[1]?.time;
+    const secondIn = dayClockIn[2]?.time;
+    const secondOut = dayClockIn[3]?.time;
 
     const refac = (value: any) => {
       return `20${value?.split(" ")[0]?.split("/")[2]}/${value.split("/")[1]}/${
@@ -216,26 +207,17 @@ export default function RegistroDePonto() {
     IClockIn | undefined,
     string
   ] => {
-    const firstIn = clockIn.filter((ele) => {
-      if (Number(ele?.time?.split("/")[0]) === Number(value)) {
-        return ele;
-      }
-    })[0];
-    const firstOut = clockIn.filter((ele) => {
-      if (Number(ele?.time?.split("/")[0]) === Number(value)) {
-        return ele;
-      }
-    })[1];
-    const secondIn = clockIn.filter((ele) => {
-      if (Number(ele?.time?.split("/")[0]) === Number(value)) {
-        return ele;
-      }
-    })[2];
-    const secondOut = clockIn.filter((ele) => {
-      if (Number(ele?.time?.split("/")[0]) === Number(value)) {
-        return ele;
-      }
-    })[3];
+    const dayClockIn = clockIn
+      .filter((ele) => {
+        if (Number(ele?.time?.split("/")[0]) === Number(value)) {
+          return ele;
+        }
+      })
+      .sort((a, b) => (a?.time > b?.time ? 1 : -1));
+    const firstIn = dayClockIn[0];
+    const firstOut = dayClockIn[1];
+    const secondIn = dayClockIn[2];
+    const secondOut = dayClockIn[3];
 
     const refac = (value: any) => {
       return `20${value?.split(" ")[0]?.split("/")[2]}/${value.split("/")[1]}/${
@@ -272,8 +254,9 @@ export default function RegistroDePonto() {
     );
 
     if (arrSubtotal.length > 0) {
-      const subTotal = arrSubtotal.reduce((a, b) => a + b, 0);
-      const minutes =
+      let subTotal = arrSubtotal.reduce((a, b) => a + b, 0);
+
+      let minutes =
         Math.floor(subTotal / 1000 / 60 / 60) +
         ":" +
         (Math.floor(

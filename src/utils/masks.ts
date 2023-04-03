@@ -22,7 +22,7 @@ export const hourFormatter = (hour: string): string => {
   hour = hour.replace(/\D/g, "");
   const newHour = hour.split("");
   newHour.shift();
-  hour = newHour.join('');
+  hour = newHour.join("");
 
   // realizar a formatação...
   return hour.replace(/(\d{2})(\d{2})/, "$1:$2");
