@@ -10,6 +10,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <GeneralProvider>
       <CompanyProvider>
+        <GlobalStyles />
         <Component {...pageProps} />
       </CompanyProvider>
     </GeneralProvider>
