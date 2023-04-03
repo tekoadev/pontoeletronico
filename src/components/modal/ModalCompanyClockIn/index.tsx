@@ -1,9 +1,10 @@
-import { CompanyContext } from "@/context/companyContext";
-import { hourFormatter } from "@/utils/masks";
+import { CompanyContext, useCompanyContext } from "@/context/companyContext";
+import { hourFormatter, verifyHour } from "@/utils/masks";
 import { Dispatch, SetStateAction, useContext, useState } from "react";
 import { AiOutlineCloseCircle } from "react-icons/ai";
 import * as S from "./style";
 import { IUser } from "@/server/interface";
+import { useGeneral } from "@/context/generalContext";
 
 export default function ModalCompanyClockIn({
   type,
@@ -35,7 +36,8 @@ export default function ModalCompanyClockIn({
         : "00:00"
       : "00:00"
   );
-  const { editClockIn, deleteClockIn, addClockIn } = useContext(CompanyContext);
+  const { editClockIn, deleteClockIn, addClockIn } = useCompanyContext();
+  const { showAlert } = useGeneral();
 
   return (
     <S.ModalContainer>
@@ -96,12 +98,16 @@ export default function ModalCompanyClockIn({
 
           <button
             onClick={async () => {
-              await editClockIn(
-                `${editClockInValue!.split(" ")[0]} ${valueInput}`,
-                clockInId
-              );
-              await handlerUpdateClockIn(userId);
-              setShowModal(false);
+              if (verifyHour(valueInput)) {
+                await editClockIn(
+                  `${editClockInValue!.split(" ")[0]} ${valueInput}`,
+                  clockInId
+                );
+                await handlerUpdateClockIn(userId);
+                setShowModal(false);
+              } else {
+                showAlert("error", "Formato de hora invalida", "");
+              }
             }}
           >
             Editar
@@ -144,12 +150,16 @@ export default function ModalCompanyClockIn({
               />
               <button
                 onClick={async () => {
-                  await addClockIn(
-                    `${day}/${month}/${year} ${valueInput}`,
-                    userId
-                  );
-                  await handlerUpdateClockIn(userId);
-                  setShowModal(false);
+                  if (verifyHour(valueInput)) {
+                    await addClockIn(
+                      `${day}/${month}/${year} ${valueInput}`,
+                      userId
+                    );
+                    await handlerUpdateClockIn(userId);
+                    setShowModal(false);
+                  } else {
+                    showAlert("error", "Formato de hora invalida", "");
+                  }
                 }}
               >
                 Adicionar
