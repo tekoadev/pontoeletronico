@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-floating-promises */
 import Header from "@/components/HeaderAdm";
+import ModalDeleteEmployee from "@/components/modal/modalDeleteUser";
 import { useCompanyContext } from "@/context/companyContext";
 import { useGeneral } from "@/context/generalContext";
 import type { IUser } from "@/server/interface";
@@ -14,6 +15,7 @@ export default function EditUser() {
 
   const [user, setUser] = useState<IUser>({} as IUser);
   const [checked, setChecked] = useState(user?.hourly);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const findUserById = (id: string) => {
     const userFind = users.find((e) => e.id == id);
@@ -26,8 +28,10 @@ export default function EditUser() {
   };
 
   useEffect(() => {
-    listUsers();
-  }, []);
+    if (!showDeleteModal) {
+      listUsers();
+    }
+  }, [showDeleteModal]);
 
   const HandlerSubmit = (e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -75,13 +79,15 @@ export default function EditUser() {
             }}
           >
             <S.EmployOptions value="">Selecione um funcionário</S.EmployOptions>
-            {users.map((elem, i) => {
-              return (
-                <S.EmployOptions value={elem?.id} key={i}>
-                  {elem.name}
-                </S.EmployOptions>
-              );
-            })}
+            {users
+              .sort((a, b) => (a?.name > b?.name ? 1 : -1))
+              .map((elem, i) => {
+                return (
+                  <S.EmployOptions value={elem?.id} key={i}>
+                    {elem.name}
+                  </S.EmployOptions>
+                );
+              })}
           </S.EmploySelect>
         </S.ContainerInput>
 
@@ -198,8 +204,8 @@ export default function EditUser() {
           type="submit"
           // eslint-disable-next-line @typescript-eslint/no-misused-promises
           onClick={async (e) => {
+            e.preventDefault();
             if (user?.id === undefined) {
-              e.preventDefault();
               showAlert("error", "Selecione um usuário", "");
               return;
             } else if (HandlerSubmit(e) && user?.id !== undefined) {
@@ -223,6 +229,24 @@ export default function EditUser() {
         >
           Enviar
         </S.SubmitButton>
+        <S.DeleteButton
+          onClick={(e) => {
+            e.preventDefault();
+            if (user?.id === undefined) {
+              showAlert("error", "Selecione um usuário", "");
+            } else {
+              setShowDeleteModal(true);
+            }
+          }}
+        >
+          Deletar funcionário
+        </S.DeleteButton>
+        {showDeleteModal && (
+          <ModalDeleteEmployee
+            setShowModal={setShowDeleteModal}
+            userId={user.id!}
+          />
+        )}
       </S.FormContainer>
     </>
   );

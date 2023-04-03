@@ -93,6 +93,16 @@ export const SubmitButton = styled.button`
   font-weight: 600;
 `;
 
+export const DeleteButton = styled.button`
+  background-color: red;
+  border: none;
+  padding: 12px;
+  border-radius: 12px;
+  width: 80%;
+  color: var(--white);
+  font-weight: 600;
+`;
+
 export const CheckboxContainer = styled.label`
   position: relative;
   display: inline-block;
