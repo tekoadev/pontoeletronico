@@ -12,7 +12,10 @@ import ModalCompanyClockIn from "@/components/modal/ModalCompanyClockIn";
 import { useCompanyContext } from "@/context/companyContext";
 import type { IClockIn, IUser } from "@/server/interface";
 import * as S from "@/styles/pages/registerPoint";
-import { PDFgeneratorToDownload } from "@/utils/PDFgeneratorToDownload";
+import {
+  PDFGeneratorToDownloadOfTheDiaristType,
+  PDFgeneratorToDownload,
+} from "@/utils/PDFgeneratorToDownload";
 import { useEffect, useState } from "react";
 import {
   AiOutlinePlusCircle,
@@ -373,15 +376,25 @@ export default function RegistroDePonto() {
               </S.EmployColumn>
               <S.DownloadPDF
                 onClick={() =>
-                  PDFgeneratorToDownload(
-                    days,
-                    generateRowHourly,
-                    selectedUser,
-                    company!,
-                    selectedMonth,
-                    selectedYear,
-                    generateTotalHours
-                  )
+                  !selectedUser.hourly
+                    ? PDFGeneratorToDownloadOfTheDiaristType(
+                        days,
+                        generateRowHourly,
+                        selectedUser,
+                        company!,
+                        selectedMonth,
+                        selectedYear,
+                        generateTotalEmployeeDays
+                      )
+                    : PDFgeneratorToDownload(
+                        days,
+                        generateRowHourly,
+                        selectedUser,
+                        company!,
+                        selectedMonth,
+                        selectedYear,
+                        generateTotalHours
+                      )
                 }
               >
                 Baixar como PDF

@@ -1,12 +1,37 @@
 import UserAside from "@/components/userAside";
 import { Container } from "@/styles/pages/styles";
-import { useEffect, useState } from "react";
+import { FormEvent, MouseEvent, useEffect, useState } from "react";
 import { BsClock } from "react-icons/bs";
 import * as S from "@/styles/pages/registerPointUser";
+import { useGeneral } from "@/context/generalContext";
+import { useUserContext } from "@/context/userContext";
 
 export default function Home() {
   const [time, setTime] = useState("");
-  const [active, setActive] = useState(false)
+  const [obs, setObs] = useState("")
+  const {user, createClockIn} = useUserContext() 
+  const {showAlert} = useGeneral()
+  
+  const [location, setLocation] = useState("");
+
+  const positionError = () => {
+    showAlert("error", "Habilite o envio de localização", "");
+  };
+
+  const showPosition = (pos: GeolocationPosition) => {
+    setLocation(`${pos.coords.latitude}/${pos.coords.longitude}`);
+  };
+
+  const getLocation = (
+    event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent> | FormEvent<HTMLFormElement>
+  ) => {
+    event.preventDefault();
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(showPosition, positionError);
+    } else {
+      showAlert("error", "Habilite o envio de localização", "");
+    }
+  };
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -23,13 +48,22 @@ export default function Home() {
 
         <S.Wrapper>
           <S.Text style={{ marginTop: "2vh", fontWeight: "600" }}>
-            Olá, Fabio
+            Olá, {user?.name}
           </S.Text>
           <S.ClockText>
             <BsClock />
             &#32;&#32;&#32;{time}
           </S.ClockText>
-          <S.Form onSubmit={(e) => {e.preventDefault()}}>
+          <S.Form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (location === "") {
+                getLocation(e);
+              } else {
+                createClockIn(location, obs)
+              }
+            }}
+          >
             <S.Text
               style={{
                 textAlign: "center",
@@ -38,16 +72,18 @@ export default function Home() {
                 fontSize: "1.2rem",
                 marginBottom: "2vh",
               }}
+              
             >
               Marcar ponto:
             </S.Text>
 
             <S.Label>Observações:</S.Label>
-            <S.TextArea name="Observações" />
+            <S.TextArea name="Observações" value={obs} onChange={(e) => setObs(e.target.value)}/>
 
             <S.Button
               value="Enviar localização"
               style={{ width: "80%", margin: "2vh 10% 0 10%" }}
+              onClick={(event) => {getLocation(event)}}
             >
               Enviar localização
             </S.Button>

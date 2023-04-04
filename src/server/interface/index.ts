@@ -29,6 +29,16 @@ export interface IUser {
   session?: IUserSession[];
   createdAt?: Date;
   updatedAt?: Date;
+  company?: {
+    id: string;
+    name: string;
+    cnpj: string;
+    password: string;
+    logo: string;
+    isActive: boolean;
+    createdAt: string;
+    updatedAt: string;
+  };
 }
 
 export interface IClockIn {
@@ -44,6 +54,7 @@ export interface IClockIn {
   type?: string;
   createdAt?: Date;
   updatedAt?: Date;
+  user?: IUser
 }
 
 export interface IUserSession {

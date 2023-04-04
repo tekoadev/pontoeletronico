@@ -1,12 +1,12 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import * as S from "./styles";
 import { BsReverseLayoutTextSidebarReverse, BsXCircle } from "react-icons/bs";
 import { useRouter } from "next/router";
-import nookies, { parseCookies, setCookie, destroyCookie } from "nookies";
+import { useUserContext } from "@/context/userContext";
 
 export default function UserAside() {
   const navigate = useRouter();
-
+  const { handleLogout, verifyUserToken } = useUserContext();
   const [animation, setAnimation] = useState({});
   const [animoBlur, setAnimoBlur] = useState({});
   const [userAside, setUserAside] = useState(false);
@@ -44,6 +44,7 @@ export default function UserAside() {
           <hr />
           <S.Text
             onClick={() => {
+              verifyUserToken();
               navigate.push("/registros");
             }}
             style={{ cursor: "pointer" }}
@@ -52,6 +53,7 @@ export default function UserAside() {
           </S.Text>
           <S.Text
             onClick={() => {
+              verifyUserToken();
               navigate.push("/usuario/registro");
             }}
             style={{ cursor: "pointer" }}
@@ -60,7 +62,7 @@ export default function UserAside() {
           </S.Text>
           <S.Text
             onClick={() => {
-              navigate.push("/");
+              handleLogout();
             }}
             style={{ cursor: "pointer" }}
           >
