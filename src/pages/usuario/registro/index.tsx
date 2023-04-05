@@ -5,13 +5,19 @@ import { BsClock } from "react-icons/bs";
 import * as S from "@/styles/pages/registerPointUser";
 import { useGeneral } from "@/context/generalContext";
 import { useUserContext } from "@/context/userContext";
+import { parseCookies } from "nookies";
 
 export default function Home() {
   const [time, setTime] = useState("");
-  const [obs, setObs] = useState("")
-  const {user, createClockIn} = useUserContext() 
-  const {showAlert} = useGeneral()
-  
+  const [obs, setObs] = useState("");
+  const { user, createClockIn } = useUserContext();
+  const { showAlert } = useGeneral();
+
+  const cookies = parseCookies();
+  const [refUser, setRefUser] = useState(
+    cookies?.user !== undefined ? JSON.parse(cookies?.user) : {}
+  );
+
   const [location, setLocation] = useState("");
 
   const positionError = () => {
@@ -23,11 +29,14 @@ export default function Home() {
   };
 
   const getLocation = (
-    event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent> | FormEvent<HTMLFormElement>
+    event:
+      | MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
+      | FormEvent<HTMLFormElement>
   ) => {
     event.preventDefault();
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(showPosition, positionError);
+      showAlert("", "Localização enviada com sucesso", "");
     } else {
       showAlert("error", "Habilite o envio de localização", "");
     }
@@ -41,15 +50,27 @@ export default function Home() {
     return () => clearInterval(interval);
   });
 
+  useEffect(() => {
+    if (user?.id) {
+      setRefUser(user);
+    }
+  }, []);
+
   return (
     <>
       <Container>
         <UserAside />
 
         <S.Wrapper>
-          <S.Text style={{ marginTop: "2vh", fontWeight: "600" }}>
-            Olá, {user?.name}
-          </S.Text>
+          {refUser?.name !== undefined ? (
+            <S.Text style={{ marginTop: "2vh", fontWeight: "600" }}>
+              Olá, {refUser.name}
+            </S.Text>
+          ) : (
+            <S.Text style={{ marginTop: "2vh", fontWeight: "600" }}>
+              Seja bem vindo!
+            </S.Text>
+          )}
           <S.ClockText>
             <BsClock />
             &#32;&#32;&#32;{time}
@@ -60,7 +81,7 @@ export default function Home() {
               if (location === "") {
                 getLocation(e);
               } else {
-                createClockIn(location, obs)
+                createClockIn(location, obs);
               }
             }}
           >
@@ -72,18 +93,23 @@ export default function Home() {
                 fontSize: "1.2rem",
                 marginBottom: "2vh",
               }}
-              
             >
               Marcar ponto:
             </S.Text>
 
             <S.Label>Observações:</S.Label>
-            <S.TextArea name="Observações" value={obs} onChange={(e) => setObs(e.target.value)}/>
+            <S.TextArea
+              name="Observações"
+              value={obs}
+              onChange={(e) => setObs(e.target.value)}
+            />
 
             <S.Button
               value="Enviar localização"
               style={{ width: "80%", margin: "2vh 10% 0 10%" }}
-              onClick={(event) => {getLocation(event)}}
+              onClick={(event) => {
+                getLocation(event);
+              }}
             >
               Enviar localização
             </S.Button>

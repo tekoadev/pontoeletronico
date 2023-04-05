@@ -27,7 +27,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const { setIsLoading, showAlert } = useGeneral();
   const cookies = parseCookies();
   const [user, setUser] = useState<IUser | undefined>(
-    cookies?.User !== undefined ? JSON.parse(cookies?.user) : {}
+    cookies?.user !== undefined ? JSON.parse(cookies?.user) : {}
   );
   const [userToken, setUserToken] = useState(cookies?.userToken) || "";
   const headers = {
@@ -68,17 +68,14 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     navigate.push("/usuario");
   };
 
-  const verifyUserToken = () => {
+  const verifyUserToken = async () => {
     if (window.location.pathname.includes("/usuario") && userToken !== "") {
-      ClockInApi({
+      await ClockInApi({
         method: "GET",
         url: "user/clockin",
         headers: headers,
       })
         .then((res) => {
-          setUser(res?.data?.body);
-          setCookie(null, "user", JSON.stringify(res?.data?.body));
-
           if (window.location.pathname === "/usuario") {
             navigate.push("/usuario/registro");
           }
@@ -130,14 +127,14 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       },
     })
       .then((res) => {
-        setIsLoading(false);
         showAlert("", "Ponto registrado com sucesso", "");
       })
-      .catch((err) => {
-        verifyUserToken();
-        setIsLoading(false);
+      .catch(async (err) => {
+        await verifyUserToken();
+
         showAlert("error", "Erro de login", "Verifique os dados enviados");
       });
+    setIsLoading(false);
   };
 
   return (

@@ -41,7 +41,7 @@ export default function UserAside() {
             <S.Text>Menu do usuário</S.Text>
             <BsXCircle onClick={() => HandlerClose()} />
           </S.HeaderMenu>
-          <hr />
+
           <S.Text
             onClick={() => {
               verifyUserToken();

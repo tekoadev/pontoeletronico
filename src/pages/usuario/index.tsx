@@ -9,8 +9,7 @@ export default function Home() {
 
   const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
-  const {handleLogin} = useUserContext()
-  
+  const { handleLogin } = useUserContext();
 
   return (
     <>
@@ -19,7 +18,7 @@ export default function Home() {
           <S.LoginForm
             onSubmit={(e) => {
               e.preventDefault();
-              handleLogin(user, password)
+              handleLogin(user, password);
             }}
           >
             <h3>Login</h3>
