@@ -10,7 +10,7 @@ export async function createClockIn(
   req: ICreateCompanyClockInReq,
   res: NextApiResponse
 ) {
-  const { location, obs, type } = req.body;
+  const { location, obs } = req.body;
 
   const findUser = await prismaConnect.users.findUnique({
     where: { id: req.request_id },
@@ -38,7 +38,6 @@ export async function createClockIn(
       time,
       location,
       obs,
-      type,
     },
     include: {
       company: true,

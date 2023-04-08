@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import prismaConnect from "@/server/db";
+import type { Users, Company } from "@prisma/client";
 import type {
   ICompany,
   ICreateCompany,
   ICreateCompanyReq,
-} from "@/server/interface";
+} from "@/server/interface/backEnd";
 import { hash } from "bcrypt";
 import type { NextApiResponse } from "next";
 
@@ -12,7 +13,14 @@ export async function createCompany(
   req: ICreateCompanyReq,
   res: NextApiResponse
 ) {
-  const { name, cnpj, logo, isActive = true, password } = req.body;
+  const {
+    name,
+    cnpj,
+    logo,
+    isActive = true,
+    password,
+    payment = false,
+  } = req.body;
 
   if (!name || !cnpj || !password) {
     return res
@@ -20,7 +28,7 @@ export async function createCompany(
       .json({ message: "must send a name, password and cnpj" });
   }
 
-  const findCompany: ICompany | null = await prismaConnect.company.findUnique({
+  const findCompany: Company | null = await prismaConnect.company.findUnique({
     where: { cnpj },
   });
 
@@ -29,13 +37,14 @@ export async function createCompany(
   }
   const hashedPassword = await hash(password.toString(), 10);
 
-  const createCompany: ICreateCompany = await prismaConnect.company.create({
+  const createCompany: Company = await prismaConnect.company.create({
     data: {
       name,
       cnpj,
       logo,
       isActive,
       password: hashedPassword,
+      payment,
     },
   });
 
@@ -46,13 +55,21 @@ export async function updateCompany(
   req: ICreateCompanyReq,
   res: NextApiResponse
 ) {
-  const { id, name, cnpj, logo, isActive = true, password } = req.body;
+  const {
+    id,
+    name,
+    cnpj,
+    logo,
+    isActive = true,
+    password,
+    payment = false,
+  } = req.body;
 
   if (!id) {
     return res.status(400).json({ message: "must send a id" });
   }
 
-  const findCompany: ICompany | null = await prismaConnect.company.findUnique({
+  const findCompany: Company | null = await prismaConnect.company.findUnique({
     where: { id },
   });
 
@@ -73,6 +90,7 @@ export async function updateCompany(
       logo,
       isActive,
       password: hashedPassword,
+      payment,
     },
   });
 
@@ -89,7 +107,7 @@ export async function deleteCompany(
     return res.status(400).json({ message: "must send a id" });
   }
 
-  const findCompany: ICompany | null = await prismaConnect.company.findUnique({
+  const findCompany: Company | null = await prismaConnect.company.findUnique({
     where: { id },
   });
 
