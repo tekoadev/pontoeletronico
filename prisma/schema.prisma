@@ -21,7 +21,9 @@ model Company {
 
     logo String? @db.LongText
 
-    isActive Boolean
+    isActive Boolean?
+
+    payment Boolean?
 
     users Users[]
 
@@ -53,6 +55,10 @@ model Users {
 
     email String?
     
+    location Boolean?
+
+    isAdm Boolean?
+    
     clockin ClockIn[]
 
     session UserSession[]
@@ -81,8 +87,6 @@ model ClockIn {
     location String? @db.LongText
 
     obs String?
-
-    type String?
 
     updatedAt DateTime @updatedAt @default(now())
 
