@@ -78,13 +78,15 @@ export default function Home() {
           <S.Form
             onSubmit={(e) => {
               e.preventDefault();
+              console.log(location, obs);
+
               if (user?.location == true && location === "") {
                 getLocation(e);
-                createClockIn(location, obs)
+                createClockIn({ location, obs });
               } else {
                 user?.location
-                  ? createClockIn(location, obs)
-                  : createClockIn(obs);
+                  ? createClockIn({ location, obs })
+                  : createClockIn({ obs });
               }
             }}
           >

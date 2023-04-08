@@ -15,7 +15,13 @@ interface UserContextProps {
   handleLogin: (user: string, password: string) => Promise<void>;
   handleLogout: () => void;
   verifyUserToken: () => void;
-  createClockIn: (location?: string, obs?: string) => Promise<void>;
+  createClockIn: ({
+    location,
+    obs,
+  }: {
+    location?: string;
+    obs?: string;
+  }) => Promise<void>;
   user: IUser | undefined;
 }
 
@@ -54,7 +60,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         setUser(res?.data?.body);
         setCookie(null, "user", JSON.stringify(res?.data?.body));
         setIsLoading(false);
-        navigate.push("/usuario/registro");
+        navigate.push("/usuario/criar-registro");
       })
       .catch((err) => {
         setIsLoading(false);
@@ -77,7 +83,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       })
         .then((res) => {
           if (window.location.pathname === "/usuario") {
-            navigate.push("/usuario/registro");
+            navigate.push("/usuario/criar-registro");
           }
         })
         .catch((err) => {
@@ -114,7 +120,13 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       });
   };
 
-  const createClockIn = async (location = "", obs = "") => {
+  const createClockIn = async ({
+    location,
+    obs,
+  }: {
+    location?: string;
+    obs?: string;
+  }) => {
     setIsLoading(true);
     await ClockInApi({
       method: "POST",
@@ -122,7 +134,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       headers,
       data: {
         location,
-        obs: obs != "" ? obs : null,
+        obs,
       },
     })
       .then((res) => {
