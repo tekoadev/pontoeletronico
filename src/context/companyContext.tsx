@@ -27,6 +27,7 @@ interface CompanyContextProps {
   editUser: (data: ICreateUser) => Promise<boolean>;
   deleteUser: (data: {id:string}) => Promise<boolean>
 }
+
 export const CompanyContext = createContext<CompanyContextProps>(
   {} as CompanyContextProps
 );
@@ -296,7 +297,7 @@ export const CompanyProvider = ({ children }: any) => {
         }
         showAlert(
           "error",
-          "Erro ao criar usuário",
+          "Erro ao Editar usuário",
           "Verifique com administrador do serviço"
         );
         return false;
