@@ -18,6 +18,7 @@ export default function RegisterUser() {
     email: "",
     phone: "",
     hourly: true,
+    location: true
   });
 
   const HandlerSubmit = (e: React.FormEvent<HTMLButtonElement>) => {
@@ -158,6 +159,18 @@ export default function RegisterUser() {
           </S.CheckboxContainer>
         </S.ContainerInput>
 
+        <S.ContainerInput>
+          <S.LabelText htmlFor="">Localização obrigatória?</S.LabelText>
+          <S.CheckboxContainer className="switch">
+            <S.SwitchInput
+              type="checkbox"
+              checked={data.location}
+              onChange={() => setData({ ...data, location: !data.location })}
+            />
+            <S.Slider className="slider round"></S.Slider>
+          </S.CheckboxContainer>
+        </S.ContainerInput>
+
         <S.SubmitButton
           type="submit"
           onClick={async (e) => {
@@ -171,6 +184,7 @@ export default function RegisterUser() {
                   email: "",
                   phone: "",
                   hourly: true,
+                  location: true
                 });
               }
             }

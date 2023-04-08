@@ -78,10 +78,13 @@ export default function Home() {
           <S.Form
             onSubmit={(e) => {
               e.preventDefault();
-              if (location === "") {
+              if (user?.location == true && location === "") {
                 getLocation(e);
+                createClockIn(location, obs)
               } else {
-                createClockIn(location, obs);
+                user?.location
+                  ? createClockIn(location, obs)
+                  : createClockIn(obs);
               }
             }}
           >
@@ -104,15 +107,17 @@ export default function Home() {
               onChange={(e) => setObs(e.target.value)}
             />
 
-            <S.Button
-              value="Enviar localização"
-              style={{ width: "80%", margin: "2vh 10% 0 10%" }}
-              onClick={(event) => {
-                getLocation(event);
-              }}
-            >
-              Enviar localização
-            </S.Button>
+            {user?.location == true && (
+              <S.Button
+                value="Enviar localização"
+                style={{ width: "80%", margin: "2vh 10% 0 10%" }}
+                onClick={(event) => {
+                  getLocation(event);
+                }}
+              >
+                Enviar localização
+              </S.Button>
+            )}
 
             <S.Button
               type="submit"

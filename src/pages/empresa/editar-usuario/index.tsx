@@ -189,6 +189,18 @@ export default function EditUser() {
         </S.ContainerInput>
 
         <S.ContainerInput>
+          <S.LabelText htmlFor="">Localização obrigatória?</S.LabelText>
+          <S.CheckboxContainer className="switch">
+            <S.SwitchInput
+              type="checkbox"
+              checked={user?.location}
+              onChange={() => setUser({ ...user, location: !user.location })}
+            />
+            <S.Slider className="slider round"></S.Slider>
+          </S.CheckboxContainer>
+        </S.ContainerInput>
+
+        <S.ContainerInput>
           <S.LabelText htmlFor="">Funcionário Ativo</S.LabelText>
           <S.CheckboxContainer className="switch">
             <S.SwitchInput

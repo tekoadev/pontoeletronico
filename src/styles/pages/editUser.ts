@@ -165,6 +165,7 @@ export const EmploySelect = styled.select`
   padding-left: 20px;
   padding: 10px;
   font-size: large;
+  min-width: 256px;
   color: black;
 `;
 

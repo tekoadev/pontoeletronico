@@ -122,7 +122,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       headers,
       data: {
         location,
-        type: "in",
         obs: obs != "" ? obs : null,
       },
     })
@@ -130,9 +129,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         showAlert("", "Ponto registrado com sucesso", "");
       })
       .catch(async (err) => {
+        showAlert("error", "Erro de dados", "Verifique os dados enviados");
         await verifyUserToken();
-
-        showAlert("error", "Erro de login", "Verifique os dados enviados");
       });
     setIsLoading(false);
   };

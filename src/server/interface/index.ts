@@ -24,6 +24,7 @@ export interface IUser {
   isActive: boolean;
   phone?: string;
   email?: string;
+  location?: boolean;
   CompanyId?: string;
   clockin?: IClockIn[];
   session?: IUserSession[];
@@ -130,6 +131,7 @@ export interface ICreateUser {
   name?: string;
   password: string;
   hourly: boolean;
+  location: boolean;
   isActive?: boolean;
   phone?: string | null;
   email?: string | null;
