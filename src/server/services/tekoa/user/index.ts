@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import prismaConnect from "@/server/db";
+import type { Users, Company } from "@prisma/client";
 import type {
   ICompany,
   ICreateUser,
   ICreateUserReq,
   IUser,
-} from "@/server/interface";
+} from "@/server/interface/backEnd";
 import { hash } from "bcrypt";
 import type { NextApiResponse } from "next";
 
@@ -20,15 +21,17 @@ export async function createUser(req: ICreateUserReq, res: NextApiResponse) {
     isActive = true,
     phone,
     email,
+    location = true,
+    isAdm = false,
   } = req.body;
 
   if (!user || !company_id || !cpf || !name || !password) {
-    return res
-      .status(400)
-      .json({ message: "must send a user, company id, cpf, name and password" });
+    return res.status(400).json({
+      message: "must send a user, company id, cpf, name and password",
+    });
   }
 
-  const findCompany: ICompany | null = await prismaConnect.company.findUnique({
+  const findCompany: Company | null = await prismaConnect.company.findUnique({
     where: { id: company_id },
   });
 
@@ -36,7 +39,7 @@ export async function createUser(req: ICreateUserReq, res: NextApiResponse) {
     return res.status(409).json({ message: "Company not found" });
   }
 
-  const findUser: IUser | null = await prismaConnect.users.findUnique({
+  const findUser: Users | null = await prismaConnect.users.findUnique({
     where: { user },
   });
 
@@ -56,6 +59,8 @@ export async function createUser(req: ICreateUserReq, res: NextApiResponse) {
       isActive,
       phone,
       email,
+      location,
+      isAdm,
     },
   });
 
@@ -73,24 +78,24 @@ export async function updateUser(req: ICreateUserReq, res: NextApiResponse) {
     isActive = true,
     phone,
     email,
+    location = true,
+    isAdm = false,
   } = req.body;
 
   if (!id) {
     return res.status(400).json({ message: "must send a company id" });
   }
   if (company_id) {
-    const findCompany: ICompany | null = await prismaConnect.company.findUnique(
-      {
-        where: { id: company_id },
-      }
-    );
+    const findCompany: Company | null = await prismaConnect.company.findUnique({
+      where: { id: company_id },
+    });
 
     if (!findCompany) {
       return res.status(409).json({ message: "Company not found" });
     }
   }
 
-  const findUser: IUser | null = await prismaConnect.users.findUnique({
+  const findUser: Users | null = await prismaConnect.users.findUnique({
     where: { id },
   });
 
@@ -114,6 +119,8 @@ export async function updateUser(req: ICreateUserReq, res: NextApiResponse) {
       isActive,
       phone,
       email,
+      location,
+      isAdm,
     },
   });
 
@@ -130,7 +137,7 @@ export async function deleteUser(
     return res.status(400).json({ message: "must send a id" });
   }
 
-  const findUser: IUser | null = await prismaConnect.users.findUnique({
+  const findUser: Users | null = await prismaConnect.users.findUnique({
     where: { id },
   });
 

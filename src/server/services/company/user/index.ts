@@ -5,7 +5,7 @@ import type {
   ICreateUser,
   ICreateUserCompanyReq,
   IUser,
-} from "@/server/interface";
+} from "@/server/interface/backEnd";
 import { hash } from "bcrypt";
 import type { NextApiResponse } from "next";
 
@@ -22,6 +22,8 @@ export async function createUser(
     isActive = true,
     phone,
     email,
+    isAdm = false,
+    location = true,
   } = req.body;
 
   if (!cpf || !name || !password) {
@@ -30,7 +32,7 @@ export async function createUser(
       .json({ message: "must send a company id, cpf, name and password" });
   }
 
-  const findCompany: ICompany | null = await prismaConnect.company.findUnique({
+  const findCompany = await prismaConnect.company.findUnique({
     where: { id: req.request_id },
   });
 
@@ -58,6 +60,8 @@ export async function createUser(
       isActive,
       phone,
       email,
+      location,
+      isAdm,
     },
   });
 
@@ -78,12 +82,14 @@ export async function updateUser(
     isActive = true,
     phone,
     email,
+    isAdm = false,
+    location = true,
   } = req.body;
 
   if (!id) {
     return res.status(400).json({ message: "must send a company id" });
   }
-  const findCompany: ICompany | null = await prismaConnect.company.findUnique({
+  const findCompany = await prismaConnect.company.findUnique({
     where: { id: req.request_id },
   });
 
@@ -125,6 +131,8 @@ export async function updateUser(
       isActive,
       phone,
       email,
+      isAdm,
+      location,
     },
   });
 
@@ -132,7 +140,7 @@ export async function updateUser(
 }
 
 export async function deleteUser(
-  req: { body: { id: string }, request_id: string},
+  req: { body: { id: string }; request_id: string },
   res: NextApiResponse
 ) {
   const { id } = req.body;
@@ -223,14 +231,11 @@ export async function reportUserByMonth(
     return res.status(409).json({ message: "User not found" });
   }
 
-  const body = clockIn.map((elem) => {
-    if (
+  const body = clockIn.find(
+    (elem) =>
       elem.time?.split(" ")[0]?.split("/")[1] === month &&
       elem.time?.split(" ")[0]?.split("/")[2] === year
-    ) {
-      return elem;
-    }
-  });
+  );
 
   return res.json({
     message: "Success",
