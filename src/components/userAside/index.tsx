@@ -45,7 +45,7 @@ export default function UserAside() {
           <S.Text
             onClick={() => {
               verifyUserToken();
-              navigate.push("/registros");
+              navigate.push("/usuario/meus-registros");
             }}
             style={{ cursor: "pointer" }}
           >
@@ -54,7 +54,7 @@ export default function UserAside() {
           <S.Text
             onClick={() => {
               verifyUserToken();
-              navigate.push("/usuario/registro");
+              navigate.push("/usuario/criar-registro");
             }}
             style={{ cursor: "pointer" }}
           >
