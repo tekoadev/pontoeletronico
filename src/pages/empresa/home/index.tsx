@@ -1,6 +1,5 @@
 import Header from "@/components/HeaderAdm";
 import * as S from "@/styles/pages/registerPoint";
-import { useState } from "react";
 import Member from "@/assets/imgs/member.png";
 import Search from "@/assets/imgs/search.png";
 import TimeInACloud from "@/assets/imgs/timeInACloud.png";
@@ -10,26 +9,9 @@ import ArrowRight from "@/assets/imgs/arrowright.png";
 import Image from "next/image";
 
 export default function Registrodeponto() {
-  const months = [
-    "Janeiro",
-    "Fevereiro",
-    "Março",
-    "Abril",
-    "Maio",
-    "Junho",
-    "Julho",
-    "Agosto",
-    "Setembro",
-    "Outubro",
-    "Novembro",
-    "Dezembro",
-  ];
-
-  const [month, setMonth] = useState("Janeiro");
-
   return (
-    <S.Wrapper>
-      <Header></Header>
+    <S.Wrapper className="home">
+      <Header />
 
       <S.ContainerHome>
         <S.ContainerInfo>
@@ -45,7 +27,7 @@ export default function Registrodeponto() {
           </S.Infos>
 
           <S.Infos>
-            <h3>Total de Funcionários</h3>
+            <h3 className="employee">Total de Funcionários</h3>
 
             <S.InfoAlignment>
               <S.InfosDetails>

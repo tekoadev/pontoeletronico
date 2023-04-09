@@ -14,6 +14,10 @@ export const Wrapper = styled.div`
   padding-bottom: 5vh;
   background-color: #ebf0f5;
   overflow: scroll;
+
+  &.home {
+    padding: 50px 0;
+  }
 `;
 
 export const ReportWrapper = styled.div`
@@ -137,14 +141,20 @@ export const ContainerTableComponent = styled.div`
 export const ContainerHome = styled.div`
   width: 80%;
   margin: 0 auto;
+  margin-top: 80px;
+  max-width: 1500px;
 `;
 
 export const ContainerInfo = styled.div`
   width: 100%;
   display: flex;
   flex-wrap: wrap;
-  row-gap: 20px;
-  justify-content: space-between;
+  gap: 20px;
+  justify-content: center;
+
+  @media (min-width: 768px) {
+    justify-content: space-between;
+  }
 `;
 
 export const Infos = styled.div`
@@ -154,10 +164,55 @@ export const Infos = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
+
+  @media (min-width: 768px) {
+    width: 290px;
+  }
+  @media (min-width: 905px) {
+    width: fit-content;
+  }
+
+  @media (min-width: 1405px) {
+    :nth-child(1) {
+      width: 400px;
+    }
+    :nth-child(2) {
+      width: 500px;
+    }
+  }
+  @media (min-width: 1410px) {
+    :nth-child(1) {
+      width: 500px;
+    }
+    :nth-child(2) {
+      width: 600px;
+    }
+  }
 
   h3 {
-    font-size: 40px;
+    font-size: 15px;
     color: var(--select);
+
+    &.employee {
+      font-size: 13px;
+    }
+
+    @media (min-width: 905px) {
+      font-size: 25px;
+
+      &.employee {
+        font-size: 25px;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      font-size: 30px;
+
+      &.employee {
+        font-size: 30px;
+      }
+    }
   }
 
   p {
@@ -175,15 +230,33 @@ export const InfoAlignment = styled.div`
 `;
 
 export const ImageContainer = styled.figure`
-  width: 100px;
+  display: none;
+  width: 50px;
+
+  &.info {
+    display: block;
+    width: 20px;
+  }
 
   .timeInACloud {
-    width: 150px;
+    width: 80px;
   }
 
   img {
     width: 100%;
     height: 100%;
+  }
+
+  @media (min-width: 1020px) {
+    display: block;
+  }
+
+  @media (min-width: 1170px) {
+    width: 100px;
+
+    .timeInACloud {
+      width: 150px;
+    }
   }
 `;
 
@@ -195,7 +268,11 @@ export const InfosDetails = styled.div`
   span {
     color: var(--select);
     font-weight: 600;
-    font-size: 16px;
+    font-size: 10px;
+
+    @media (min-width: 905px) {
+      font-size: 16px;
+    }
   }
 
   div {
@@ -222,6 +299,7 @@ export const ContainerOptionsInfo = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 20px 30px;
+  gap: 10px;
 
   .info {
     width: 80px;
@@ -239,10 +317,23 @@ export const OptionsAlignment = styled.div`
   }
 
   div {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
     p,
     span {
       color: var(--select);
       font-weight: 600;
+      font-size: 10px;
+
+      @media (min-width: 768px) {
+        font-size: 16px;
+      }
+    }
+
+    p {
+      color: var(--text);
     }
   }
 `;
