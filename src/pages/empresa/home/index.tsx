@@ -1,6 +1,13 @@
 import Header from "@/components/HeaderAdm";
 import * as S from "@/styles/pages/registerPoint";
 import { useState } from "react";
+import Member from "@/assets/imgs/member.png";
+import Search from "@/assets/imgs/search.png";
+import TimeInACloud from "@/assets/imgs/timeInACloud.png";
+import Calendar from "@/assets/imgs/calendar.png";
+import Download from "@/assets/imgs/download.png";
+import ArrowRight from "@/assets/imgs/arrowright.png";
+import Image from "next/image";
 
 export default function Registrodeponto() {
   const months = [
@@ -24,53 +31,86 @@ export default function Registrodeponto() {
     <S.Wrapper>
       <Header></Header>
 
-      <S.ReportWrapper>
-        <S.ReportInputs>
-          <S.EmployColumn>
-            <S.EmployLabel>Funcionários</S.EmployLabel>
-            <S.EmploySelect>
-              <S.EmployOptions value="fa">Fabio</S.EmployOptions>
-            </S.EmploySelect>
-          </S.EmployColumn>
-          <S.EmployColumn>
-            <S.EmployLabel>Mês</S.EmployLabel>
-            <S.EmploySelect onChange={(event) => setMonth(event.target.value)}>
-              {months.map((e, i) => (
-                <S.EmployOptions value={e} key={`${i}ds`}>
-                  {e}
-                </S.EmployOptions>
-              ))}
-            </S.EmploySelect>
-          </S.EmployColumn>
-          <S.DownloadPDF>Baixar como PDF</S.DownloadPDF>
-        </S.ReportInputs>
+      <S.ContainerHome>
+        <S.ContainerInfo>
+          <S.Infos>
+            <h3>Checkin no mês</h3>
 
-        <hr
-          style={{ width: "100%", height: "1px", backgroundColor: "#000000" }}
-        />
+            <S.InfoAlignment>
+              <p>240</p>
+              <S.ImageContainer>
+                <Image src={TimeInACloud} alt="" className="timeInACloud" />
+              </S.ImageContainer>
+            </S.InfoAlignment>
+          </S.Infos>
 
-        <S.TableHeadersColumn>
-          <div>
-            <S.TableHeadersText>Empresa:</S.TableHeadersText>
-            <S.TableHeadersText>CNPJ: 45.780.837/0001-39</S.TableHeadersText>
-          </div>
+          <S.Infos>
+            <h3>Total de Funcionários</h3>
 
-          <div>
-            <S.TableHeadersText>Período:</S.TableHeadersText>
-            <S.TableHeadersText>{month}</S.TableHeadersText>
-          </div>
-        </S.TableHeadersColumn>
+            <S.InfoAlignment>
+              <S.InfosDetails>
+                <span>cadastrados</span>
 
-        <S.TableHeadersColumn>
-          <div>
-            <S.TableHeadersText>Funcionário</S.TableHeadersText>
-            <S.TableHeadersText>CPF: 999.999.999-99</S.TableHeadersText>
-          </div>
-        </S.TableHeadersColumn>
-        <hr
-          style={{ width: "100%", height: "1px", backgroundColor: "#000000" }}
-        />
-      </S.ReportWrapper>
+                <div>
+                  <p>32</p>
+
+                  <S.ImageContainer>
+                    <Image src={Search} alt="" />
+                  </S.ImageContainer>
+                </div>
+              </S.InfosDetails>
+
+              <S.InfosDetails>
+                <span>ativos</span>
+
+                <div>
+                  <p>25</p>
+
+                  <S.ImageContainer>
+                    <Image src={Member} alt="" />
+                  </S.ImageContainer>
+                </div>
+              </S.InfosDetails>
+            </S.InfoAlignment>
+          </S.Infos>
+        </S.ContainerInfo>
+
+        <S.ContainerOptions>
+          <S.ContainerOptionsInfo>
+            <S.OptionsAlignment>
+              <S.ImageContainer className="align">
+                <Image src={Calendar} alt="" />
+              </S.ImageContainer>
+
+              <div>
+                <span>Calendário</span>
+                <p>Visão dos registros de ponto como calendário</p>
+              </div>
+            </S.OptionsAlignment>
+
+            <S.ImageContainer className="info">
+              <Image src={ArrowRight} alt="" />
+            </S.ImageContainer>
+          </S.ContainerOptionsInfo>
+
+          <S.ContainerOptionsInfo>
+            <S.OptionsAlignment>
+              <S.ImageContainer className="align">
+                <Image src={Download} alt="" />
+              </S.ImageContainer>
+
+              <div>
+                <span>Download</span>
+                <p>Faça download dos dados dos funcionários</p>
+              </div>
+            </S.OptionsAlignment>
+
+            <S.ImageContainer className="info">
+              <Image src={ArrowRight} alt="" />
+            </S.ImageContainer>
+          </S.ContainerOptionsInfo>
+        </S.ContainerOptions>
+      </S.ContainerHome>
     </S.Wrapper>
   );
 }
