@@ -133,3 +133,116 @@ export const ContainerTableComponent = styled.div`
   height: calc((80vh - 260px));
   overflow: auto;
 `;
+
+export const ContainerHome = styled.div`
+  width: 80%;
+  margin: 0 auto;
+`;
+
+export const ContainerInfo = styled.div`
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 20px;
+  justify-content: space-between;
+`;
+
+export const Infos = styled.div`
+  border: 1px solid var(--text);
+  border-radius: 10px;
+  padding: 20px 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  h3 {
+    font-size: 40px;
+    color: var(--select);
+  }
+
+  p {
+    color: var(--select);
+    font-weight: 500;
+  }
+`;
+
+export const InfoAlignment = styled.div`
+  display: flex;
+  gap: 50px;
+  font-size: 30px;
+  margin-top: 30px;
+  align-items: center;
+`;
+
+export const ImageContainer = styled.figure`
+  width: 100px;
+
+  .timeInACloud {
+    width: 150px;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+  }
+`;
+
+export const InfosDetails = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  span {
+    color: var(--select);
+    font-weight: 600;
+    font-size: 16px;
+  }
+
+  div {
+    display: flex;
+    gap: 30px;
+    margin-top: 10px;
+    align-items: center;
+  }
+`;
+
+export const ContainerOptions = styled.div`
+  width: 100%;
+  margin-top: 50px;
+  gap: 20px;
+  display: flex;
+  flex-direction: column;
+`;
+
+export const ContainerOptionsInfo = styled.div`
+  width: 100%;
+  border: 1px solid var(--text);
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 30px;
+
+  .info {
+    width: 80px;
+    cursor: pointer;
+  }
+`;
+
+export const OptionsAlignment = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 20px;
+
+  .align {
+    width: 80px;
+  }
+
+  div {
+    p,
+    span {
+      color: var(--select);
+      font-weight: 600;
+    }
+  }
+`;
