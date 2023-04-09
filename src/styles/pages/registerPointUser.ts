@@ -49,6 +49,7 @@ export const Button = styled.button`
   padding: 2%;
   font-weight: bold;
   color: black;
+  cursor: pointer;
 
   @media (min-width: 765px) {
     margin: 0;
