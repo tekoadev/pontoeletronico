@@ -231,10 +231,10 @@ export async function reportUserByMonth(
     return res.status(409).json({ message: "User not found" });
   }
 
-  const body = clockIn.find(
+  const body = clockIn.filter(
     (elem) =>
-      elem.time?.split(" ")[0]?.split("/")[1] === month &&
-      elem.time?.split(" ")[0]?.split("/")[2] === year
+      Number(elem.time?.split(" ")[0]?.split("/")[1]) === Number(month) &&
+      Number(elem.time?.split(" ")[0]?.split("/")[2]) === Number(year)
   );
 
   return res.json({
