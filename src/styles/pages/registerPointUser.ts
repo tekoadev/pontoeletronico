@@ -16,6 +16,10 @@ export const Wrapper = styled.div`
     width: 40vw;
     padding: 0;
   }
+  @media (max-width: 450px) {
+    width: 80vw;
+    padding: 0;
+  }
 `;
 
 export const Text = styled.p`
@@ -45,6 +49,7 @@ export const Button = styled.button`
   padding: 2%;
   font-weight: bold;
   color: black;
+  cursor: pointer;
 
   @media (min-width: 765px) {
     margin: 0;
@@ -66,9 +71,13 @@ export const Form = styled.form`
   border: 1px solid var(--primary-light);
   box-shadow: 0 0 15px black;
   font-weight: bold;
-  
+
   @media (min-width: 765px) {
     padding: 2vh 10%;
+  }
+
+  @media (max-width: 450px) {
+    width: 100%;
   }
 `;
 
@@ -89,21 +98,20 @@ export const TypeBtn = styled.div`
   height: 5vh;
   width: 100%;
 
-
   @media (min-width: 765px) {
     margin: 0;
   }
 `;
 
-interface ChoicesButton{
-  active: boolean
+interface ChoicesButton {
+  active: boolean;
 }
 
 export const ChoicesButton = styled.button<ChoicesButton>`
   border-radius: 10px;
   padding: 2% 1vw;
   font-weight: bold;
-  color: ${(p) => p.active ? "black" : "white"};
+  color: ${(p) => (p.active ? "black" : "white")};
 
   @media (min-width: 765px) {
     margin: 0;
@@ -118,4 +126,3 @@ export const TextArea = styled.textarea`
   resize: none;
   width: 100%;
 `;
-

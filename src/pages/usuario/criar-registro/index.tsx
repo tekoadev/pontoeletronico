@@ -9,7 +9,7 @@ import { parseCookies } from "nookies";
 
 export default function Home() {
   const [time, setTime] = useState("");
-  const [obs, setObs] = useState("");
+  const [obs, setObs] = useState<string | undefined>(undefined);
   const { user, createClockIn } = useUserContext();
   const { showAlert } = useGeneral();
 
@@ -18,29 +18,7 @@ export default function Home() {
     cookies?.user !== undefined ? JSON.parse(cookies?.user) : {}
   );
 
-  const [location, setLocation] = useState("");
-
-  const positionError = () => {
-    showAlert("error", "Habilite o envio de localização", "");
-  };
-
-  const showPosition = (pos: GeolocationPosition) => {
-    setLocation(`${pos.coords.latitude}/${pos.coords.longitude}`);
-  };
-
-  const getLocation = (
-    event:
-      | MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
-      | FormEvent<HTMLFormElement>
-  ) => {
-    event.preventDefault();
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(showPosition, positionError);
-      showAlert("", "Localização enviada com sucesso", "");
-    } else {
-      showAlert("error", "Habilite o envio de localização", "");
-    }
-  };
+  const [location, setLocation] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -55,6 +33,33 @@ export default function Home() {
       setRefUser(user);
     }
   }, []);
+
+  function getLocationFromUser() {
+    return new Promise((resolve, reject) => {
+      if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          resolve(position);
+        }, reject);
+        return true;
+      } else {
+        reject("Geolocation not supported");
+      }
+    });
+  }
+
+  async function loadLocation() {
+    try {
+      const defaultLocation: GeolocationPosition =
+        (await getLocationFromUser()) as GeolocationPosition;
+      setLocation(
+        `${defaultLocation.coords.latitude}/${defaultLocation.coords.longitude}`
+      );
+      return true;
+    } catch {
+      showAlert("error", "Habilite o envio de localização", "");
+      return false;
+    }
+  }
 
   return (
     <>
@@ -76,17 +81,16 @@ export default function Home() {
             &#32;&#32;&#32;{time}
           </S.ClockText>
           <S.Form
-            onSubmit={(e) => {
+            onSubmit={async (e) => {
               e.preventDefault();
-              console.log(location, obs);
+              console.log(await loadLocation());
 
-              if (user?.location == true && location === "") {
-                getLocation(e);
-                createClockIn({ location, obs });
+              if (user?.location === true) {
+                if (await loadLocation()) {
+                  createClockIn({ location, obs });
+                }
               } else {
-                user?.location
-                  ? createClockIn({ location, obs })
-                  : createClockIn({ obs });
+                createClockIn({ obs });
               }
             }}
           >
@@ -114,7 +118,8 @@ export default function Home() {
                 value="Enviar localização"
                 style={{ width: "80%", margin: "2vh 10% 0 10%" }}
                 onClick={(event) => {
-                  getLocation(event);
+                  event.preventDefault();
+                  loadLocation();
                 }}
               >
                 Enviar localização
