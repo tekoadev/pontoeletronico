@@ -87,4 +87,15 @@ export const ItemNav = styled.li`
   justify-content: center;
   gap: 20px;
   cursor: pointer;
+  > a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    cursor: pointer;
+
+    > img {
+      aspect-ratio: 1/1;
+    }
+  }
 `;
