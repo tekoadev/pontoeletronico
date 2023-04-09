@@ -8,6 +8,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable react-hooks/exhaustive-deps */
 import Header from "@/components/HeaderAdm";
+import DayCard from "@/components/modal/modalRegistroFuncionário";
 import ModalCompanyClockIn from "@/components/modal/ModalCompanyClockIn";
 import { useCompanyContext } from "@/context/companyContext";
 import type { IClockIn, IUser } from "@/server/interface";
@@ -21,6 +22,7 @@ import {
   AiOutlinePlusCircle,
   AiFillCheckCircle,
   AiFillCloseCircle,
+  AiOutlineQuestionCircle,
 } from "react-icons/ai";
 import { BsPencil } from "react-icons/bs";
 import { MdDeleteOutline } from "react-icons/md";
@@ -33,6 +35,8 @@ export default function RegistroDePonto() {
   const [typeModal, setTypeModal] = useState<"edit" | "add" | "delete" | "">(
     "edit"
   );
+  const [dayModal, setDayModal] = useState(false);
+  const [dayModalData, setDayModalData] = useState<IClockIn[]>([]);
   const [clockInId, setClockInId] = useState("");
   const [editClockInValue, setEditClockInValue] = useState("");
 
@@ -295,414 +299,339 @@ export default function RegistroDePonto() {
     return totalTimes.length;
   };
   return (
-    <>
-      {selectedUser?.id !== undefined ? (
-        <S.Wrapper>
-          <Header></Header>
+    <S.Wrapper>
+      <Header></Header>
 
-          <S.ReportWrapper>
-            <S.ReportInputs>
-              <S.EmployColumn>
-                <S.EmployLabel>Funcionários</S.EmployLabel>
-                <S.EmploySelect
-                  onChange={(e) => {
-                    const selected = users.find((elem) => {
-                      return elem.id === e.target.value;
-                    });
+      <S.ReportWrapper>
+        <S.ReportInputs>
+          <S.EmployColumn>
+            <S.EmployLabel>Funcionários</S.EmployLabel>
+            <S.EmploySelect
+              onChange={(e) => {
+                const selected = users.find((elem) => {
+                  return elem.id === e.target.value;
+                });
 
-                    if (selected === undefined) {
-                      return;
-                    }
+                if (selected === undefined) {
+                  return;
+                }
 
-                    setSelectedUser(selected);
-                  }}
+                setSelectedUser(selected);
+              }}
+            >
+              {users
+                .sort((a, b) => (a?.name > b?.name ? 1 : -1))
+                .map((elem, i) => {
+                  return (
+                    <S.EmployOptions
+                      value={elem?.id}
+                      key={i}
+                      selected={selectedUser?.id === elem?.id}
+                    >
+                      {elem.name}
+                    </S.EmployOptions>
+                  );
+                })}
+            </S.EmploySelect>
+          </S.EmployColumn>
+          <S.EmployColumn>
+            <S.EmployLabel>Mês</S.EmployLabel>
+            <S.EmploySelect
+              onChange={(event) => {
+                const selected = months.filter((elem) => {
+                  return elem.value === event.target.value;
+                });
+
+                if (selected[0]?.title !== undefined) {
+                  setMonth(selected[0]?.title);
+                }
+              }}
+            >
+              {months.map((elem, i) => (
+                <S.EmployOptions
+                  value={elem.value}
+                  key={`${i}ds`}
+                  selected={selectedMonth === elem.title}
                 >
-                  {users
-                    .sort((a, b) => (a?.name > b?.name ? 1 : -1))
-                    .map((elem, i) => {
+                  {elem.title}
+                </S.EmployOptions>
+              ))}
+            </S.EmploySelect>
+          </S.EmployColumn>
+          <S.EmployColumn>
+            <S.EmployLabel>Ano</S.EmployLabel>
+            <S.EmploySelect
+              onChange={(event) => {
+                setSelectedYear(event.target.value);
+              }}
+            >
+              {year.map((elem, i) => (
+                <S.EmployOptions
+                  value={elem}
+                  key={`${i}ds`}
+                  selected={selectedYear === elem}
+                >
+                  {elem}
+                </S.EmployOptions>
+              ))}
+            </S.EmploySelect>
+          </S.EmployColumn>
+          <S.DownloadPDF
+            onClick={() =>
+              !selectedUser.hourly
+                ? PDFGeneratorToDownloadOfTheDiaristType(
+                    days,
+                    generateRowHourly,
+                    selectedUser,
+                    company!,
+                    selectedMonth,
+                    selectedYear,
+                    generateTotalEmployeeDays
+                  )
+                : PDFgeneratorToDownload(
+                    days,
+                    generateRowHourly,
+                    selectedUser,
+                    company!,
+                    selectedMonth,
+                    selectedYear,
+                    generateTotalHours
+                  )
+            }
+            style={{ cursor: "pointer" }}
+          >
+            Baixar como PDF
+          </S.DownloadPDF>
+        </S.ReportInputs>
+
+        <hr
+          style={{
+            width: "100%",
+            height: "1px",
+            backgroundColor: "#000000",
+          }}
+        />
+
+        <S.TableHeadersColumn>
+          <div>
+            <S.TableHeadersText>Empresa: {company?.name}</S.TableHeadersText>
+            <S.TableHeadersText>CNPJ: {company?.cnpj}</S.TableHeadersText>
+          </div>
+
+          <div>
+            <S.TableHeadersText>Período:</S.TableHeadersText>
+            <S.TableHeadersText>
+              {selectedMonth} / 20{selectedYear}
+            </S.TableHeadersText>
+          </div>
+        </S.TableHeadersColumn>
+
+        <S.TableHeadersColumn>
+          <div>
+            <S.TableHeadersText>
+              Funcionário:
+              {selectedUser?.name === undefined ? "" : selectedUser.name}
+            </S.TableHeadersText>
+            <S.TableHeadersText>
+              CPF:
+              {selectedUser?.cpf === undefined ? "" : selectedUser?.cpf}
+            </S.TableHeadersText>
+          </div>
+
+          <div>
+            <S.TableHeadersText>
+              {selectedUser.hourly
+                ? "Horas contabilizadas:"
+                : "Diárias contabilizadas:"}
+            </S.TableHeadersText>
+            <S.TableHeadersText>
+              {selectedUser.hourly
+                ? generateTotalHours()
+                : generateTotalEmployeeDays()}
+            </S.TableHeadersText>
+          </div>
+        </S.TableHeadersColumn>
+        <hr
+          style={{
+            width: "100%",
+            height: "1px",
+            backgroundColor: "#000000",
+          }}
+        />
+
+        <S.ContainerTableComponent>
+          {selectedUser.hourly ? (
+            <S.TableComponent>
+              <tr>
+                <th>Dia</th>
+                <th>Entrada</th>
+                <th>Saída</th>
+                <th>Entrada</th>
+                <th>Saída</th>
+                <th>Total</th>
+              </tr>
+
+              {days.map((ele, i) => {
+                return (
+                  <tr key={i}>
+                    <td className="day">{ele}</td>
+                    {generateRowHourly(ele).map((ele2, i: number) => {
+                      if (i < 4) {
+                        return (
+                          <td key={i}>
+                            {ele2?.time?.split(" ")[1] === undefined ? (
+                              <AiOutlinePlusCircle
+                                className="plus"
+                                size={18}
+                                color="black"
+                                style={{ cursor: "pointer" }}
+                                onClick={() => {
+                                  setShowModal(true);
+                                  setTypeModal("add");
+                                  setDay(ele);
+                                }}
+                              />
+                            ) : (
+                              <div>
+                                {ele2?.time?.split(" ")[1]}
+                                <BsPencil
+                                  size={18}
+                                  color="black"
+                                  style={{ cursor: "pointer" }}
+                                  onClick={() => {
+                                    setShowModal(true);
+                                    setTypeModal("edit");
+                                    setDay(ele);
+                                    setClockInId(ele2.id);
+                                    setEditClockInValue(ele2.time);
+                                  }}
+                                />
+                                <MdDeleteOutline
+                                  size={18}
+                                  color="black"
+                                  style={{ cursor: "pointer" }}
+                                  onClick={() => {
+                                    setShowModal(true);
+                                    setTypeModal("delete");
+                                    setClockInId(ele2.id);
+                                  }}
+                                />
+                                <AiOutlineQuestionCircle
+                                  size={18}
+                                  color="black"
+                                  style={{ cursor: "pointer" }}
+                                  onClick={() => {
+                                    setDayModalData([ele2]);
+                                    setDayModal(true)
+                                  }}
+                                />
+                              </div>
+                            )}
+                          </td>
+                        );
+                      } else {
+                        return <td key={i}>{ele2 as string}</td>;
+                      }
+                    })}
+                  </tr>
+                );
+              })}
+            </S.TableComponent>
+          ) : (
+            <S.TableComponent>
+              <tr>
+                <th>Dia</th>
+                <th>Diária</th>
+              </tr>
+              {days.map((ele, i) => {
+                return (
+                  <tr key={i}>
+                    <td>{ele}</td>
+                    {generateRow(ele).map((ele2, i2) => {
                       return (
-                        <S.EmployOptions
-                          value={elem?.id}
-                          key={i}
-                          selected={selectedUser?.id === elem?.id}
-                        >
-                          {elem.name}
-                        </S.EmployOptions>
+                        <td key={i2}>
+                          {ele2?.time?.split(" ")[1] === undefined ? (
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                gap: "4px",
+                              }}
+                            >
+                              <AiFillCloseCircle size={36} />
+                              <AiOutlinePlusCircle
+                                className="plus"
+                                size={18}
+                                color="black"
+                                style={{ cursor: "pointer" }}
+                                onClick={() => {
+                                  setShowModal(true);
+                                  setTypeModal("add");
+                                  setDay(ele);
+                                }}
+                              />
+                            </div>
+                          ) : (
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                gap: "4px",
+                              }}
+                            >
+                              <AiFillCheckCircle size={36} color="black" />
+                              <MdDeleteOutline
+                                style={{ margin: 0, cursor: "pointer" }}
+                                size={18}
+                                color="black"
+                                onClick={() => {
+                                  setShowModal(true);
+                                  setTypeModal("delete");
+                                  setClockInId(ele2.id);
+                                }}
+                              />
+                              <AiOutlineQuestionCircle
+                                size={18}
+                                color="black"
+                                style={{ cursor: "pointer" }}
+                                onClick={() => {
+                                  setDayModalData([ele2]);
+                                  setDayModal(true)
+                                }}
+                              />
+                            </div>
+                          )}
+                        </td>
                       );
                     })}
-                </S.EmploySelect>
-              </S.EmployColumn>
-              <S.EmployColumn>
-                <S.EmployLabel>Mês</S.EmployLabel>
-                <S.EmploySelect
-                  onChange={(event) => {
-                    const selected = months.filter((elem) => {
-                      return elem.value === event.target.value;
-                    });
-
-                    if (selected[0]?.title !== undefined) {
-                      setMonth(selected[0]?.title);
-                    }
-                  }}
-                >
-                  {months.map((elem, i) => (
-                    <S.EmployOptions
-                      value={elem.value}
-                      key={`${i}ds`}
-                      selected={selectedMonth === elem.title}
-                    >
-                      {elem.title}
-                    </S.EmployOptions>
-                  ))}
-                </S.EmploySelect>
-              </S.EmployColumn>
-              <S.EmployColumn>
-                <S.EmployLabel>Ano</S.EmployLabel>
-                <S.EmploySelect
-                  onChange={(event) => {
-                    setSelectedYear(event.target.value);
-                  }}
-                >
-                  {year.map((elem, i) => (
-                    <S.EmployOptions
-                      value={elem}
-                      key={`${i}ds`}
-                      selected={selectedYear === elem}
-                    >
-                      {elem}
-                    </S.EmployOptions>
-                  ))}
-                </S.EmploySelect>
-              </S.EmployColumn>
-              <S.DownloadPDF
-                onClick={() =>
-                  !selectedUser.hourly
-                    ? PDFGeneratorToDownloadOfTheDiaristType(
-                        days,
-                        generateRowHourly,
-                        selectedUser,
-                        company!,
-                        selectedMonth,
-                        selectedYear,
-                        generateTotalEmployeeDays
-                      )
-                    : PDFgeneratorToDownload(
-                        days,
-                        generateRowHourly,
-                        selectedUser,
-                        company!,
-                        selectedMonth,
-                        selectedYear,
-                        generateTotalHours
-                      )
-                }
-              >
-                Baixar como PDF
-              </S.DownloadPDF>
-            </S.ReportInputs>
-
-            <hr
-              style={{
-                width: "100%",
-                height: "1px",
-                backgroundColor: "#000000",
-              }}
-            />
-
-            <S.TableHeadersColumn>
-              <div>
-                <S.TableHeadersText>
-                  Empresa: {company?.name}
-                </S.TableHeadersText>
-                <S.TableHeadersText>CNPJ: {company?.cnpj}</S.TableHeadersText>
-              </div>
-
-              <div>
-                <S.TableHeadersText>Período:</S.TableHeadersText>
-                <S.TableHeadersText>
-                  {selectedMonth} / 20{selectedYear}
-                </S.TableHeadersText>
-              </div>
-            </S.TableHeadersColumn>
-
-            <S.TableHeadersColumn>
-              <div>
-                <S.TableHeadersText>
-                  Funcionário:
-                  {selectedUser?.name === undefined ? "" : selectedUser.name}
-                </S.TableHeadersText>
-                <S.TableHeadersText>
-                  CPF:
-                  {selectedUser?.cpf === undefined ? "" : selectedUser?.cpf}
-                </S.TableHeadersText>
-              </div>
-
-              <div>
-                <S.TableHeadersText>
-                  {selectedUser.hourly
-                    ? "Horas contabilizadas:"
-                    : "Diárias contabilizadas:"}
-                </S.TableHeadersText>
-                <S.TableHeadersText>
-                  {selectedUser.hourly
-                    ? generateTotalHours()
-                    : generateTotalEmployeeDays()}
-                </S.TableHeadersText>
-              </div>
-            </S.TableHeadersColumn>
-            <hr
-              style={{
-                width: "100%",
-                height: "1px",
-                backgroundColor: "#000000",
-              }}
-            />
-
-            <S.ContainerTableComponent>
-              {selectedUser.hourly ? (
-                <S.TableComponent>
-                  <tr>
-                    <th>Dia</th>
-                    <th>Entrada</th>
-                    <th>Saída</th>
-                    <th>Entrada</th>
-                    <th>Saída</th>
-                    <th>Total</th>
                   </tr>
-
-                  {days.map((ele, i) => {
-                    return (
-                      <tr key={i}>
-                        <td className="day">{ele}</td>
-                        {generateRowHourly(ele).map((ele2, i: number) => {
-                          if (i < 4) {
-                            return (
-                              <td key={i}>
-                                {ele2?.time?.split(" ")[1] === undefined ? (
-                                  <AiOutlinePlusCircle
-                                    className="plus"
-                                    size={18}
-                                    color="black"
-                                    onClick={() => {
-                                      setShowModal(true);
-                                      setTypeModal("add");
-                                      setDay(ele);
-                                    }}
-                                  />
-                                ) : (
-                                  <div>
-                                    {ele2?.time?.split(" ")[1]}
-                                    <BsPencil
-                                      size={18}
-                                      color="black"
-                                      onClick={() => {
-                                        setShowModal(true);
-                                        setTypeModal("edit");
-                                        setDay(ele);
-                                        setClockInId(ele2.id);
-                                        setEditClockInValue(ele2.time);
-                                      }}
-                                    />
-                                    <MdDeleteOutline
-                                      size={18}
-                                      color="black"
-                                      onClick={() => {
-                                        setShowModal(true);
-                                        setTypeModal("delete");
-                                        setClockInId(ele2.id);
-                                      }}
-                                    />
-                                  </div>
-                                )}
-                              </td>
-                            );
-                          } else {
-                            return <td key={i}>{ele2 as string}</td>;
-                          }
-                        })}
-                      </tr>
-                    );
-                  })}
-                </S.TableComponent>
-              ) : (
-                <S.TableComponent>
-                  <tr>
-                    <th>Dia</th>
-                    <th>Diária</th>
-                  </tr>
-                  {days.map((ele, i) => {
-                    return (
-                      <tr key={i}>
-                        <td>{ele}</td>
-                        {generateRow(ele).map((ele2, i2) => {
-                          return (
-                            <td key={i2}>
-                              {ele2?.time?.split(" ")[1] === undefined ? (
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    gap: "4px",
-                                  }}
-                                >
-                                  <AiFillCloseCircle size={36} />
-                                  <AiOutlinePlusCircle
-                                    className="plus"
-                                    size={18}
-                                    color="black"
-                                    onClick={() => {
-                                      setShowModal(true);
-                                      setTypeModal("add");
-                                      setDay(ele);
-                                    }}
-                                  />
-                                </div>
-                              ) : (
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    gap: "4px",
-                                  }}
-                                >
-                                  <AiFillCheckCircle size={36} />
-                                  <MdDeleteOutline
-                                    style={{ margin: 0 }}
-                                    size={18}
-                                    color="black"
-                                    onClick={() => {
-                                      setShowModal(true);
-                                      setTypeModal("delete");
-                                      setClockInId(ele2.id);
-                                    }}
-                                  />
-                                </div>
-                              )}
-                            </td>
-                          );
-                        })}
-                      </tr>
-                    );
-                  })}
-                </S.TableComponent>
-              )}
-            </S.ContainerTableComponent>
-          </S.ReportWrapper>
-          {showModal && (
-            <ModalCompanyClockIn
-              type={typeModal}
-              setShowModal={setShowModal}
-              day={day}
-              month={
-                months.filter((ele) => ele.title === selectedMonth)[0]?.value
-              }
-              year={selectedYear}
-              clockInId={clockInId}
-              editClockInValue={editClockInValue}
-              userId={selectedUser.id}
-              user={selectedUser}
-              handlerUpdateClockIn={handlerUpdateClockIn}
-            />
+                );
+              })}
+            </S.TableComponent>
           )}
-        </S.Wrapper>
-      ) : (
-        <S.Wrapper>
-          <Header></Header>
-
-          <S.ReportWrapper>
-            <S.ReportInputs>
-              <S.EmployColumn>
-                <S.EmployLabel>Funcionários</S.EmployLabel>
-                <S.EmploySelect>
-                  {users.map((elem, i) => {
-                    return (
-                      <S.EmployOptions value={elem?.id} key={i}>
-                        {elem.name}
-                      </S.EmployOptions>
-                    );
-                  })}
-                </S.EmploySelect>
-              </S.EmployColumn>
-              <S.EmployColumn>
-                <S.EmployLabel>Mês</S.EmployLabel>
-                <S.EmploySelect>
-                  {months.map((elem, i) => (
-                    <S.EmployOptions
-                      value={elem.value}
-                      key={`${i}ds`}
-                      selected={selectedMonth === elem.title}
-                    >
-                      {elem.title}
-                    </S.EmployOptions>
-                  ))}
-                </S.EmploySelect>
-              </S.EmployColumn>
-              <S.EmployColumn>
-                <S.EmployLabel>Ano</S.EmployLabel>
-                <S.EmploySelect>
-                  {year.map((elem, i) => (
-                    <S.EmployOptions
-                      value={elem}
-                      key={`${i}ds`}
-                      selected={selectedYear === elem}
-                    >
-                      {elem}
-                    </S.EmployOptions>
-                  ))}
-                </S.EmploySelect>
-              </S.EmployColumn>
-              <S.DownloadPDF>Baixar como PDF</S.DownloadPDF>
-            </S.ReportInputs>
-
-            <hr
-              style={{
-                width: "100%",
-                height: "1px",
-                backgroundColor: "#000000",
-              }}
-            />
-
-            <S.TableHeadersColumn>
-              <div>
-                <S.TableHeadersText>Empresa:</S.TableHeadersText>
-                <S.TableHeadersText>CNPJ:</S.TableHeadersText>
-              </div>
-
-              <div>
-                <S.TableHeadersText>Período:</S.TableHeadersText>
-                <S.TableHeadersText>
-                  {selectedMonth} / 20{selectedYear}
-                </S.TableHeadersText>
-              </div>
-            </S.TableHeadersColumn>
-
-            <S.TableHeadersColumn>
-              <div>
-                <S.TableHeadersText>Funcionário:</S.TableHeadersText>
-                <S.TableHeadersText>CPF:</S.TableHeadersText>
-              </div>
-
-              <div>
-                <S.TableHeadersText>Horas contabilizadas:</S.TableHeadersText>
-                <S.TableHeadersText></S.TableHeadersText>
-              </div>
-            </S.TableHeadersColumn>
-            <hr
-              style={{
-                width: "100%",
-                height: "1px",
-                backgroundColor: "#000000",
-              }}
-            />
-
-            <S.ContainerTableComponent>
-              <S.TableComponent></S.TableComponent>
-            </S.ContainerTableComponent>
-          </S.ReportWrapper>
-        </S.Wrapper>
+        </S.ContainerTableComponent>
+      </S.ReportWrapper>
+      {showModal && (
+        <ModalCompanyClockIn
+          type={typeModal}
+          setShowModal={setShowModal}
+          day={day}
+          month={months.filter((ele) => ele.title === selectedMonth)[0]?.value}
+          year={selectedYear}
+          clockInId={clockInId}
+          editClockInValue={editClockInValue}
+          userId={selectedUser.id}
+          user={selectedUser}
+          handlerUpdateClockIn={handlerUpdateClockIn}
+        />
       )}
-    </>
+      <DayCard
+        showModal={dayModal}
+        setShowModal={setDayModal}
+        register={dayModalData}
+      />
+    </S.Wrapper>
   );
 }

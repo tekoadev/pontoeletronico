@@ -41,14 +41,20 @@ export const Wrapper = styled.div`
   max-height: 80vh;
   overflow-y: scroll;
   overflow-x: hidden;
+
+  @media (min-width: 750px) {
+    width: 40vw;
+    height: 40vh;
+  }
 `;
 
 export const TitleWrapper = styled.div`
   display: flex;
   align-items: center;
+  position: relative;
   > svg {
     position: absolute;
-    right: 5vw;
+    right: -40px;
   }
 `;
 
