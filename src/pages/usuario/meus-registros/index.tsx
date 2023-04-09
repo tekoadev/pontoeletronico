@@ -2,7 +2,7 @@ import UserAside from "@/components/userAside";
 import { Container } from "@/styles/pages/styles";
 import * as S from "@/styles/pages/meusRegistros";
 import Calendar from "react-calendar";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ClockInApi from "@/services";
 import { parseCookies } from "nookies";
 import { IClockIn } from "@/server/interface";
@@ -21,7 +21,7 @@ export default function Render() {
   };
   const [month, setMonth] = useState((today.getMonth() + 1).toString());
   const [year, setYear] = useState((today.getFullYear() - 2000).toString());
-  const [ClockIn, setClockIn] = useState<IClockIn[]>([] as IClockIn[]);
+  const ClockIn = useRef<IClockIn[]>([] as IClockIn[]);
 
   const HandlerGetClockIn = async () => {
     setIsLoading(true);
@@ -32,17 +32,17 @@ export default function Render() {
     });
 
     if (response?.data?.body === undefined) {
-      setClockIn([]);
+      ClockIn.current = [];
       return;
     }
 
-    setClockIn(response.data.body);
+    ClockIn.current = response.data.body;
     setIsLoading(false);
   };
 
   useEffect(() => {
     HandlerGetClockIn();
-  }, []);
+  }, [month, year]);
 
   function FormatDate(date: Date) {
     var month = date.getMonth() + 1;
@@ -59,10 +59,27 @@ export default function Render() {
 
   const HandlerModal = (event: Date) => {
     const date = FormatDate(event);
-    const response = ClockIn.filter((ele) => ele.time?.split(" ")[0] === date);
+    const response = ClockIn.current.filter(
+      (ele) => ele.time?.split(" ")[0] === date
+    );
     setRegister(response);
     setShowModal(true);
   };
+
+  const HandlerTileClassName = (date: Date) => {
+    let resClassName = "";
+    ClockIn.current.forEach((ele) => {
+      if (ele.time?.split(" ")[0] === FormatDate(date)) {
+        resClassName += " red_item";
+      }
+    });
+    return resClassName;
+  };
+
+  const [date, setDate] = useState(today);
+  useEffect(() => {
+    HandlerTileClassName(date);
+  }, [date]);
   return (
     <Container>
       <UserAside />
@@ -96,25 +113,15 @@ export default function Render() {
 
             return "";
           }}
-          tileClassName={({ date }) => {
-            let resClassName = "";
-            ClockIn.forEach((ele) => {
-              if (ele.time?.split(" ")[0] === FormatDate(date)) {
-                resClassName += " red_item";
-              }
-            });
-            return resClassName;
-          }}
+          tileClassName={({ date }) => HandlerTileClassName(date)}
           onClickDay={(event) => HandlerModal(event)}
           onDrillUp={({ activeStartDate }) => {
             setMonth(FormatDate(activeStartDate).split("/")[1]);
             setYear(FormatDate(activeStartDate).split("/")[2]);
-            HandlerGetClockIn();
           }}
           onActiveStartDateChange={({ activeStartDate }) => {
             setMonth(FormatDate(activeStartDate!).split("/")[1]);
             setYear(FormatDate(activeStartDate!).split("/")[2]);
-            HandlerGetClockIn();
           }}
         />
       </S.CalendarWrapper>
