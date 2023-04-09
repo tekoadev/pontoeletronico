@@ -233,6 +233,14 @@ export const ImageContainer = styled.figure`
   display: none;
   width: 50px;
 
+  .true {
+    transform: rotate(90deg);
+  }
+
+  .false {
+    transform: rotate(0);
+  }
+
   &.info {
     display: block;
     width: 20px;
@@ -290,20 +298,24 @@ export const ContainerOptions = styled.div`
   display: flex;
   flex-direction: column;
 `;
-
 export const ContainerOptionsInfo = styled.div`
-  width: 100%;
   border: 1px solid var(--text);
   border-radius: 10px;
+`;
+
+export const OptionsInfo = styled.div`
+  border: 1px solid var(--text);
+  border-radius: 10px;
+  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 20px 30px;
   gap: 10px;
+  cursor: pointer;
 
   .info {
     width: 80px;
-    cursor: pointer;
   }
 `;
 
@@ -334,6 +346,95 @@ export const OptionsAlignment = styled.div`
 
     p {
       color: var(--text);
+    }
+  }
+`;
+
+export const Calendar = styled.div`
+  width: 100%;
+`;
+
+export const Download = styled.div`
+  width: 100%;
+  padding: 10px 10px 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 50px;
+
+  button {
+    padding: 10px;
+    border: 1px solid var(--select);
+    border-radius: 10px;
+    background-color: var(--background);
+    color: var(--white);
+
+    :hover {
+      background-color: transparent;
+      color: var(--select);
+    }
+
+    @media (min-width: 768px) {
+      padding: 15px;
+      font-size: 20px;
+    }
+  }
+`;
+
+export const DownloadAlignment = styled.div`
+  width: 100%;
+  display: flex;
+  gap: 20px;
+  justify-content: space-around;
+
+  div {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+
+    p {
+      width: fit-content;
+      font-size: 14px;
+
+      @media (min-width: 768px) {
+        font-size: 20px;
+      }
+    }
+
+    select {
+      width: max-content;
+      font-size: 10px;
+      border-radius: 10px;
+      border: 1px solid var(--select);
+      cursor: pointer;
+      outline: none;
+
+      @media (min-width: 768px) {
+        font-size: 16px;
+        padding: 3px 0 3px 5px;
+      }
+
+      @media (min-width: 1020px) {
+        font-size: 20px;
+      }
+    }
+
+    input {
+      width: 100%;
+      max-width: 60px;
+      border-radius: 10px;
+      border: 1px solid var(--select);
+      font-size: 10px;
+      padding-left: 5px;
+      outline: none;
+
+      @media (min-width: 768px) {
+        padding: 5px 0 5px 5px;
+        font-size: 16px;
+        width: 50%;
+      }
     }
   }
 `;

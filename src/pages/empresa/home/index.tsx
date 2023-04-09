@@ -7,8 +7,12 @@ import Calendar from "@/assets/imgs/calendar.png";
 import Download from "@/assets/imgs/download.png";
 import ArrowRight from "@/assets/imgs/arrowright.png";
 import Image from "next/image";
+import { useState } from "react";
 
 export default function Registrodeponto() {
+  const [isCalenderVisible, setIsCalenderVisible] = useState(false);
+  const [isDownloadVisible, setIsDownloadVisible] = useState(false);
+
   return (
     <S.Wrapper className="home">
       <Header />
@@ -59,37 +63,108 @@ export default function Registrodeponto() {
 
         <S.ContainerOptions>
           <S.ContainerOptionsInfo>
-            <S.OptionsAlignment>
-              <S.ImageContainer className="align">
-                <Image src={Calendar} alt="" />
+            <S.OptionsInfo
+              onClick={() => {
+                setIsCalenderVisible(!isCalenderVisible);
+                isDownloadVisible && setIsDownloadVisible(false);
+              }}
+            >
+              <S.OptionsAlignment>
+                <S.ImageContainer className="align">
+                  <Image src={Calendar} alt="" />
+                </S.ImageContainer>
+
+                <div>
+                  <span>Calendário</span>
+                  <p>Visão dos registros de ponto como calendário</p>
+                </div>
+              </S.OptionsAlignment>
+
+              <S.ImageContainer className="info">
+                <Image
+                  src={ArrowRight}
+                  alt=""
+                  className={`${isCalenderVisible}`}
+                />
               </S.ImageContainer>
+            </S.OptionsInfo>
 
-              <div>
-                <span>Calendário</span>
-                <p>Visão dos registros de ponto como calendário</p>
-              </div>
-            </S.OptionsAlignment>
-
-            <S.ImageContainer className="info">
-              <Image src={ArrowRight} alt="" />
-            </S.ImageContainer>
+            {isCalenderVisible && (
+              <S.Calendar>
+                <div></div>
+                <div></div>
+              </S.Calendar>
+            )}
           </S.ContainerOptionsInfo>
 
           <S.ContainerOptionsInfo>
-            <S.OptionsAlignment>
-              <S.ImageContainer className="align">
-                <Image src={Download} alt="" />
+            <S.OptionsInfo
+              onClick={() => {
+                setIsDownloadVisible(!isDownloadVisible);
+                isCalenderVisible && setIsCalenderVisible(false);
+              }}
+            >
+              <S.OptionsAlignment>
+                <S.ImageContainer className="align">
+                  <Image src={Download} alt="" />
+                </S.ImageContainer>
+
+                <div>
+                  <span>Download</span>
+                  <p>Faça download dos dados dos funcionários</p>
+                </div>
+              </S.OptionsAlignment>
+
+              <S.ImageContainer className="info">
+                <Image
+                  src={ArrowRight}
+                  alt=""
+                  className={`${isDownloadVisible}`}
+                />
               </S.ImageContainer>
+            </S.OptionsInfo>
 
-              <div>
-                <span>Download</span>
-                <p>Faça download dos dados dos funcionários</p>
-              </div>
-            </S.OptionsAlignment>
+            {isDownloadVisible && (
+              <S.Download>
+                <S.DownloadAlignment>
+                  <div>
+                    <p>Funcionário</p>
 
-            <S.ImageContainer className="info">
-              <Image src={ArrowRight} alt="" />
-            </S.ImageContainer>
+                    <select>
+                      <option value="all">Todos</option>
+                      <option value="allActive">Todos ativos</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <p>Mês</p>
+
+                    <select>
+                      <option value="1">Janeiro</option>
+                      <option value="2">Fevereiro</option>
+                      <option value="3">Março</option>
+                      <option value="4">Abril</option>
+                      <option value="5">Maio</option>
+                      <option value="6">Junho</option>
+                      <option value="7">Julho</option>
+                      <option value="8">Agosto</option>
+                      <option value="9">Setembro</option>
+                      <option value="10">Outubro</option>
+                      <option value="11">Novembro</option>
+                      <option value="12">Dezembro</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <p>Ano</p>
+
+                    <input type="number" />
+                  </div>
+                </S.DownloadAlignment>
+
+                <button>Download como Excel</button>
+              </S.Download>
+            )}
           </S.ContainerOptionsInfo>
         </S.ContainerOptions>
       </S.ContainerHome>
