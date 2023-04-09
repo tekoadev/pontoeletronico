@@ -58,6 +58,10 @@ export default createGlobalStyle`
     text-rendering: optimizeLegibility;
   }
 
+  * button {
+    cursor: pointer;
+  }
+
   /* Chrome, Safari, Edge, Opera */
   input::-webkit-outer-spin-button,
   input::-webkit-inner-spin-button {
