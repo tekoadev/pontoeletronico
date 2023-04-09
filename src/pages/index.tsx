@@ -44,10 +44,10 @@ export default function Home() {
             </S.GenericButtonWithBackgroundColor>
           </S.GenericInformationContainer>
 
-          <S.Imagem src="https://res.cloudinary.com/da4pzol89/image/upload/v1674404488/test/imagem-notebook-cell_1_wib1m8.png" />
+          <S.Imagem src="https://res.cloudinary.com/dtgkjo5sy/image/upload/v1681077326/pontoEletronico/imagem-notebook-cell_ewiega.png" />
         </S.ContainerWithoutBackgroundColor>
-        <S.ContainerWithoutBackgroundColor>
-          <S.Imagem src="https://png.pngtree.com/png-clipart/20210404/big/pngtree-hand-holding-mobile-phone-social-finger-click-to-browse-news-page-png-image_6188413.png" />
+        <S.ContainerWithoutBackgroundColor id="funcionalidades">
+          <S.Imagem src="https://res.cloudinary.com/dtgkjo5sy/image/upload/v1681077810/pontoEletronico/mao-segurando-o-telefone-celular-um-dedo_r14dgr.png" />
           <S.GenericInformationContainer>
             <S.ContainerGenericTitle>
               <S.Title>
@@ -55,9 +55,7 @@ export default function Home() {
                 <S.LineBreaker />
                 <S.HighlightText>Apenas um click!</S.HighlightText>
               </S.Title>
-              <S.SubTitle>
-                texto genérico pacas onde voce pode fazer em qualquer lugar
-              </S.SubTitle>
+              <S.SubTitle>prático, econômico e prático!</S.SubTitle>
             </S.ContainerGenericTitle>
           </S.GenericInformationContainer>
         </S.ContainerWithoutBackgroundColor>
@@ -70,13 +68,14 @@ export default function Home() {
                 <S.HighlightText>Automaticamente!</S.HighlightText>
               </S.Title>
               <S.SubTitle>
-                Com duas opção de arquivo como PDF ou Excel
+                Gerencie os dados facilmente e exporte PDF ou Excel!
               </S.SubTitle>
             </S.ContainerGenericTitle>
           </S.GenericInformationContainer>
-          <S.Imagem src="https://png.pngtree.com/png-clipart/20210404/big/pngtree-hand-holding-mobile-phone-social-finger-click-to-browse-news-page-png-image_6188413.png" />
+          <S.Imagem src="https://res.cloudinary.com/dtgkjo5sy/image/upload/v1681078334/pontoEletronico/example_jqj5k9.png" />
         </S.ContainerWithoutBackgroundColor>
         <S.Form
+          id="teste"
           onSubmit={(e) => {
             e.preventDefault();
             if (CaptchaChecker(numbers, +captcha, showAlert)) {

@@ -21,12 +21,19 @@ export default function LandingFooter() {
       </S.LogoWrapper>
       <S.Nav>
         <S.ItemNav>
-          <Image src={Whats} alt="whats" width="60" height="40" />
-          <S.Text>Fale conosco</S.Text>
+          <a
+            target="_blank"
+            href="https://api.whatsapp.com/send?phone=5511930151064"
+          >
+            <Image src={Whats} alt="whats" width="60" height="40" />
+            <S.Text>Fale conosco</S.Text>
+          </a>
         </S.ItemNav>
         <S.ItemNav>
-          <Image src={Checkmark} alt="valid" width="60" height="40" />
-          <S.Text>TESTE GRATUITO</S.Text>
+          <a href="#teste">
+            <Image src={Checkmark} alt="valid" width="60" height="40" />
+            <S.Text>TESTE GRATUITO</S.Text>
+          </a>
         </S.ItemNav>
       </S.Nav>
     </S.Container>

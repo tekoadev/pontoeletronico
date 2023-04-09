@@ -79,7 +79,7 @@ export default function LandingHeader() {
 
         <S.TestButton
           onClick={() => {
-            navigate.push("/usuario");
+            navigate.push("#teste");
           }}
           style={{ cursor: "pointer" }}
         >
