@@ -126,12 +126,12 @@ export interface ICreateUserCompanyReq extends NextApiRequest {
 export interface ICreateUser {
   id?: string;
   user_name?: string;
-  user: string;
+  user?: string;
   cpf: string;
   name?: string;
   password: string;
   hourly: boolean;
-  location: boolean;
+  location?: boolean;
   isActive?: boolean;
   phone?: string | null;
   email?: string | null;

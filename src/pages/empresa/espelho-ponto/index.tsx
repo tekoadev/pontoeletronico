@@ -141,7 +141,7 @@ export default function RegistroDePonto() {
           return ele;
         }
       })
-      .sort((a, b) => (a?.time > b?.time ? 1 : -1));
+      .sort((a, b) => (a?.time! > b?.time! ? 1 : -1));
     const firstIn = dayClockIn[0]?.time;
     const firstOut = dayClockIn[1]?.time;
     const secondIn = dayClockIn[2]?.time;
@@ -522,7 +522,7 @@ export default function RegistroDePonto() {
                                   style={{ cursor: "pointer" }}
                                   onClick={() => {
                                     setDayModalData([ele2]);
-                                    setDayModal(true)
+                                    setDayModal(true);
                                   }}
                                 />
                               </div>
@@ -598,7 +598,7 @@ export default function RegistroDePonto() {
                                 style={{ cursor: "pointer" }}
                                 onClick={() => {
                                   setDayModalData([ele2]);
-                                  setDayModal(true)
+                                  setDayModal(true);
                                 }}
                               />
                             </div>
