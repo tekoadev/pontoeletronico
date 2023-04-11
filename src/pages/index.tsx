@@ -195,6 +195,46 @@ export default function Home() {
             TESTE GRATUITO
           </S.GenericButtonWithBackgroundColor>
         </S.Form>
+
+        <S.PlansContainer id="planos">
+          <S.Plans>
+            <S.TitlePlans>Plano anual</S.TitlePlans>
+            <S.TextPlans>
+              <S.HighlightText>R$ 69,90</S.HighlightText> por mês{" "}
+              <S.LineBreaker />
+              <S.HighlightText>em até 6X</S.HighlightText>
+            </S.TextPlans>
+            <S.ContainerBuy>
+              <S.SubTextPlans>
+                boleto, pix, cartão (sem valor das taxas)
+              </S.SubTextPlans>
+
+              <S.GenericButtonWithBackgroundColor
+                textAlign="center"
+                style={{ width: "100%" }}
+              >
+                ASSINAR
+              </S.GenericButtonWithBackgroundColor>
+            </S.ContainerBuy>
+          </S.Plans>
+          <S.Plans>
+            <S.TitlePlans>Plano mensal</S.TitlePlans>
+            <S.TextPlans>
+              <S.HighlightText>R$ 89,90</S.HighlightText> por mês
+            </S.TextPlans>
+            <S.ContainerBuy>
+              <S.SubTextPlans>
+                boleto, pix, cartão (sem valor das taxas)
+              </S.SubTextPlans>
+              <S.GenericButtonWithBackgroundColor
+                textAlign="center"
+                style={{ width: "100%" }}
+              >
+                ASSINAR
+              </S.GenericButtonWithBackgroundColor>
+            </S.ContainerBuy>
+          </S.Plans>
+        </S.PlansContainer>
       </S.MainContainer>
 
       <LandingFooter />

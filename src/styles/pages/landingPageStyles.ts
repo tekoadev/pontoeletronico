@@ -276,3 +276,80 @@ export const ContainerCheckbox = styled.div`
 `;
 
 export const Checkbox = styled.input``;
+
+export const PlansContainer = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 40px;
+
+  @media (max-width: 1024px) {
+    flex-direction: column;
+  }
+`;
+
+export const Plans = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  gap: 20px;
+  width: max-content;
+  min-width: calc((80% -40px)/2);
+  height: 400px;
+  border: 1px solid white;
+  border-radius: 15px;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 500px;
+
+  @media (max-width: 1024px) {
+    width: 80%;
+  }
+`;
+
+export const ContainerBuy = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const TitlePlans = styled.h2`
+  color: var(--white);
+  font-weight: bold;
+  width: 100%;
+  font-size: 32px;
+  text-align: center;
+
+  @media (max-width: 1250px) {
+    font-size: 26px;
+  }
+
+  @media (max-width: 1024px) {
+    font-size: 32px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 24px;
+  }
+
+  @media (max-width: 425px) {
+    font-size: 20px;
+  }
+
+  @media (max-width: 325px) {
+    font-size: 16px;
+  }
+`;
+
+export const TextPlans = styled.p`
+  color: white;
+  font-size: 24px;
+`;
+
+export const SubTextPlans = styled.p`
+  color: white;
+  font-size: 18px;
+`;
