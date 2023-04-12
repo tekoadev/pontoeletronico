@@ -14,6 +14,10 @@ export const Wrapper = styled.div`
   padding-bottom: 5vh;
   background-color: #ebf0f5;
   overflow: scroll;
+
+  &.home {
+    padding: 50px 0;
+  }
 `;
 
 export const ReportWrapper = styled.div`
@@ -137,14 +141,20 @@ export const ContainerTableComponent = styled.div`
 export const ContainerHome = styled.div`
   width: 80%;
   margin: 0 auto;
+  margin-top: 80px;
+  max-width: 1500px;
 `;
 
 export const ContainerInfo = styled.div`
   width: 100%;
   display: flex;
   flex-wrap: wrap;
-  row-gap: 20px;
-  justify-content: space-between;
+  gap: 20px;
+  justify-content: center;
+
+  @media (min-width: 768px) {
+    justify-content: space-between;
+  }
 `;
 
 export const Infos = styled.div`
@@ -154,10 +164,55 @@ export const Infos = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
+
+  @media (min-width: 768px) {
+    width: 290px;
+  }
+  @media (min-width: 905px) {
+    width: fit-content;
+  }
+
+  @media (min-width: 1405px) {
+    :nth-child(1) {
+      width: 400px;
+    }
+    :nth-child(2) {
+      width: 500px;
+    }
+  }
+  @media (min-width: 1410px) {
+    :nth-child(1) {
+      width: 500px;
+    }
+    :nth-child(2) {
+      width: 600px;
+    }
+  }
 
   h3 {
-    font-size: 40px;
+    font-size: 15px;
     color: var(--select);
+
+    &.employee {
+      font-size: 13px;
+    }
+
+    @media (min-width: 905px) {
+      font-size: 25px;
+
+      &.employee {
+        font-size: 25px;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      font-size: 30px;
+
+      &.employee {
+        font-size: 30px;
+      }
+    }
   }
 
   p {
@@ -175,15 +230,41 @@ export const InfoAlignment = styled.div`
 `;
 
 export const ImageContainer = styled.figure`
-  width: 100px;
+  display: none;
+  width: 50px;
+
+  .true {
+    transform: rotate(90deg);
+  }
+
+  .false {
+    transform: rotate(0);
+  }
+
+  &.info {
+    display: block;
+    width: 20px;
+  }
 
   .timeInACloud {
-    width: 150px;
+    width: 80px;
   }
 
   img {
     width: 100%;
     height: 100%;
+  }
+
+  @media (min-width: 1020px) {
+    display: block;
+  }
+
+  @media (min-width: 1170px) {
+    width: 100px;
+
+    .timeInACloud {
+      width: 150px;
+    }
   }
 `;
 
@@ -195,7 +276,11 @@ export const InfosDetails = styled.div`
   span {
     color: var(--select);
     font-weight: 600;
-    font-size: 16px;
+    font-size: 10px;
+
+    @media (min-width: 905px) {
+      font-size: 16px;
+    }
   }
 
   div {
@@ -213,19 +298,24 @@ export const ContainerOptions = styled.div`
   display: flex;
   flex-direction: column;
 `;
-
 export const ContainerOptionsInfo = styled.div`
-  width: 100%;
   border: 1px solid var(--text);
   border-radius: 10px;
+`;
+
+export const OptionsInfo = styled.div`
+  border: 1px solid var(--text);
+  border-radius: 10px;
+  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 20px 30px;
+  gap: 10px;
+  cursor: pointer;
 
   .info {
     width: 80px;
-    cursor: pointer;
   }
 `;
 
@@ -239,10 +329,112 @@ export const OptionsAlignment = styled.div`
   }
 
   div {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
     p,
     span {
       color: var(--select);
       font-weight: 600;
+      font-size: 10px;
+
+      @media (min-width: 768px) {
+        font-size: 16px;
+      }
+    }
+
+    p {
+      color: var(--text);
+    }
+  }
+`;
+
+export const Calendar = styled.div`
+  width: 100%;
+`;
+
+export const Download = styled.div`
+  width: 100%;
+  padding: 10px 10px 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 50px;
+
+  button {
+    padding: 10px;
+    border: 1px solid var(--select);
+    border-radius: 10px;
+    background-color: var(--background);
+    color: var(--white);
+
+    :hover {
+      background-color: transparent;
+      color: var(--select);
+    }
+
+    @media (min-width: 768px) {
+      padding: 15px;
+      font-size: 20px;
+    }
+  }
+`;
+
+export const DownloadAlignment = styled.div`
+  width: 100%;
+  display: flex;
+  gap: 20px;
+  justify-content: space-around;
+
+  div {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+
+    p {
+      width: fit-content;
+      font-size: 14px;
+
+      @media (min-width: 768px) {
+        font-size: 20px;
+      }
+    }
+
+    select {
+      width: max-content;
+      font-size: 10px;
+      border-radius: 10px;
+      border: 1px solid var(--select);
+      cursor: pointer;
+      outline: none;
+
+      @media (min-width: 768px) {
+        font-size: 16px;
+        padding: 3px 0 3px 5px;
+      }
+
+      @media (min-width: 1020px) {
+        font-size: 20px;
+      }
+    }
+
+    input {
+      width: 100%;
+      max-width: 60px;
+      border-radius: 10px;
+      border: 1px solid var(--select);
+      font-size: 10px;
+      padding-left: 5px;
+      outline: none;
+
+      @media (min-width: 768px) {
+        padding: 5px 0 5px 5px;
+        font-size: 16px;
+        width: 50%;
+      }
     }
   }
 `;
