@@ -5,6 +5,7 @@ import ClockInApi from "@/services";
 import * as S from "@/styles/pages/landingPageStyles";
 import { CaptchaChecker, RandomNumberGenerator } from "@/utils/captcha";
 import { phoneFormatter } from "@/utils/masks";
+import nookies, { parseCookies, setCookie, destroyCookie } from "nookies";
 import { useEffect, useState } from "react";
 
 export default function Home() {
@@ -29,19 +30,29 @@ export default function Home() {
   }
 
   const handleSubmit = async (data: ICollaborator) => {
-    await ClockInApi({
-      method: "POST",
-      url: "tekoa/email",
-      data,
-    })
-      .then((res) => {
-        console.log(res);
-        showAlert("", "Dados enviados", "");
+    const cookies = parseCookies();
+
+    const sendEmail = cookies?.emailSend ? cookies?.emailSend : undefined;
+
+    if (sendEmail === undefined) {
+      await ClockInApi({
+        method: "POST",
+        url: "tekoa/email",
+        data,
       })
-      .catch((err) => {
-        console.log(err);
-        showAlert("error", "Erro fale com administrador", "");
-      });
+        .then((res) => {
+          setCookie(null, "emailSend", "value", {
+            maxAge: 60 * 5,
+            path: "/",
+          });
+          showAlert("", "Dados enviados", "");
+        })
+        .catch((err) => {
+          showAlert("error", "Erro fale com administrador", "");
+        });
+    } else {
+      showAlert("error", `Aguarde ${5}`, "");
+    }
   };
 
   return (
@@ -108,7 +119,6 @@ export default function Home() {
                 RangeOfCollaborators,
                 receiveNotifications,
               });
-              showAlert("", "Dados enviados com sucesso", "");
             }
           }}
         >
