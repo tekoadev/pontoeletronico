@@ -362,7 +362,7 @@ export const Download = styled.div`
   align-items: center;
   gap: 50px;
 
-  button {
+  > div:last-child > button {
     padding: 10px;
     border: 1px solid var(--select);
     border-radius: 10px;
@@ -370,7 +370,7 @@ export const Download = styled.div`
     color: var(--white);
 
     :hover {
-      background-color: transparent;
+      opacity: 0.6;
       color: var(--select);
     }
 
