@@ -13,6 +13,21 @@ export default function Registrodeponto() {
   const [isCalenderVisible, setIsCalenderVisible] = useState(false);
   const [isDownloadVisible, setIsDownloadVisible] = useState(false);
 
+  const months = [
+    "Janeiro",
+    "Fevereiro",
+    "Março",
+    "Abril",
+    "Maio",
+    "Junho",
+    "Julho",
+    "Agosto",
+    "Setembro",
+    "Outubro",
+    "Novembro",
+    "Dezembro",
+  ];
+
   return (
     <S.Wrapper className="home">
       <Header />
@@ -140,18 +155,9 @@ export default function Registrodeponto() {
                     <p>Mês</p>
 
                     <select>
-                      <option value="1">Janeiro</option>
-                      <option value="2">Fevereiro</option>
-                      <option value="3">Março</option>
-                      <option value="4">Abril</option>
-                      <option value="5">Maio</option>
-                      <option value="6">Junho</option>
-                      <option value="7">Julho</option>
-                      <option value="8">Agosto</option>
-                      <option value="9">Setembro</option>
-                      <option value="10">Outubro</option>
-                      <option value="11">Novembro</option>
-                      <option value="12">Dezembro</option>
+                      {months.map((month, i) => (
+                        <option value={i + 1}>{month}</option>
+                      ))}
                     </select>
                   </div>
 
