@@ -43,3 +43,34 @@ export const verifyHour = (hour: string) => {
 
   return true
 }
+
+
+export const phoneFormatter = (phone: string): string => {
+  const cleaned = ('' + phone).replace(/\D/g, '')
+  const match = cleaned.match(/^(\d{2})(\d{1})(\d{4})(\d{5})$/)
+  if (match) {
+    return '(' + match[1] + ') ' + match[2] + ' ' + match[3] + '-' + match[4]
+  }
+
+  const match2 = cleaned.match(/^(\d{2})(\d{1})(\d{4})(\d{4})$/)
+  if (match2) {
+    return (
+      '(' + match2[1] + ') ' + match2[2] + ' ' + match2[3] + '-' + match2[4]
+    )
+  }
+  return phone
+}
+
+export const checkPhone = (phone: string): boolean => {
+  const cleaned = ('' + phone).replace(/\D/g, '')
+  const match = cleaned.match(/^(\d{2})(\d{1})(\d{4})(\d{4})$/)
+  if (match) {
+    return true
+  }
+
+  const match2 = cleaned.match(/^(\d{2})(\d{1})(\d{4})(\d{3})$/)
+  if (match2) {
+    return true
+  }
+  return false
+}

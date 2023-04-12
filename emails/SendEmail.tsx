@@ -18,7 +18,7 @@ export default function Email({ data }: { data: ICollaborator }) {
     <Html>
       <Section style={main}>
         <Container style={container}>
-          <Text style={heading}>Pedido para testa o produto</Text>
+          <Text style={heading}>Pedido para testar o produto!</Text>
           <Text style={paragraph}>
             <Text style={paragraph}>Nome: {data.name}</Text>
             <Text style={paragraph}>Email: {data.email}</Text>

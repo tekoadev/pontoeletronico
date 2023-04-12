@@ -4,6 +4,7 @@ import { useGeneral } from "@/context/generalContext";
 import ClockInApi from "@/services";
 import * as S from "@/styles/pages/landingPageStyles";
 import { CaptchaChecker, RandomNumberGenerator } from "@/utils/captcha";
+import { phoneFormatter } from "@/utils/masks";
 import { useEffect, useState } from "react";
 
 export default function Home() {
@@ -11,7 +12,6 @@ export default function Home() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [companyName, setCompanyName] = useState("");
-  const [ddd, setDdd] = useState("");
   const [cellPhone, setCellPhone] = useState("");
   const [companyRole, setCompanyRole] = useState("");
   const [RangeOfCollaborators, setRangeOfCollaborators] = useState("");
@@ -40,7 +40,7 @@ export default function Home() {
       })
       .catch((err) => {
         console.log(err);
-        showAlert("error", "vlw falou", "");
+        showAlert("error", "Erro fale com administrador", "");
       });
   };
 
@@ -104,7 +104,7 @@ export default function Home() {
                 name,
                 email,
                 companyName,
-                cellPhone: ddd + cellPhone,
+                cellPhone,
                 RangeOfCollaborators,
                 receiveNotifications,
               });
@@ -134,24 +134,15 @@ export default function Home() {
             onChange={(e) => setCompanyName(e.target.value)}
             required
           />
-          <S.CellContainer>
-            <S.InputDDD
-              type="number"
-              placeholder="DDD"
-              value={ddd}
-              onChange={(e) => setDdd(e.target.value)}
-              required
 
-            />
-            <S.Input
-              placeholder="Celular*"
-              value={cellPhone}
-              onChange={(e) => setCellPhone(e.target.value)}
-              required
-              type="number"
-     
-            />
-          </S.CellContainer>
+          <S.Input
+            placeholder="Celular*"
+            value={cellPhone}
+            onChange={(e) => setCellPhone(phoneFormatter(e.target.value))}
+            required
+            type="text"
+          />
+
           <S.Select
             value={companyRole}
             onChange={(e) => setCompanyRole(e.target.value)}
@@ -208,6 +199,7 @@ export default function Home() {
                 type="checkbox"
                 checked={receiveNotifications}
                 onChange={(e) => setReceiveNotifications(e.target.checked)}
+                required
               />
               <S.SubTitle>concordo em receber notificações</S.SubTitle>
             </S.ContainerCheckbox>
