@@ -21,7 +21,7 @@ interface AlertBallonProps {
 export const AlertBallon = styled.div<AlertBallonProps>`
   display: flex;
   flex-direction: column;
-  position: absolute;
+  position: fixed;
   bottom: 15px;
   right: 15px;
   border-radius: 4px;

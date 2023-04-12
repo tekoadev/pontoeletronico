@@ -1,6 +1,6 @@
 export const RandomNumberGenerator = () => {
-  const fistNumber = Math.floor(Math.random() * 100) + 1;
-  const secondNumber = Math.floor(Math.random() * 100) + 1;
+  const fistNumber = Math.floor(Math.random() * 10) + 1;
+  const secondNumber = Math.floor(Math.random() * 10) + 1;
 
   return [fistNumber, secondNumber];
 };

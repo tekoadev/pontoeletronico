@@ -142,7 +142,6 @@ export const GenericButtonWithBackgroundColor = styled.button<IGenericButtonWith
       ? "center"
       : "flex-end"};
   cursor: pointer;
-
   height: 60px;
   border: 1px solid var(--white);
   padding: 0px 20px;
@@ -154,6 +153,10 @@ export const GenericButtonWithBackgroundColor = styled.button<IGenericButtonWith
     background-color: transparent;
     color: var(--white);
   }
+`;
+
+export const A = styled.a`
+  width: 100%;
 `;
 
 export const ContainerWithoutBackgroundColor = styled.div`
@@ -295,7 +298,7 @@ export const Plans = styled.div`
   padding: 20px;
   gap: 20px;
   width: max-content;
-  min-width: calc((80% -40px)/2);
+  min-width: calc((80% -40px) / 2);
   height: 400px;
   border: 1px solid white;
   border-radius: 15px;

@@ -87,6 +87,7 @@ export default function Home() {
                 RangeOfCollaborators,
                 receiveNotifications,
               });
+              showAlert("", "Dados enviados com sucesso", "");
             }
           }}
         >
@@ -114,18 +115,20 @@ export default function Home() {
           />
           <S.CellContainer>
             <S.InputDDD
-              type="text"
+              type="number"
               placeholder="DDD"
               value={ddd}
               onChange={(e) => setDdd(e.target.value)}
               required
+              max={3}
             />
             <S.Input
-              type="text"
               placeholder="Celular*"
               value={cellPhone}
               onChange={(e) => setCellPhone(e.target.value)}
               required
+              type="number"
+              max={12}
             />
           </S.CellContainer>
           <S.Select
@@ -208,13 +211,14 @@ export default function Home() {
               <S.SubTextPlans>
                 boleto, pix, cartão (sem valor das taxas)
               </S.SubTextPlans>
-
-              <S.GenericButtonWithBackgroundColor
-                textAlign="center"
-                style={{ width: "100%" }}
-              >
-                ASSINAR
-              </S.GenericButtonWithBackgroundColor>
+              <S.A href="https://api.whatsapp.com/send?phone=5511930151064">
+                <S.GenericButtonWithBackgroundColor
+                  textAlign="center"
+                  style={{ width: "100%" }}
+                >
+                  ASSINAR
+                </S.GenericButtonWithBackgroundColor>
+              </S.A>
             </S.ContainerBuy>
           </S.Plans>
           <S.Plans>
@@ -226,12 +230,15 @@ export default function Home() {
               <S.SubTextPlans>
                 boleto, pix, cartão (sem valor das taxas)
               </S.SubTextPlans>
-              <S.GenericButtonWithBackgroundColor
-                textAlign="center"
-                style={{ width: "100%" }}
-              >
-                ASSINAR
-              </S.GenericButtonWithBackgroundColor>
+
+              <S.A href="https://api.whatsapp.com/send?phone=5511930151064">
+                <S.GenericButtonWithBackgroundColor
+                  textAlign="center"
+                  style={{ width: "100%" }}
+                >
+                  ASSINAR
+                </S.GenericButtonWithBackgroundColor>
+              </S.A>
             </S.ContainerBuy>
           </S.Plans>
         </S.PlansContainer>
