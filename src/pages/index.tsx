@@ -1,6 +1,7 @@
 import LandingFooter from "@/components/FooterLanding";
 import LandingHeader from "@/components/HeaderLanding";
 import { useGeneral } from "@/context/generalContext";
+import ClockInApi from "@/services";
 import * as S from "@/styles/pages/landingPageStyles";
 import { CaptchaChecker, RandomNumberGenerator } from "@/utils/captcha";
 import { useEffect, useState } from "react";
@@ -16,12 +17,32 @@ export default function Home() {
   const [RangeOfCollaborators, setRangeOfCollaborators] = useState("");
   const [captcha, setCaptcha] = useState("");
   const [receiveNotifications, setReceiveNotifications] = useState(false);
-  const [data, setData] = useState({});
   const { showAlert } = useGeneral();
 
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
+  interface ICollaborator {
+    RangeOfCollaborators: string;
+    cellPhone: string;
+    companyName: string;
+    email: string;
+    name: string;
+    receiveNotifications: boolean;
+  }
+
+  const handleSubmit = async (data: ICollaborator) => {
+    await ClockInApi({
+      method: "POST",
+      url: "tekoa/email",
+      data,
+    })
+      .then((res) => {
+        console.log(res);
+        showAlert("", "Dados enviados", "");
+      })
+      .catch((err) => {
+        console.log(err);
+        showAlert("error", "vlw falou", "");
+      });
+  };
 
   return (
     <>
@@ -79,7 +100,7 @@ export default function Home() {
           onSubmit={(e) => {
             e.preventDefault();
             if (CaptchaChecker(numbers, +captcha, showAlert)) {
-              setData({
+              handleSubmit({
                 name,
                 email,
                 companyName,
@@ -120,7 +141,7 @@ export default function Home() {
               value={ddd}
               onChange={(e) => setDdd(e.target.value)}
               required
-              max={3}
+
             />
             <S.Input
               placeholder="Celular*"
@@ -128,7 +149,7 @@ export default function Home() {
               onChange={(e) => setCellPhone(e.target.value)}
               required
               type="number"
-              max={12}
+     
             />
           </S.CellContainer>
           <S.Select
