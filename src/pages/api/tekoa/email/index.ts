@@ -8,7 +8,7 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const data = req.body;
-  console.log(req.body);
+
   await sendEmail({
     to: process.env.SMTP_USER
       ? process.env.SMTP_USER
