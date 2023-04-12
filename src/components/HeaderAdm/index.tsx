@@ -15,7 +15,11 @@ export default function EmpresaHeader() {
     <>
       <S.Open active={theme}>
         <div>
-          <S.LogoWrapper>
+          <S.LogoWrapper
+            onClick={() => {
+              navigate.push("/empresa/home");
+            }}
+          >
             <S.Fig>
               <Image
                 priority
