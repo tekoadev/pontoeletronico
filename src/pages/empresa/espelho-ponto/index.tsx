@@ -128,12 +128,6 @@ export default function RegistroDePonto() {
     await getReport(selectedUser.id!, dateMonth!.value, selectedYear);
   };
 
-  useEffect(() => {
-    if (selectedUser?.id !== undefined) {
-      HandlerOnChange();
-    }
-  }, [selectedUser, selectedMonth, selectedYear]);
-
   const generateTimes = (value: string) => {
     const dayClockIn = clockIn
       .filter((ele) => {
@@ -298,6 +292,15 @@ export default function RegistroDePonto() {
     }
     return totalTimes.length;
   };
+
+  useEffect(() => {
+    if (selectedUser?.id !== undefined) {
+      HandlerOnChange();
+    } else {
+      setSelectedUserFunction();
+    }
+  }, [selectedMonth, selectedUser, selectedYear, users]);
+
   return (
     <S.Wrapper>
       <Header></Header>
@@ -486,9 +489,11 @@ export default function RegistroDePonto() {
                                 color="black"
                                 style={{ cursor: "pointer" }}
                                 onClick={() => {
-                                  setShowModal(true);
-                                  setTypeModal("add");
-                                  setDay(ele);
+                                  if (selectedUser?.id) {
+                                    setShowModal(true);
+                                    setTypeModal("add");
+                                    setDay(ele);
+                                  }
                                 }}
                               />
                             ) : (
@@ -499,11 +504,13 @@ export default function RegistroDePonto() {
                                   color="black"
                                   style={{ cursor: "pointer" }}
                                   onClick={() => {
-                                    setShowModal(true);
-                                    setTypeModal("edit");
-                                    setDay(ele);
-                                    setClockInId(ele2.id);
-                                    setEditClockInValue(ele2.time);
+                                    if (selectedUser?.id) {
+                                      setShowModal(true);
+                                      setTypeModal("edit");
+                                      setDay(ele);
+                                      setClockInId(ele2.id);
+                                      setEditClockInValue(ele2.time);
+                                    }
                                   }}
                                 />
                                 <MdDeleteOutline
@@ -511,9 +518,11 @@ export default function RegistroDePonto() {
                                   color="black"
                                   style={{ cursor: "pointer" }}
                                   onClick={() => {
-                                    setShowModal(true);
-                                    setTypeModal("delete");
-                                    setClockInId(ele2.id);
+                                    if (selectedUser?.id) {
+                                      setShowModal(true);
+                                      setTypeModal("delete");
+                                      setClockInId(ele2.id);
+                                    }
                                   }}
                                 />
                                 <AiOutlineQuestionCircle
@@ -521,8 +530,10 @@ export default function RegistroDePonto() {
                                   color="black"
                                   style={{ cursor: "pointer" }}
                                   onClick={() => {
-                                    setDayModalData([ele2]);
-                                    setDayModal(true);
+                                    if (selectedUser?.id) {
+                                      setDayModalData([ele2]);
+                                      setDayModal(true);
+                                    }
                                   }}
                                 />
                               </div>
@@ -566,9 +577,11 @@ export default function RegistroDePonto() {
                                 color="black"
                                 style={{ cursor: "pointer" }}
                                 onClick={() => {
-                                  setShowModal(true);
-                                  setTypeModal("add");
-                                  setDay(ele);
+                                  if (selectedUser?.id) {
+                                    setShowModal(true);
+                                    setTypeModal("add");
+                                    setDay(ele);
+                                  }
                                 }}
                               />
                             </div>
@@ -587,9 +600,11 @@ export default function RegistroDePonto() {
                                 size={18}
                                 color="black"
                                 onClick={() => {
-                                  setShowModal(true);
-                                  setTypeModal("delete");
-                                  setClockInId(ele2.id);
+                                  if (selectedUser?.id) {
+                                    setShowModal(true);
+                                    setTypeModal("delete");
+                                    setClockInId(ele2.id);
+                                  }
                                 }}
                               />
                               <AiOutlineQuestionCircle
@@ -597,8 +612,10 @@ export default function RegistroDePonto() {
                                 color="black"
                                 style={{ cursor: "pointer" }}
                                 onClick={() => {
-                                  setDayModalData([ele2]);
-                                  setDayModal(true);
+                                  if (selectedUser?.id) {
+                                    setDayModalData([ele2]);
+                                    setDayModal(true);
+                                  }
                                 }}
                               />
                             </div>

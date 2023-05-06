@@ -37,10 +37,10 @@ export default function DayCard({
                       <a
                         target="_blank"
                         href={`https://www.google.com.br/maps/search/${
-                          ele.location.split(",")[0]
-                        },${ele.location.split(",")[1]}/@${
-                          ele.location.split(",")[0]
-                        },${ele.location.split(",")[1]}z?hl=pt-BR`}
+                          ele.location.split("/")[0]
+                        },${ele.location.split("/")[1]}/@${
+                          ele.location.split("/")[0]
+                        },${ele.location.split("/")[1]}z?hl=pt-BR`}
                       >
                         Localização
                       </a>
