@@ -7,6 +7,7 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable react-hooks/exhaustive-deps */
+
 import Header from "@/components/HeaderAdm";
 import DayCard from "@/components/modal/modalRegistroFuncionário";
 import ModalCompanyClockIn from "@/components/modal/ModalCompanyClockIn";
@@ -84,7 +85,7 @@ export default function RegistroDePonto() {
     { title: "Março", value: "03" },
     { title: "Abril", value: "04" },
     { title: "Maio", value: "05" },
-    { title: "Junho", value: "09" },
+    { title: "Junho", value: "06" },
     { title: "Julho", value: "07" },
     { title: "Agosto", value: "08" },
     { title: "Setembro", value: "09" },
