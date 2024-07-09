@@ -136,6 +136,7 @@ export default function Registrodeponto() {
         Funcionário: ele.user?.name,
         Data: ele.time,
         Localização: ele?.location,
+        pagamento: ele?.payment ? "Pago" : "",
         Observações: ele?.obs,
       };
     }).sort((a, b) =>

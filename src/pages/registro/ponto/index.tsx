@@ -46,7 +46,6 @@ export default function Registrodeponto() {
           toast.success(<p>Ponto registrado com sucesso</p>, { toastId: 5 });
         })
         .catch((err) => {
-          console.log(err);
           setLoading(false);
           toast.error(
             <p>

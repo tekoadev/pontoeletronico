@@ -87,7 +87,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
           }
         })
         .catch((err) => {
-          console.log(err);
           handleLogout();
         });
     }

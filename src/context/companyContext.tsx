@@ -91,7 +91,6 @@ export const CompanyProvider = ({ children }: any) => {
         navigate.push("/empresa/home");
       })
       .catch((err) => {
-        console.log(err);
         setIsLoading(false);
         showAlert("error", "Erro de login", "Verifique os dados enviados");
       });
@@ -178,7 +177,6 @@ export const CompanyProvider = ({ children }: any) => {
           }
         })
         .catch((err) => {
-          console.log(err);
           navigate.push("/empresa");
           destroyCookie(null, "Company");
           destroyCookie(null, "CompanyToken");

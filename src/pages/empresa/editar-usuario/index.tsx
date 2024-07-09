@@ -35,7 +35,6 @@ export default function EditUser() {
 
   const HandlerSubmit = (e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    console.log(user);
 
     if (user?.name === "" || !user?.name) {
       showAlert("error", "Nome obrigatório", "Campo obrigatório");
