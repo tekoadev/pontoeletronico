@@ -53,6 +53,7 @@ export interface IClockIn {
   location?: string;
   obs?: string;
   type?: string;
+  payment: boolean | null;
   createdAt?: Date;
   updatedAt?: Date;
   user?: IUser
@@ -167,6 +168,7 @@ export interface ICreateCompanyClockInReq extends NextApiRequest {
     location?: string | null;
     obs?: string | null;
     type?: string | null;
+    payment: boolean;
     createdAt?: Date;
     updatedAt?: Date;
   };

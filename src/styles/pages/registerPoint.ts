@@ -494,3 +494,36 @@ export const CalendarWrapper = styled.div`
     gap: 5vw;
   }
 `;
+
+export const InputCheckBox = styled.input`
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  background-color: transparent;
+  border: 1px solid #ccc;
+  position: relative;
+
+  width: 120px;
+  height: 35px;
+  padding-left: 5px;
+  margin: 0px 4px;
+  border-radius: 5px;
+
+  background-color: ${(props) => (props.checked ? "#97C160" : "#E5E5E5")};
+
+  display: flex;
+  align-items: center;
+
+  &:after {
+    content: ${(props) => (props.checked ? "Pago ✔" : "Em aberto ✘")}; ;
+    color: white;
+    font-size: 20px;
+    display: ${(props) => (props.checked ? "block" : "none")}
+    left: 0;
+    position: absolute;
+    
+  }
+`;

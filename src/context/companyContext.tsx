@@ -23,6 +23,7 @@ interface CompanyContextProps {
   listUsers: () => Promise<void>;
   addClockIn: (timeValue: string, userID: string) => Promise<void>;
   editClockIn: (timeValue: string, clockInId: string) => Promise<void>;
+  editClockInPayment: (payment: boolean | null, clockInId: string) => Promise<void>;
   deleteClockIn: (clockInId: string) => Promise<void>;
   editUser: (data: ICreateUser) => Promise<boolean>;
   deleteUser: (data: {id:string}) => Promise<boolean>
@@ -246,6 +247,35 @@ export const CompanyProvider = ({ children }: any) => {
     setIsLoading(false);
   };
 
+  const editClockInPayment = async (
+    payment: boolean | null | undefined,
+    clockInId: string
+  ): Promise<void> => {
+    setIsLoading(true);
+    showAlert("", "Atualizando dados", "");
+    await ClockInApi({
+      method: "PATCH",
+      url: "company/clockin",
+      headers,
+      data: {
+        id: clockInId,
+        payment,
+      },
+    })
+      .then((req) => {
+        showAlert("", "Editado com sucesso", "");
+      })
+      .catch((err) => {
+        showAlert(
+          "error",
+          "Erro com dados",
+          "Comunique o administrador do serviço"
+        );
+      });
+
+    setIsLoading(false);
+  };
+
   const deleteClockIn = async (clockInId: string): Promise<void> => {
     setIsLoading(true);
     await ClockInApi({
@@ -350,6 +380,7 @@ export const CompanyProvider = ({ children }: any) => {
         listUsers,
         addClockIn,
         editClockIn,
+        editClockInPayment,
         deleteClockIn,
         editUser,
         deleteUser

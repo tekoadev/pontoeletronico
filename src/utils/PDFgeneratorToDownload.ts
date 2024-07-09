@@ -217,7 +217,7 @@ export const PDFGeneratorToDownloadOfTheDiaristType = (
     {
       table: {
         headerRows: 1,
-        widths: ["*", "*"],
+        widths: ["*", "*", "*"],
         body: [
           [
             {
@@ -227,7 +227,13 @@ export const PDFGeneratorToDownloadOfTheDiaristType = (
               fontSize: 14,
             },
             {
-              text: "Diarista",
+              text: "Dias trabalhados",
+              style: "tableHeader",
+              alignment: "center",
+              fontSize: 14,
+            },
+            {
+              text: "Pagamento",
               style: "tableHeader",
               alignment: "center",
               fontSize: 14,
@@ -328,24 +334,47 @@ const transformObjectToPDFMakerOfDiaristType = (
     string
   ]
 ) => {
+  const generateOccurrence = (ele: any) => {
+    return generateRow(ele).map((ele2: any, i: number) => {
+      if (i < 1) {
+        return ele2?.time?.split(" ")[1] === undefined
+          ? { text: "", fontSize: 13, alignment: "center" }
+          : {
+              text: "Trabalhou",
+              fontSize: 13,
+              alignment: "center",
+            };
+      } else {
+        return;
+      }
+    });
+  };
+  const generatePayment = (ele: any) => {
+    return generateRow(ele).map((ele2: any, i: number) => {
+      if (i < 1) {
+        return {
+          text:
+            ele2?.time?.split(" ")[1] !== undefined
+              ? ele2?.payment
+                ? "Pago"
+                : "Não Pago"
+              : "",
+
+          fontSize: 13,
+          alignment: "center",
+        };
+      } else {
+        return;
+      }
+    });
+  };
   return days.map((ele, i) => {
     const objectTransformedToBeAcceptedByPDFMaker = [
       { text: ele, fontSize: 13, alignment: "center" },
-      ...generateRow(ele).map((ele2: any, i: number) => {
-        if (i < 1) {
-          return ele2?.time?.split(" ")[1] === undefined
-            ? { text: "X", fontSize: 13, alignment: "center" }
-            : {
-                text: "V",
-                fontSize: 13,
-                alignment: "center",
-              };
-        } else {
-          return;
-        }
-      }),
+      ...generateOccurrence(ele),
+      ...generatePayment(ele),
     ].filter((item) => item !== undefined);
-    console.log(objectTransformedToBeAcceptedByPDFMaker);
+
     return objectTransformedToBeAcceptedByPDFMaker;
   });
 };

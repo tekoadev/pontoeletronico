@@ -6,6 +6,7 @@ import type {
   IUser,
 } from "@/server/interface";
 import type { NextApiResponse } from "next";
+import { boolean } from "zod";
 
 export async function createClockIn(
   req: ICreateCompanyClockInReq,
@@ -50,7 +51,7 @@ export async function updateClockIn(
   req: ICreateCompanyClockInReq,
   res: NextApiResponse
 ) {
-  const { id, time, location, obs } = req.body;
+  const { id, time, location, obs, payment } = req.body;
 
   if (!id) {
     return res.status(400).json({ message: "must send a id" });
@@ -74,6 +75,7 @@ export async function updateClockIn(
       time,
       location,
       obs,
+      payment,
     },
     include: {
       company: true,

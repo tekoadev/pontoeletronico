@@ -31,7 +31,8 @@ import { MdDeleteOutline } from "react-icons/md";
 export default function RegistroDePonto() {
   const today: Date = new Date();
   // const { setIsLoading } = useGeneral();
-  const { users, company, clockIn, getReport, listUsers } = useCompanyContext();
+  const { users, company, clockIn, getReport, listUsers, editClockInPayment } =
+    useCompanyContext();
   const [showModal, setShowModal] = useState(false);
   const [typeModal, setTypeModal] = useState<"edit" | "add" | "delete" | "">(
     "edit"
@@ -302,6 +303,10 @@ export default function RegistroDePonto() {
     }
   }, [selectedMonth, selectedUser, selectedYear, users]);
 
+  async function handleUpdatePayment(clockIn: IClockIn) {
+    await editClockInPayment(!clockIn.payment, clockIn.id as string);
+    handlerUpdateClockIn(selectedUser.id as string);
+  }
   return (
     <S.Wrapper>
       <Header></Header>
@@ -596,6 +601,44 @@ export default function RegistroDePonto() {
                               }}
                             >
                               <AiFillCheckCircle size={36} color="black" />
+                              <div
+                                style={{
+                                  display: "flex",
+                                  gap: "4px",
+                                  backgroundColor: "#fff",
+                                  position: "relative",
+                                }}
+                              >
+                                <p
+                                  onClick={() => {
+                                    handleUpdatePayment(ele2);
+                                  }}
+                                  style={{
+                                    position: "absolute",
+                                    left: "0",
+                                    top: "0",
+                                    zIndex: 1,
+                                    width: "100%",
+                                    height: "100%",
+                                    cursor: "pointer",
+                                    color: ele2?.payment ? "green" : "red",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                  }}
+                                >
+                                  {ele2?.payment ? "Pago ✔" : "Em aberto ✘"}
+                                </p>
+                                <S.InputCheckBox
+                                  type="checkbox"
+                                  checked={
+                                    ele2?.payment ? ele2?.payment : false
+                                  }
+                                  onClick={() => {
+                                    handleUpdatePayment(ele2);
+                                  }}
+                                />
+                              </div>
                               <MdDeleteOutline
                                 style={{ margin: 0, cursor: "pointer" }}
                                 size={18}
@@ -604,7 +647,7 @@ export default function RegistroDePonto() {
                                   if (selectedUser?.id) {
                                     setShowModal(true);
                                     setTypeModal("delete");
-                                    setClockInId(ele2.id);
+                                    setClockInId(ele2.id as string);
                                   }
                                 }}
                               />
@@ -640,7 +683,7 @@ export default function RegistroDePonto() {
           year={selectedYear}
           clockInId={clockInId}
           editClockInValue={editClockInValue}
-          userId={selectedUser.id}
+          userId={selectedUser.id as string}
           user={selectedUser}
           handlerUpdateClockIn={handlerUpdateClockIn}
         />

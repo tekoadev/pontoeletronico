@@ -88,6 +88,8 @@ model ClockIn {
 
     obs String?
 
+    payment Boolean?
+
     updatedAt DateTime @updatedAt @default(now())
 
     createdAt DateTime @default(now())
