@@ -3,7 +3,7 @@ import * as S from "@/styles/pages/registerPoint";
 import Member from "@/assets/imgs/member.png";
 import Search from "@/assets/imgs/search.png";
 import TimeInACloud from "@/assets/imgs/timeInACloud.png";
-import Calendar from "@/assets/imgs/calendar.png";
+import CalendarImg from "@/assets/imgs/calendar.png";
 import Download from "@/assets/imgs/download.png";
 import ArrowRight from "@/assets/imgs/arrowright.png";
 import Image from "next/image";
@@ -14,6 +14,8 @@ import { parseCookies } from "nookies";
 import { IClockIn, IUser } from "@/server/interface";
 import ClockInApi from "@/services";
 import { JsonToExcel } from "react-json-to-excel";
+import Calendar from "react-calendar";
+import DayCard from "@/components/modal/modalRegistroFuncionário";
 
 export default function Registrodeponto() {
   const [isCalenderVisible, setIsCalenderVisible] = useState(false);
@@ -34,14 +36,23 @@ export default function Registrodeponto() {
       : (today.getMonth() + 1).toString()
   );
   const [year, setYear] = useState((today.getFullYear() - 2000).toString());
-  const ClockIn = useRef<IClockIn[]>([] as IClockIn[]);
+  const [ClockIn, setClockIn] = useState<IClockIn[]>([]);
   const user = useRef<IUser[]>([]);
+  const [selectedUser, setSelectedUser] = useState("all");
+  const [totalCheckIn, setTotalCheckIn] = useState(0);
+  const [firstGet, setFirstGet] = useState(true);
 
   const HandlerGetClockIn = async () => {
     setIsLoading(true);
     const clockInResponse: { data: { body: IClockIn[] } } = await ClockInApi({
       method: "GET",
-      url: `company/reports/excel?month=${month}&year=${year}`,
+      url: `company/reports/excel?month=${month}&year=${year}${
+        selectedUser === "all"
+          ? ""
+          : selectedUser === "allActive"
+          ? "&active=true"
+          : `&id=${selectedUser}`
+      }`,
       headers: headers,
     });
 
@@ -52,11 +63,21 @@ export default function Registrodeponto() {
     });
 
     if (clockInResponse?.data?.body === undefined) {
-      user.current = [];
+      setClockIn([]);
+    }
+    if (clockInResponse?.data?.body !== undefined) {
+      setClockIn(clockInResponse.data.body);
+      if (firstGet) {
+        setTotalCheckIn(clockInResponse.data.body.length);
+        setFirstGet(false);
+      }
     }
 
     if (userResponse?.data?.body === undefined) {
-      ClockIn.current = [];
+      user.current = [];
+    }
+    if (userResponse?.data?.body !== undefined) {
+      user.current = userResponse.data.body;
     }
 
     if (
@@ -67,14 +88,12 @@ export default function Registrodeponto() {
       return;
     }
 
-    ClockIn.current = clockInResponse.data.body;
-    user.current = userResponse.data.body;
     setIsLoading(false);
   };
 
   useEffect(() => {
     HandlerGetClockIn();
-  }, [month, year]);
+  }, [month, year, selectedUser]);
 
   function FormatDate(date: Date) {
     var month = date.getMonth() + 1;
@@ -91,16 +110,14 @@ export default function Registrodeponto() {
 
   const HandlerModal = (event: Date) => {
     const date = FormatDate(event);
-    const response = ClockIn.current.filter(
-      (ele) => ele.time?.split(" ")[0] === date
-    );
+    const response = ClockIn.filter((ele) => ele.time?.split(" ")[0] === date);
     setRegister(response);
     setShowModal(true);
   };
 
   const HandlerTileClassName = (date: Date) => {
     let resClassName = "";
-    ClockIn.current.forEach((ele) => {
+    ClockIn.forEach((ele) => {
       if (ele.time?.split(" ")[0] === FormatDate(date)) {
         resClassName += " red_item";
       }
@@ -114,14 +131,16 @@ export default function Registrodeponto() {
   }, [date]);
 
   const NormalizeExcel = () => {
-    return ClockIn.current.map((ele) => {
+    return ClockIn.map((ele) => {
       return {
         Funcionário: ele.user?.name,
         Data: ele.time,
         Localização: ele?.location,
         Observações: ele?.obs,
       };
-    });
+    }).sort((a, b) =>
+      Number(a?.Data?.split("/")[0]) > Number(b?.Data?.split("/")[0]) ? 1 : -1
+    );
   };
 
   const months = [
@@ -149,7 +168,7 @@ export default function Registrodeponto() {
             <h3>Checkin no mês</h3>
 
             <S.InfoAlignment>
-              <p>{ClockIn.current !== undefined && ClockIn.current.length}</p>
+              <p>{totalCheckIn !== undefined && totalCheckIn}</p>
               <S.ImageContainer>
                 <Image src={TimeInACloud} alt="" className="timeInACloud" />
               </S.ImageContainer>
@@ -200,7 +219,7 @@ export default function Registrodeponto() {
             >
               <S.OptionsAlignment>
                 <S.ImageContainer className="align">
-                  <Image src={Calendar} alt="" />
+                  <Image src={CalendarImg} alt="" />
                 </S.ImageContainer>
 
                 <div>
@@ -219,8 +238,113 @@ export default function Registrodeponto() {
 
             {isCalenderVisible && (
               <S.Calendar>
-                <div></div>
-                <div></div>
+                <S.Download>
+                  <S.DownloadAlignment>
+                    <div>
+                      <p>Funcionário</p>
+
+                      <select onChange={(e) => setSelectedUser(e.target.value)}>
+                        <option value="all" selected={selectedUser === "all"}>
+                          Todos
+                        </option>
+                        <option
+                          value="allActive"
+                          selected={selectedUser === "allActive"}
+                        >
+                          Todos ativos
+                        </option>
+                        {user.current !== undefined &&
+                          user.current.map((ele, i) => {
+                            return (
+                              <option
+                                value={ele.id}
+                                key={i}
+                                selected={selectedUser === ele.id}
+                              >
+                                {ele.name}
+                              </option>
+                            );
+                          })}
+                      </select>
+                    </div>
+
+                    <div>
+                      <p>Mês</p>
+
+                      <select onChange={(e) => setMonth(e.target.value)}>
+                        {months.map((ele, i) => (
+                          <option
+                            value={ele.value}
+                            selected={ele.value === month}
+                          >
+                            {ele.title}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <p>Ano</p>
+
+                      <select onChange={(e) => setYear(e.target.value)}>
+                        <option value={"22"} selected={year === "22"}>
+                          2022
+                        </option>
+                        <option value={"23"} selected={year === "23"}>
+                          2023
+                        </option>
+                        <option value={"24"} selected={year === "24"}>
+                          2024
+                        </option>
+                        <option value={"25"} selected={year === "25"}>
+                          2025
+                        </option>
+                      </select>
+                    </div>
+                  </S.DownloadAlignment>
+                  <S.CalendarWrapper>
+                    <Calendar
+                      calendarType="Hebrew"
+                      defaultView={"month"}
+                      view="month"
+                      formatShortWeekday={(locale, date) => {
+                        if (date.getDay() === 0) {
+                          return "D";
+                        }
+                        if (date.getDay() === 1) {
+                          return "S";
+                        }
+                        if (date.getDay() === 2) {
+                          return "T";
+                        }
+                        if (date.getDay() === 3) {
+                          return "Q";
+                        }
+                        if (date.getDay() === 4) {
+                          return "Q";
+                        }
+                        if (date.getDay() === 5) {
+                          return "S";
+                        }
+                        if (date.getDay() === 6) {
+                          return "S";
+                        }
+
+                        return "";
+                      }}
+                      tileClassName={({ date }) => HandlerTileClassName(date)}
+                      onClickDay={(event) => HandlerModal(event)}
+                      onDrillUp={({ activeStartDate }) => {
+                        setMonth(FormatDate(activeStartDate).split("/")[1]);
+                        setYear(FormatDate(activeStartDate).split("/")[2]);
+                      }}
+                      onActiveStartDateChange={({ activeStartDate }) => {
+                        setMonth(FormatDate(activeStartDate!).split("/")[1]);
+                        setYear(FormatDate(activeStartDate!).split("/")[2]);
+                      }}
+                    />
+                  </S.CalendarWrapper>
+                </S.Download>
               </S.Calendar>
             )}
           </S.ContainerOptionsInfo>
@@ -257,13 +381,24 @@ export default function Registrodeponto() {
                   <div>
                     <p>Funcionário</p>
 
-                    <select>
-                      <option value="all">Todos</option>
-                      <option value="allActive">Todos ativos</option>
+                    <select onChange={(e) => setSelectedUser(e.target.value)}>
+                      <option value="all" selected={selectedUser === "all"}>
+                        Todos
+                      </option>
+                      <option
+                        value="allActive"
+                        selected={selectedUser === "allActive"}
+                      >
+                        Todos ativos
+                      </option>
                       {user.current !== undefined &&
                         user.current.map((ele, i) => {
                           return (
-                            <option value={ele.id} key={i}>
+                            <option
+                              value={ele.id}
+                              key={i}
+                              selected={selectedUser === ele.id}
+                            >
                               {ele.name}
                             </option>
                           );
@@ -317,6 +452,12 @@ export default function Registrodeponto() {
           </S.ContainerOptionsInfo>
         </S.ContainerOptions>
       </S.ContainerHome>
+      <DayCard
+        showModal={showModal}
+        setShowModal={setShowModal}
+        register={register}
+        user={true}
+      />
     </S.Wrapper>
   );
 }

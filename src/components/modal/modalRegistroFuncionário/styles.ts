@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const Bck = styled.div`
-  position: absolute;
+  position: fixed;
   left: 0;
   top: 0;
   width: 100%;
@@ -15,6 +15,8 @@ export const Bck = styled.div`
 `;
 
 export const Wrapper = styled.div`
+  position: fixed;
+  top: 0;
   margin: 10vh 10vw;
   width: 80vw;
   height: 80vh;

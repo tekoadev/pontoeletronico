@@ -5,6 +5,7 @@ import { FaMapMarkerAlt } from "react-icons/fa";
 
 interface DayCardProps {
   register: IClockIn[];
+  user?: boolean;
   showModal: boolean;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -12,6 +13,7 @@ export default function DayCard({
   register,
   showModal,
   setShowModal,
+  user,
 }: DayCardProps) {
   return (
     <>
@@ -27,6 +29,7 @@ export default function DayCard({
               return (
                 <S.Register key={i}>
                   <h4>Registro</h4>
+                  {user && <p>Usuário: {ele.user?.name}</p>}
                   <p>Horário: {ele.time!.split(" ")[1]}</p>
                   {ele.location && (
                     <div>
