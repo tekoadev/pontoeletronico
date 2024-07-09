@@ -46,7 +46,7 @@ export default function Registrodeponto() {
     setIsLoading(true);
     const clockInResponse: { data: { body: IClockIn[] } } = await ClockInApi({
       method: "GET",
-      url: `company/reports/excel?month=${month}&year=${year}${
+      url: `company/reports/excel?&year=${year}${
         selectedUser === "all"
           ? ""
           : selectedUser === "allActive"

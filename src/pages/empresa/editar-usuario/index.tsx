@@ -35,6 +35,8 @@ export default function EditUser() {
 
   const HandlerSubmit = (e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    console.log(user);
+
     if (user?.name === "" || !user?.name) {
       showAlert("error", "Nome obrigatório", "Campo obrigatório");
       return false;
@@ -55,7 +57,10 @@ export default function EditUser() {
     //   showAlert("error", "Senha obrigatória", "Campo obrigatório");
     //   return false;
     // }
-    if (user?.newPassword !== undefined && user?.newPassword.length < 6) {
+    if (user?.newPassword !== undefined && user?.newPassword === "") {
+      setUser({ ...user, newPassword: undefined });
+    }
+    if (user?.newPassword !== undefined && user?.newPassword.length < 6 && user?.newPassword !== "") {
       showAlert(
         "error",
         "Tamanho mínimo senha",
@@ -221,20 +226,10 @@ export default function EditUser() {
               showAlert("error", "Selecione um usuário", "");
               return;
             } else if (HandlerSubmit(e) && user?.id !== undefined) {
-
-              if (users.find((ele) => ele.user === user.user)) {
-                await editUser({
-                  ...user,
-                  password: user.newPassword!,
-                  user: undefined,
-                });
-              } else {
-                await editUser({
-                  ...user,
-                  password: user.newPassword!,
-                  user_name: user.user,
-                });
-              }
+              await editUser({
+                ...user,
+                password: user.newPassword!,
+              });
             }
           }}
         >

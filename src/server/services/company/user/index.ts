@@ -104,13 +104,14 @@ export async function updateUser(
   if (!userExist) {
     return res.status(409).json({ message: "User not found" });
   }
+  if (userExist.user !== user) {
+    const findUser = await prismaConnect.users.findUnique({
+      where: { user },
+    });
 
-  const findUser = await prismaConnect.users.findUnique({
-    where: { user },
-  });
-
-  if (findUser) {
-    return res.status(409).json({ message: "User already exist" });
+    if (findUser) {
+      return res.status(409).json({ message: "User already exist" });
+    }
   }
 
   let hashedPassword = undefined;

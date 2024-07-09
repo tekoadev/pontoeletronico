@@ -29,7 +29,8 @@ export async function createClockIn(
       hour: "2-digit",
       minute: "2-digit",
     })
-    .toString();
+    .toString()
+    .replace(",", "");
 
   const clockIn: ICreateClockIn = await prismaConnect.clockIn.create({
     data: {
