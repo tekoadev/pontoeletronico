@@ -33,7 +33,7 @@ export default async function userLogin(
   }
 
   if (!findUser.isActive) {
-    return res.status(401).json({ message: "Invalid credentials" });
+    return res.status(401).json({ message: "Invalid credentials 2" });
   }
 
   if (!compareSync(password, findUser.password)) {

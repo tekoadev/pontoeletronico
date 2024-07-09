@@ -5,12 +5,20 @@ import "@/styles/styles.css";
 import GlobalStyles from "@/styles/GlobalStyles";
 import { CompanyProvider } from "@/context/companyContext";
 import { GeneralProvider } from "@/context/generalContext";
+import { UserProvider } from "@/context/userContext";
+import Head from "next/head";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <GeneralProvider>
       <CompanyProvider>
-        <Component {...pageProps} />
+        <GlobalStyles />
+        <UserProvider>
+          <Head>
+          <title>ClockIn</title>
+          </Head>
+          <Component {...pageProps} />
+        </UserProvider>
       </CompanyProvider>
     </GeneralProvider>
   );

@@ -10,7 +10,7 @@ export async function createClockIn(
   req: ICreateCompanyClockInReq,
   res: NextApiResponse
 ) {
-  const { location, obs, type } = req.body;
+  const { location, obs } = req.body;
 
   const findUser = await prismaConnect.users.findUnique({
     where: { id: req.request_id },
@@ -38,7 +38,6 @@ export async function createClockIn(
       time,
       location,
       obs,
-      type,
     },
     include: {
       company: true,
@@ -68,22 +67,22 @@ export async function listByMonthClockIn(
   req: {
     request_id: any;
     user: string;
-    query: { month: string };
+    query: { month: string; year: string };
   },
   res: NextApiResponse
 ) {
-  const { month } = req.query;
+  const { month, year } = req.query;
 
   const clockIn = await prismaConnect.clockIn.findMany({
     where: { userId: req.request_id },
     include: { user: true },
   });
 
-  const response = clockIn.map((elem) => {
-    if (elem.time?.split("/")[1] === month) {
-      return elem;
-    }
-  });
+  const response = clockIn.filter(
+    (elem) =>
+      Number(elem.time?.split(" ")[0]?.split("/")[1]) === Number(month) &&
+      Number(elem.time?.split(" ")[0]?.split("/")[2]) === Number(year)
+  );
 
   return res.json({ message: "Success", body: response });
 }

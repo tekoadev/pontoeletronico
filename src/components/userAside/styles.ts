@@ -41,13 +41,14 @@ export const Text = styled.p`
 `;
 
 export const HeaderMenu = styled.div`
-  height: 10vh;
+  height: 8vh;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  border-bottom: 1px solid var(--text);
+  margin-bottom: 1vh;
 
-  >p:nth-child(1){
+  > p:nth-child(1) {
     margin: 0px;
   }
 `;

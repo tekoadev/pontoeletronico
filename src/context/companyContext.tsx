@@ -25,7 +25,9 @@ interface CompanyContextProps {
   editClockIn: (timeValue: string, clockInId: string) => Promise<void>;
   deleteClockIn: (clockInId: string) => Promise<void>;
   editUser: (data: ICreateUser) => Promise<boolean>;
+  deleteUser: (data: {id:string}) => Promise<boolean>
 }
+
 export const CompanyContext = createContext<CompanyContextProps>(
   {} as CompanyContextProps
 );
@@ -295,7 +297,37 @@ export const CompanyProvider = ({ children }: any) => {
         }
         showAlert(
           "error",
-          "Erro ao criar usuário",
+          "Erro ao Editar usuário",
+          "Verifique com administrador do serviço"
+        );
+        return false;
+      });
+    if (error) {
+      return false;
+    }
+    return true;
+  };
+
+  const deleteUser = async (data: { id: string }) => {
+    setIsLoading(true);
+    let error = false;
+    await ClockInApi({
+      method: "DELETE",
+      url: "company/user",
+      headers,
+      data,
+    })
+      .then(() => {
+        setIsLoading(false);
+        showAlert("", "Usuário deletado", "");
+        return true;
+      })
+      .catch((err) => {
+        error = true;
+        setIsLoading(false);
+        showAlert(
+          "error",
+          "Erro ao deletar usuário",
           "Verifique com administrador do serviço"
         );
         return false;
@@ -320,6 +352,7 @@ export const CompanyProvider = ({ children }: any) => {
         editClockIn,
         deleteClockIn,
         editUser,
+        deleteUser
       }}
     >
       {children}

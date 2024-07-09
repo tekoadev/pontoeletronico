@@ -5,6 +5,7 @@ export default createGlobalStyle`
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    
 
     ::-webkit-scrollbar {
       width: 6px;
@@ -55,6 +56,10 @@ export default createGlobalStyle`
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+  }
+
+  * button {
+    cursor: pointer;
   }
 
   /* Chrome, Safari, Edge, Opera */

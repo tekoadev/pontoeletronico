@@ -5,7 +5,8 @@ CREATE TABLE `company` (
     `cnpj` VARCHAR(191) NOT NULL,
     `password` VARCHAR(191) NOT NULL,
     `logo` LONGTEXT NULL,
-    `isActive` BOOLEAN NOT NULL,
+    `isActive` BOOLEAN NULL,
+    `payment` BOOLEAN NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
@@ -24,6 +25,8 @@ CREATE TABLE `users` (
     `isActive` BOOLEAN NOT NULL,
     `phone` VARCHAR(191) NULL,
     `email` VARCHAR(191) NULL,
+    `location` BOOLEAN NULL,
+    `isAdm` BOOLEAN NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `CompanyId` VARCHAR(191) NOT NULL,
@@ -40,7 +43,6 @@ CREATE TABLE `clockin` (
     `time` VARCHAR(191) NULL,
     `location` LONGTEXT NULL,
     `obs` VARCHAR(191) NULL,
-    `type` VARCHAR(191) NULL,
     `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 

@@ -18,6 +18,12 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/utils/PDFgeneratorToDownload.ts"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "src/utils/PDFgeneratorToDownload.ts",
+    "declarations.d.ts"
+  ],
   "exclude": ["node_modules"]
 }

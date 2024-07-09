@@ -11,12 +11,12 @@ export async function createClockIn(
   req: ICreateCompanyClockInReq,
   res: NextApiResponse
 ) {
-  const { userId, location, obs, type = "in", time } = req.body;
-  
-  if(userId === undefined || time === undefined){
+  const { userId, location, obs, time } = req.body;
+
+  if (userId === undefined || time === undefined) {
     return res.status(400).json({ message: "Must send user id and time" });
   }
- 
+
   const findUser = await prismaConnect.users.findUnique({
     where: { id: userId },
   });
@@ -36,7 +36,6 @@ export async function createClockIn(
       time,
       location,
       obs,
-      type,
     },
     include: {
       company: true,
@@ -51,7 +50,7 @@ export async function updateClockIn(
   req: ICreateCompanyClockInReq,
   res: NextApiResponse
 ) {
-  const { id, time, location, obs, type } = req.body;
+  const { id, time, location, obs } = req.body;
 
   if (!id) {
     return res.status(400).json({ message: "must send a id" });
@@ -75,7 +74,6 @@ export async function updateClockIn(
       time,
       location,
       obs,
-      type,
     },
     include: {
       company: true,
@@ -119,7 +117,10 @@ export async function deleteClockIn(
   return res.json({ message: "clock in deleted", body: clockIn });
 }
 
-export async function listClockIn(req: { request_id: string }, res: NextApiResponse) {
+export async function listClockIn(
+  req: { request_id: string },
+  res: NextApiResponse
+) {
   const clockIn = await prismaConnect.clockIn.findMany({
     where: { companyId: req.request_id },
     include: { user: true },
@@ -140,4 +141,43 @@ export async function listUniqueUserClockIn(
   });
 
   return res.json({ message: "Success", body: clockIn });
+}
+
+export async function reportsExcel(
+  req: {
+    request_id: string;
+    query: { id: string; month: string; year: string; active: string };
+  },
+  res: NextApiResponse
+) {
+  const { id, month, year, active } = req.query;
+
+  const clockIn = await prismaConnect.clockIn.findMany({
+    where: { companyId: req.request_id },
+    include: { user: true },
+  });
+
+  let body = clockIn;
+
+  if (month) {
+    body = body.filter(
+      (ele) => Number(ele?.time?.split(" ")[0]?.split("/")[1]) === Number(month)
+    );
+  }
+
+  if (year) {
+    body = body.filter(
+      (ele) => Number(ele?.time?.split(" ")[0]?.split("/")[2]) === Number(year)
+    );
+  }
+
+  if (id) {
+    body = body.filter((ele) => ele?.userId === id);
+  }
+
+  if (active) {
+    body = body.filter((ele) => ele?.user?.isActive);
+  }
+
+  return res.json({ message: "Success", body });
 }
