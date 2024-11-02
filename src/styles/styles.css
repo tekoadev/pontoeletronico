@@ -1,0 +1,284 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap");
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  /* background: var(--light-1); */
+  background: transparent;
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--naval);
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--background);
+}
+
+html,
+border-style,
+#root {
+  width: 100%;
+  height: 100%;
+  scroll-behavior: smooth;
+}
+
+#__next {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: flex-start;
+  min-height: 100vh;
+  min-width: 100vw;
+  flex-direction: column;
+}
+
+body {
+  overflow-x: hidden;
+  margin: 0;
+  background-color: hsl(216, 21%, 16%);
+}
+#bodysection {
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+
+  background: #3c31dd;
+  height: 50vh;
+  width: 100vw;
+}
+
+.curve {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 50vh;
+  width: 100vw;
+  bottom: 0;
+  text-align: center;
+}
+
+.curve::before {
+  content: "";
+  display: block;
+  position: absolute;
+  border-radius: 100% 50%;
+  width: 55%;
+  height: 100%;
+  transform: translate(85%, 60%);
+  background-color: hsl(216, 21%, 16%);
+}
+
+.curve::after {
+  content: "";
+  display: block;
+  position: absolute;
+  border-radius: 100% 50%;
+  width: 55%;
+  height: 100%;
+  background-color: #3c31dd;
+  transform: translate(-4%, 40%);
+  z-index: -1;
+}
+*,
+button,
+input {
+  background: none;
+  font-family: "Montserrat", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+:root {
+  --primary: #f2b705;
+  --primary-hover: #e78e00;
+  --primary-header: #e6ae05;
+  --primary-light: #f3be1e;
+  --background: #212529;
+  --naval: #272b2f;
+  --white: #fbfffc;
+  --inputs: #34383c;
+  --text: #8c8f8d;
+  --select: #252525;
+  --deselect: #3c4042;
+  --error: #ecaa00;
+  --red-alert: #ff5757;
+  --shadow: 0px 5px 15px 0px rgba(0, 0, 0, 0.15);
+}
+
+@keyframes Open {
+  0% {
+    left: -60vw;
+    opacity: 0;
+    height: 0;
+  }
+  100% {
+    left: 0;
+    opacity: 1;
+    height: 100vh;
+  }
+}
+
+@keyframes Close {
+  0% {
+    left: 0;
+    opacity: 1;
+    height: 100vh;
+  }
+  100% {
+    left: -60vw;
+    opacity: 0;
+    height: 0;
+  }
+}
+
+@keyframes BackDropBlur {
+  0% {
+    backdrop-filter: blur(0);
+  }
+  100% {
+    backdrop-filter: blur(10px);
+  }
+}
+
+@keyframes UnBackDropBlur {
+  0% {
+    backdrop-filter: blur(10px);
+  }
+  100% {
+    backdrop-filter: blur(0);
+  }
+}
+
+@keyframes ScaleIn {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes ScaleOut {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0);
+  }
+}
+
+.Toastify__toast {
+  width: 80%;
+}
+
+.Toastify__toast-container {
+  width: 100vw;
+}
+
+@media (min-width: 765px) {
+  .Toastify__toast {
+    width: 30%;
+  }
+}
+
+@keyframes HeightIn {
+  0% {
+    height: 0;
+  }
+  100% {
+    height: fit-content;
+  }
+}
+* {
+  transition: 0.5s ease;
+}
+
+/* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+input:checked + .slider {
+  background-color: #2196f3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196f3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+/* * {
+  border: 1px solid red;
+} */
