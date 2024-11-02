@@ -1,11 +1,8 @@
 import { IClockIn } from "@/server/interface";
 import * as S from "./styles";
 import { BsXCircle } from "react-icons/bs";
-import {
-  FaMapMarkerAlt,
-  FaRegCheckCircle,
-  FaRegCircleXmark,
-} from "react-icons/fa";
+import { FaMapMarkerAlt, FaRegCheckCircle } from "react-icons/fa";
+import { IoMdCloseCircleOutline } from "react-icons/io";
 
 interface DayCardProps {
   register: IClockIn[];
@@ -52,14 +49,14 @@ export default function DayCard({
                   )}
                   {ele.obs && <p>Observações: {ele.obs}</p>}
                   <p>Pagamento:</p>
-                  {ele.payment ? (
+                  {ele?.payment ? (
                     <div>
                       <FaRegCheckCircle />
                       Pago
                     </div>
                   ) : (
                     <div>
-                      <FaRegCircleXmark />
+                      <IoMdCloseCircleOutline />
                       Em aberto
                     </div>
                   )}
